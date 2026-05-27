@@ -1,0 +1,23 @@
+# Python 3.9.x required (tested with conda env `envv`: Python 3.9.23)
+#
+# Install (CPU, Windows example):
+#   conda create -n envv python=3.9 -y
+#   conda activate envv
+#   pip install -r requirements.txt
+#
+# PyTorch wheels vary by platform/CUDA. If install fails, use the official index first:
+#   pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+
+# --- core (data_aug + diagnosis) ---
+torch==2.8.0
+torchvision==0.23.0
+numpy==1.26.4
+pandas==1.2.4
+scipy==1.13.1
+scikit-learn==1.5.1
+matplotlib==3.9.2
+PyYAML==6.0.2
+seaborn==0.13.2
+tqdm==4.67.3
+pillow==11.3.0

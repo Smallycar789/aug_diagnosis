@@ -1,0 +1,45 @@
+experiment:
+  name: cnn_bigru_sifuqi_region_v1
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/diagnosis
+
+dataset:
+  name: sifuqi
+  root: data/sifuqi
+  domain_adaptation: false
+  value_columns:
+    - azimuth_error
+    - pitch_error
+  sample_length: 256
+  stride: 24
+  region_fraction: 0.25
+  class_window_regions:
+    normal: head
+    mild: tail
+    moderate: tail
+    severe: tail
+  normalize: global
+  val_ratio: 0.15
+  test_ratio: 0.15
+  levels:
+    normal: servo_normal.csv
+    mild: servo_mild.csv
+    moderate: servo_moderate.csv
+    severe: servo_severe.csv
+
+model:
+  name: cnn_bigru
+  input_channels: 2
+  num_classes: 4
+  sample_length: 256
+  hidden_dims: 64
+  gru_hidden: 128
+  num_layers: 2
+  batch_size: 16
+  epochs: 80
+  alpha: 0
+  lr: 0.001
+  val_ratio: 0.15

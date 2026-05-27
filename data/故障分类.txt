@@ -1,0 +1,11 @@
+1、灵敏度
+三分类：normal、sensitivity_degradation、coupled_severe_fault
+
+2、成像质量
+五分类：normal、mtf_degradation、nonuniformity_degradation、bad_pixel_degradation、coupled_severe_fault
+
+3、温控性能（制冷机）
+二分类：正常、温控性能退化
+
+4、伺服跟踪精度
+四分类：normal、mild、moderate、severe

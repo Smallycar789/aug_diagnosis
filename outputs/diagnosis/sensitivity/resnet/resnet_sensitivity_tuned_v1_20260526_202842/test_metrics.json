@@ -1,0 +1,66 @@
+{
+  "experiment": "resnet_sensitivity_tuned_v1",
+  "dataset": "sensitivity",
+  "model": "resnet",
+  "split": "test",
+  "accuracy": 0.782608695652174,
+  "loss": 0.6870235192953892,
+  "precision_macro": 0.7999999999999999,
+  "recall_macro": 0.75,
+  "f1_macro": 0.7530864197530863,
+  "classification_report": {
+    "0": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "1": {
+      "precision": 0.6666666666666666,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.4444444444444444,
+      "support": 6.0
+    },
+    "2": {
+      "precision": 0.7333333333333333,
+      "recall": 0.9166666666666666,
+      "f1-score": 0.8148148148148148,
+      "support": 12.0
+    },
+    "accuracy": 0.782608695652174,
+    "macro avg": {
+      "precision": 0.7999999999999999,
+      "recall": 0.75,
+      "f1-score": 0.7530864197530863,
+      "support": 23.0
+    },
+    "weighted avg": {
+      "precision": 0.7739130434782607,
+      "recall": 0.782608695652174,
+      "f1-score": 0.7584541062801932,
+      "support": 23.0
+    }
+  },
+  "label_names": [
+    "normal",
+    "sensitivity_degradation",
+    "coupled_severe_fault"
+  ],
+  "confusion_matrix": [
+    [
+      5,
+      0,
+      0
+    ],
+    [
+      0,
+      2,
+      4
+    ],
+    [
+      0,
+      1,
+      11
+    ]
+  ]
+}

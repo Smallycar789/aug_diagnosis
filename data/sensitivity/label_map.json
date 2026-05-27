@@ -1,0 +1,7 @@
+{
+  "fault_mode": {
+    "normal": 0,
+    "sensitivity_degradation": 1,
+    "coupled_severe_fault": 2
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "task": "sensitivity",
+  "modes": [
+    "normal",
+    "sensitivity_degradation",
+    "coupled_severe_fault"
+  ],
+  "rows": 43585,
+  "units": 363,
+  "per_mode_rows": {
+    "normal": 12044,
+    "sensitivity_degradation": 14380,
+    "coupled_severe_fault": 17161
+  }
+}

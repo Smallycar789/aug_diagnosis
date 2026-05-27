@@ -1,0 +1,100 @@
+{
+  "experiment": "resnet_image_quality_v1",
+  "dataset": "image_quality",
+  "model": "resnet",
+  "split": "test",
+  "accuracy": 0.9753086419753086,
+  "loss": 0.07421208248922119,
+  "precision_macro": 0.9747716793538895,
+  "recall_macro": 0.9764912870005489,
+  "f1_macro": 0.9754307931904703,
+  "classification_report": {
+    "0": {
+      "precision": 1.0,
+      "recall": 0.9795918367346939,
+      "f1-score": 0.9896907216494846,
+      "support": 49.0
+    },
+    "1": {
+      "precision": 0.9743589743589743,
+      "recall": 1.0,
+      "f1-score": 0.987012987012987,
+      "support": 38.0
+    },
+    "2": {
+      "precision": 1.0,
+      "recall": 0.9642857142857143,
+      "f1-score": 0.9818181818181818,
+      "support": 56.0
+    },
+    "3": {
+      "precision": 0.9183673469387755,
+      "recall": 0.9574468085106383,
+      "f1-score": 0.9375,
+      "support": 47.0
+    },
+    "4": {
+      "precision": 0.9811320754716981,
+      "recall": 0.9811320754716981,
+      "f1-score": 0.9811320754716981,
+      "support": 53.0
+    },
+    "accuracy": 0.9753086419753086,
+    "macro avg": {
+      "precision": 0.9747716793538895,
+      "recall": 0.9764912870005489,
+      "f1-score": 0.9754307931904703,
+      "support": 243.0
+    },
+    "weighted avg": {
+      "precision": 0.9760860342870924,
+      "recall": 0.9753086419753086,
+      "f1-score": 0.975496531066405,
+      "support": 243.0
+    }
+  },
+  "label_names": [
+    "normal",
+    "mtf_degradation",
+    "nonuniformity_degradation",
+    "bad_pixel_degradation",
+    "coupled_severe_fault"
+  ],
+  "confusion_matrix": [
+    [
+      48,
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      38,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      54,
+      2,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      45,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      52
+    ]
+  ]
+}

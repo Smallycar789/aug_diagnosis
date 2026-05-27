@@ -1,0 +1,18 @@
+[
+  "MTF50",
+  "MTF_Nyquist",
+  "mtf_quality",
+  "defocus_index",
+  "low_pass_cutoff_ratio",
+  "bad_pixel_rate",
+  "random_bad_pixel_rate",
+  "cluster_bad_pixel_rate",
+  "row_col_defect_rate",
+  "response_nonuniformity",
+  "PRNU",
+  "DSNU",
+  "FPN_index",
+  "stripe_noise_index",
+  "image_quality_health",
+  "physical_degradation_index"
+]

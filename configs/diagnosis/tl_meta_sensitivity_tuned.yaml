@@ -1,0 +1,47 @@
+experiment:
+  name: tl_meta_sensitivity_tuned_v1
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/diagnosis
+
+dataset:
+  name: sensitivity
+  root: data/sensitivity
+  value_columns:
+    - avg_detectivity
+    - NETD_mK
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  unit_column: unit
+  cycle_column: cycle
+  sample_length: 96
+  stride: 16
+  merge_mode: flatten
+  pad_to_length: 2048
+  prenormalize: per_window
+
+model:
+  name: tl_meta
+  n_way: 3
+  n_support: 5
+  n_unlabeled: 5
+  n_query: 8
+  n_episodes: 3000
+  val_interval: 100
+  test_episodes: 500
+  embedding_dim: 256
+  refine_iterations: 3
+  samples_per_class: 220
+  signal_length: 2048
+  overlap: 0.5
+  normalize: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  # Make optimizer switch from SGD to Adam earlier (current run often stays on SGD and plateaus).
+  l_skip: 0.9
+  sgd_lr: 0.05
+  adam_lr: 0.0007

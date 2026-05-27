@@ -1,0 +1,32 @@
+experiment:
+  name: tl_meta_cwru_v1
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/diagnosis
+
+dataset:
+  name: cwru_csv
+  csv: CWRU_12k_1797_10c.csv
+
+model:
+  name: tl_meta
+  n_way: 10
+  n_support: 5
+  n_unlabeled: 5
+  n_query: 5
+  n_episodes: 2000
+  val_interval: 200
+  test_episodes: 300
+  embedding_dim: 128
+  refine_iterations: 2
+  samples_per_class: 200
+  signal_length: 2048
+  overlap: 0.5
+  normalize: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  l_skip: 0.2
+  sgd_lr: 0.1
+  adam_lr: 0.001

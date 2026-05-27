@@ -1,0 +1,25 @@
+experiment:
+  name: smoke_gan_vae_sifuqi
+  seed: 42
+  device: cpu
+
+output:
+  root: outputs/data_aug
+
+dataset:
+  name: sifuqi
+  root: data/sifuqi
+  level: normal
+  value_column: azimuth_error
+  sample_rate: 100.0
+
+model:
+  name: gan_vae
+  seq_len: 128
+  overlap_ratio: 0.5
+  latent_dim: 64
+  epochs: 2
+  batch_size: 32
+  lr: 0.0001
+  alpha: 0.01
+  num_generate: 10

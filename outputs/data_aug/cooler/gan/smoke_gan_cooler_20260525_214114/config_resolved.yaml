@@ -1,0 +1,24 @@
+experiment:
+  name: smoke_gan_cooler
+  seed: 42
+  device: cpu
+output:
+  root: outputs/data_aug
+dataset:
+  name: cooler
+  root: data/cooler
+  csv: cooler_simulation_results/all_simulation.csv
+  value_column: T_stable_K
+  sample_rate: 1.0
+model:
+  name: gan
+  z_dim: 100
+  window_size: 50
+  overlap_ratio: 0.2
+  epochs: 2
+  batch_size: 64
+  g_lr: 0.002
+  d_lr: 0.0001
+  enc_lr: 0.001
+  num_generate: 10
+output_dir: C:\Users\86188\Desktop\ATE\光电探测\outputs\data_aug\cooler\gan\smoke_gan_cooler_20260525_214114

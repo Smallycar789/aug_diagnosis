@@ -1,0 +1,47 @@
+experiment:
+  name: tl_meta_image_quality_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/diagnosis
+dataset:
+  name: image_quality
+  root: data/image_quality
+  value_columns:
+  - MTF50
+  - response_nonuniformity
+  - bad_pixel_rate
+  class_files:
+    normal: normal.csv
+    mtf_degradation: mtf_degradation.csv
+    nonuniformity_degradation: nonuniformity_degradation.csv
+    bad_pixel_degradation: bad_pixel_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  unit_column: unit
+  cycle_column: cycle
+  sample_length: 64
+  stride: 32
+  merge_mode: flatten
+  pad_to_length: 2048
+  prenormalize: per_window
+model:
+  name: tl_meta
+  n_way: 5
+  n_support: 5
+  n_unlabeled: 5
+  n_query: 5
+  n_episodes: 1200
+  val_interval: 200
+  test_episodes: 300
+  embedding_dim: 128
+  refine_iterations: 2
+  samples_per_class: 120
+  signal_length: 2048
+  overlap: 0.5
+  normalize: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  l_skip: 0.2
+  sgd_lr: 0.1
+  adam_lr: 0.01
+output_dir: /root/workspace/detect/outputs/diagnosis/image_quality/tl_meta/tl_meta_image_quality_v1_20260526_201700

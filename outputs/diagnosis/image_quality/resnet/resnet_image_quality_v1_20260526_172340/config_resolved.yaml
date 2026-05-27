@@ -1,0 +1,36 @@
+experiment:
+  name: resnet_image_quality_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/diagnosis
+dataset:
+  name: image_quality
+  root: data/image_quality
+  value_columns:
+  - MTF50
+  - response_nonuniformity
+  - bad_pixel_rate
+  class_files:
+    normal: normal.csv
+    mtf_degradation: mtf_degradation.csv
+    nonuniformity_degradation: nonuniformity_degradation.csv
+    bad_pixel_degradation: bad_pixel_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  window_size: 32
+  window_stride: 16
+model:
+  name: resnet
+  sample_len: 96
+  nperseg: 64
+  noverlap: 32
+  nfft: 224
+  target_size: 224
+  batch_size: 32
+  epochs: 30
+  lr: 0.001
+  num_classes: 5
+  train_ratio: 0.6
+  val_ratio: 0.2
+  freeze_layers: true
+output_dir: /root/workspace/detect/outputs/diagnosis/image_quality/resnet/resnet_image_quality_v1_20260526_172340

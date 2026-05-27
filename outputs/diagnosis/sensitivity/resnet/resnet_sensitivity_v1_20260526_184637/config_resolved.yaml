@@ -1,0 +1,35 @@
+experiment:
+  name: resnet_sensitivity_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/diagnosis
+dataset:
+  name: sensitivity
+  root: data/sensitivity
+  value_columns:
+  - avg_detectivity
+  - NETD_mK
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  sample_length: 96
+  stride: 32
+  stft_input: channel
+  normalize: per_window
+model:
+  name: resnet
+  sample_len: 96
+  nperseg: 32
+  noverlap: 16
+  nfft: 128
+  target_size: 224
+  batch_size: 32
+  epochs: 40
+  lr: 0.001
+  num_classes: 3
+  train_ratio: 0.6
+  val_ratio: 0.2
+  freeze_layers: true
+output_dir: C:\Users\86188\Desktop\ATE\光电探测\outputs\diagnosis\sensitivity\resnet\resnet_sensitivity_v1_20260526_184637

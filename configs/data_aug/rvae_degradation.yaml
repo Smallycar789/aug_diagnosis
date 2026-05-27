@@ -1,0 +1,38 @@
+experiment:
+  name: rvae_degradation_v1
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/data_aug
+
+dataset:
+  name: degradation
+  root: data/DegradationData/fault_diagnosis
+  value_column: NETD_mK
+  sample_rate: 1.0
+
+model:
+  name: rvae
+  seq_len: 128
+  stride: 32
+  input_dim: 1
+  latent_dim: 32
+  hidden_dim: 128
+  num_layers: 1
+  epochs: 100
+  batch_size: 256
+  lr: 0.001
+  phase1_tf_epochs: 40
+  ramp_tfr_epochs: 45
+  use_reference_kl_schedule: true
+  beta_delay_frac: 0.42
+  beta_end: 0.04
+  free_bits: 0.0
+  tfr_min: 0.2
+  openloop_aux_weight: 0.25
+  dec_dropout: 0.05
+  weight_decay: 0.00001
+  lr_patience: 10
+  use_data_start: true
+  num_generate: 500

@@ -1,0 +1,9 @@
+{
+  "fault_mode": {
+    "normal": 0,
+    "mtf_degradation": 1,
+    "nonuniformity_degradation": 2,
+    "bad_pixel_degradation": 3,
+    "coupled_severe_fault": 4
+  }
+}

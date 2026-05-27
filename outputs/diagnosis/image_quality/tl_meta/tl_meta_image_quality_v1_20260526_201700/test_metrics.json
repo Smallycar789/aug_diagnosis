@@ -1,0 +1,100 @@
+{
+  "experiment": "tl_meta_image_quality_v1",
+  "dataset": "image_quality",
+  "model": "tl_meta",
+  "split": "test",
+  "accuracy_percent": 90.33333333333333,
+  "accuracy": 0.9033333333333333,
+  "precision_macro": 0.9034203453149459,
+  "recall_macro": 0.9033333333333333,
+  "f1_macro": 0.9033395912948945,
+  "classification_report": {
+    "0": {
+      "precision": 0.9071332436069987,
+      "recall": 0.8986666666666666,
+      "f1-score": 0.9028801071667782,
+      "support": 1500.0
+    },
+    "1": {
+      "precision": 0.9101958136394328,
+      "recall": 0.8986666666666666,
+      "f1-score": 0.9043944984904394,
+      "support": 1500.0
+    },
+    "2": {
+      "precision": 0.903462050599201,
+      "recall": 0.9046666666666666,
+      "f1-score": 0.9040639573617588,
+      "support": 1500.0
+    },
+    "3": {
+      "precision": 0.890625,
+      "recall": 0.912,
+      "f1-score": 0.9011857707509882,
+      "support": 1500.0
+    },
+    "4": {
+      "precision": 0.905685618729097,
+      "recall": 0.9026666666666666,
+      "f1-score": 0.9041736227045075,
+      "support": 1500.0
+    },
+    "accuracy": 0.9033333333333333,
+    "macro avg": {
+      "precision": 0.9034203453149459,
+      "recall": 0.9033333333333333,
+      "f1-score": 0.9033395912948945,
+      "support": 7500.0
+    },
+    "weighted avg": {
+      "precision": 0.9034203453149459,
+      "recall": 0.9033333333333333,
+      "f1-score": 0.9033395912948945,
+      "support": 7500.0
+    }
+  },
+  "label_names": [
+    "normal",
+    "mtf_degradation",
+    "nonuniformity_degradation",
+    "bad_pixel_degradation",
+    "coupled_severe_fault"
+  ],
+  "confusion_matrix": [
+    [
+      1348,
+      36,
+      36,
+      45,
+      35
+    ],
+    [
+      38,
+      1348,
+      38,
+      42,
+      34
+    ],
+    [
+      42,
+      28,
+      1357,
+      38,
+      35
+    ],
+    [
+      28,
+      34,
+      33,
+      1368,
+      37
+    ],
+    [
+      30,
+      35,
+      38,
+      43,
+      1354
+    ]
+  ]
+}

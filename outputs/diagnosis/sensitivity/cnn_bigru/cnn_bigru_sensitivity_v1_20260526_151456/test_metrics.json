@@ -1,0 +1,66 @@
+{
+  "experiment": "cnn_bigru_sensitivity_v1",
+  "dataset": "sensitivity",
+  "model": "cnn_bigru",
+  "split": "test",
+  "accuracy": 0.7323943661971831,
+  "precision_macro": 0.7411111111111112,
+  "recall_macro": 0.7413600891861761,
+  "f1_macro": 0.7410652204144069,
+  "cohen_kappa": 0.597913561847988,
+  "classification_report": {
+    "normal": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 22.0
+    },
+    "sensitivity_degradation": {
+      "precision": 0.5833333333333334,
+      "recall": 0.6086956521739131,
+      "f1-score": 0.5957446808510638,
+      "support": 23.0
+    },
+    "coupled_severe_fault": {
+      "precision": 0.64,
+      "recall": 0.6153846153846154,
+      "f1-score": 0.6274509803921569,
+      "support": 26.0
+    },
+    "accuracy": 0.7323943661971831,
+    "macro avg": {
+      "precision": 0.7411111111111112,
+      "recall": 0.7413600891861761,
+      "f1-score": 0.7410652204144069,
+      "support": 71.0
+    },
+    "weighted avg": {
+      "precision": 0.7331924882629108,
+      "recall": 0.7323943661971831,
+      "f1-score": 0.7326176499967681,
+      "support": 71.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      22,
+      0,
+      0
+    ],
+    [
+      0,
+      14,
+      9
+    ],
+    [
+      0,
+      10,
+      16
+    ]
+  ],
+  "label_names": [
+    "normal",
+    "sensitivity_degradation",
+    "coupled_severe_fault"
+  ]
+}

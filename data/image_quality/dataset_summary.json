@@ -1,0 +1,19 @@
+{
+  "task": "image_quality",
+  "modes": [
+    "normal",
+    "mtf_degradation",
+    "nonuniformity_degradation",
+    "bad_pixel_degradation",
+    "coupled_severe_fault"
+  ],
+  "rows": 72231,
+  "units": 605,
+  "per_mode_rows": {
+    "normal": 12044,
+    "mtf_degradation": 14275,
+    "nonuniformity_degradation": 14402,
+    "bad_pixel_degradation": 14349,
+    "coupled_severe_fault": 17161
+  }
+}

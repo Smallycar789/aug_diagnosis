@@ -1,0 +1,24 @@
+experiment:
+  name: smoke_cnn_bigru_cwru
+  seed: 42
+  device: cpu
+
+output:
+  root: outputs/diagnosis
+
+dataset:
+  name: cwru_csv
+  source_csv: CWRU_12k_1797_10c.csv
+  target_csv: CWRU_12k_1750_10c.csv
+  sample_length: 1024
+  stride: 512
+  val_ratio: 0.2
+
+model:
+  name: cnn_bigru
+  num_classes: 10
+  sample_length: 1024
+  batch_size: 64
+  epochs: 2
+  alpha: 1.0
+  lr: 0.0005

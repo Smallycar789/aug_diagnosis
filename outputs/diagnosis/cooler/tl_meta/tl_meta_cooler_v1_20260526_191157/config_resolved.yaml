@@ -1,0 +1,46 @@
+experiment:
+  name: tl_meta_cooler_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/diagnosis
+dataset:
+  name: cooler
+  root: data/cooler
+  head_csv: cooler_simulation_results/all_head_30.csv
+  tail_csv: cooler_simulation_results/all_tail_30.csv
+  value_columns:
+  - T_stable_K
+  - t_cool_hours
+  - sigma_T_K
+  group_column: group_id
+  cycle_column: work_cycle
+  label_names:
+  - normal
+  - degraded
+  sample_length: 30
+  merge_mode: flatten
+  pad_to_length: 2048
+  prenormalize: per_window
+model:
+  name: tl_meta
+  n_way: 2
+  n_support: 2
+  n_unlabeled: 1
+  n_query: 2
+  allow_episode_replace: true
+  n_episodes: 1500
+  val_interval: 150
+  test_episodes: 300
+  embedding_dim: 128
+  refine_iterations: 2
+  samples_per_class: 80
+  signal_length: 2048
+  overlap: 0.0
+  normalize: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  l_skip: 0.2
+  sgd_lr: 0.1
+  adam_lr: 0.001
+output_dir: /root/workspace/detect/outputs/diagnosis/cooler/tl_meta/tl_meta_cooler_v1_20260526_191157

@@ -1,0 +1,28 @@
+{
+  "experiment": "smoke_gan_vae_sifuqi",
+  "dataset": "sifuqi",
+  "model": "gan_vae",
+  "statistics": {
+    "original_mean": 0.4467594623565674,
+    "original_std": 0.46405765414237976,
+    "generated_mean": 17.464237213134766,
+    "generated_std": 6.139505863189697,
+    "correlation": 0.495286274510296,
+    "random_generated": {
+      "mean": 17.694381713867188,
+      "std": 6.061044692993164,
+      "min": -0.6583633422851562,
+      "max": 35.00425720214844
+    },
+    "original": {
+      "mean": 0.4467594623565674,
+      "std": 0.46405765414237976,
+      "min": -0.6302719116210938,
+      "max": 1.6352806091308594
+    }
+  },
+  "training_best": {
+    "best_epoch": 2,
+    "best_recon_loss": 0.02387208119034767
+  }
+}

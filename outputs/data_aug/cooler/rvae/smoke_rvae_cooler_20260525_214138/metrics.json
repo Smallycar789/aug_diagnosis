@@ -1,0 +1,23 @@
+{
+  "experiment": "smoke_rvae_cooler",
+  "dataset": "cooler",
+  "model": "rvae",
+  "statistics": {
+    "original_mean": -0.5282635688781738,
+    "original_std": 0.3259389400482178,
+    "generated_mean": -0.11388939619064331,
+    "generated_std": 0.08635502308607101,
+    "concatenated_correlation": -0.26109298678901177
+  },
+  "reconstruction_diagnostic": {
+    "mse_teacher_forced": 0.26740679144859314,
+    "mse_open_loop": 0.2687482535839081
+  },
+  "spectrum": {
+    "sample_rate": 1.0
+  },
+  "training_best": {
+    "best_epoch": 2,
+    "best_recon_loss": 0.29754921793937683
+  }
+}

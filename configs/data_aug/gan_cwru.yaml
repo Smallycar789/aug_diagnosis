@@ -1,0 +1,25 @@
+experiment:
+  name: gan_cwru_v1
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/data_aug
+
+dataset:
+  name: cwru
+  csv: data/CWRU/CWRU_12k_1797_10c.csv
+  value_column: de_normal
+  sample_rate: 12000
+
+model:
+  name: gan
+  z_dim: 100
+  window_size: 50
+  overlap_ratio: 0.2
+  epochs: 50
+  batch_size: 64
+  g_lr: 0.002
+  d_lr: 0.0001
+  enc_lr: 0.001
+  num_generate: 20
