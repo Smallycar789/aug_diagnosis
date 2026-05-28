@@ -58,10 +58,42 @@ outputs/data_aug/{dataset}/{model}/{experiment}_{timestamp}/
 
 ## 数据集配置
 
-`dataset.name` 支持三类数据：
+`dataset.name` 支持以下数据：
 
-- `degradation` — `data/DegradationData/fault_diagnosis/`
 - `cooler` — `data/cooler/cooler_simulation_results/`
 - `sifuqi` — `data/sifuqi/servo_*.csv`
+- `cwru` — CWRU CSV
+- `sensitivity` / 其他 `class_files` 数据 — 多类别 CSV 滑窗，支持 RVAE 条件生成
+- `degradation` / `Degradation` — 红外退化仿真系统的统一生成视角，可合并灵敏度与成像质量相关指标和故障类型
+
+### 性能退化指标与特征参数
+
+| 性能退化指标 | 简称 | 对应特征参数 |
+|--------------|------|--------------|
+| 温控性能退化 | `cooler` | 冷端温度、制冷时间、温度波动水平 |
+| 灵敏度下降 | `sensitivity` | 平均探测率、噪声等效温差 |
+| 图像质量下降 | `image_quality` | MTF 指标、图像均一性、坏点率 |
+| 伺服跟踪精度下降 | `sifuqi` | 方位角跟踪误差、俯仰角跟踪误差 |
+
+### Degradation 仿真系统
+
+`sensitivity` 与 `image_quality` 来自同一个红外退化仿真系统 `Degradation`。两者整体仿真参数一致，只是关注的特征参数与故障类型不同。
+
+| 任务视角 | 关联特征列 | 故障类型 |
+|----------|------------|----------|
+| `sensitivity` 灵敏度 | `avg_detectivity`, `NETD_mK` | `normal`, `sensitivity_degradation`, `coupled_severe_fault` |
+| `image_quality` 成像质量 | `SiTF`, `signal_gain`, `read_noise_index` | `normal`, `mtf_degradation`, `nonuniformity_degradation`, `bad_pixel_degradation`, `coupled_severe_fault` |
+| `degradation` 统一生成 | `avg_detectivity`, `NETD_mK`, `SiTF`, `signal_gain`, `read_noise_index` | `normal`, `sensitivity_degradation`, `mtf_degradation`, `nonuniformity_degradation`, `bad_pixel_degradation`, `coupled_severe_fault` |
+
+`coupled_severe_fault` 在两个任务视角中本质上对应同一类耦合严重故障数据，整理统一 `degradation` 数据时应作为一个类别处理，避免重复计入。
+
+#### Degradation 数据整理思路
+
+1. 以同一仿真系统输出为基准，整理一套统一 CSV/class-files 数据目录，例如 `data/degradation/`。
+2. 固定五个核心特征列顺序：`avg_detectivity`, `NETD_mK`, `SiTF`, `signal_gain`, `read_noise_index`。
+3. 将类别统一为六类：`normal`, `sensitivity_degradation`, `mtf_degradation`, `nonuniformity_degradation`, `bad_pixel_degradation`, `coupled_severe_fault`。
+4. 如果原始文件仍按 `sensitivity` 和 `image_quality` 拆分，需要按仿真单元/周期对齐后合并五个特征；`coupled_severe_fault` 只保留一份。
+5. 统一保留 `unit` 与 `cycle` 字段，后续仍按 `unit` 分组、按 `cycle` 排序后滑窗。
+6. 生成模型输出应保存五维窗口、类别标签、特征列顺序和归一化参数，便于还原为带标签的 Degradation 增强样本。
 
 详见 `FRAMEWORK_DESIGN.md`。

@@ -73,7 +73,7 @@ def main(config_path: str, stage: str = "all", output_dir: str | None = None) ->
         result = mod.train(bundle, cfg, out_dir)
         if model_name == "gan":
             enc, gen, disc, meta = result
-            model = (enc, gen, disc)
+            model = enc if isinstance(enc, dict) else (enc, gen, disc)
         else:
             model, meta = result
         print(f"Training done. Best checkpoint: {out_dir / 'checkpoint_best.pth'}")
@@ -90,6 +90,8 @@ def main(config_path: str, stage: str = "all", output_dir: str | None = None) ->
         elif model_name == "gan":
             if model is None:
                 enc, gen, disc = mod.load_checkpoint(ckpt, cfg, out_dir)
+            elif isinstance(model, dict):
+                enc, gen, disc = model, None, None
             else:
                 enc, gen, disc = model
             mod.generate(enc, gen, disc, bundle, cfg, out_dir)
@@ -101,8 +103,18 @@ def main(config_path: str, stage: str = "all", output_dir: str | None = None) ->
             if model is None:
                 model = mod.load_checkpoint(ckpt, cfg)
             if not meta:
-                _, _, data_min, data_max, sequences, _ = rvae._prepare_data(bundle, cfg)
-                meta = {"sequences": sequences, "data_min": float(data_min), "data_max": float(data_max)}
+                _, _, data_min, data_max, sequences, labels, _, per_class_norm = rvae._prepare_data(
+                    bundle, cfg
+                )
+                meta = {
+                    "sequences": sequences,
+                    "labels": labels,
+                    "label_names": bundle.label_names,
+                    "feature_columns": bundle.feature_columns,
+                    "data_min": data_min.tolist() if hasattr(data_min, "tolist") else float(data_min),
+                    "data_max": data_max.tolist() if hasattr(data_max, "tolist") else float(data_max),
+                    "per_class_norm": per_class_norm,
+                }
             mod.generate(model, bundle, cfg, out_dir, meta)
 
         print(f"Generated samples: {out_dir / 'generated_samples.npy'}")
@@ -133,8 +145,18 @@ def main(config_path: str, stage: str = "all", output_dir: str | None = None) ->
             if m is None:
                 m = mod.load_checkpoint(out_dir / "checkpoint_best.pth", cfg)
             if not meta:
-                _, _, data_min, data_max, sequences, _ = rvae._prepare_data(bundle, cfg)
-                meta = {"sequences": sequences, "data_min": float(data_min), "data_max": float(data_max)}
+                _, _, data_min, data_max, sequences, labels, _, per_class_norm = rvae._prepare_data(
+                    bundle, cfg
+                )
+                meta = {
+                    "sequences": sequences,
+                    "labels": labels,
+                    "label_names": bundle.label_names,
+                    "feature_columns": bundle.feature_columns,
+                    "data_min": data_min.tolist() if hasattr(data_min, "tolist") else float(data_min),
+                    "data_max": data_max.tolist() if hasattr(data_max, "tolist") else float(data_max),
+                    "per_class_norm": per_class_norm,
+                }
             mod.evaluate(bundle, out_dir, cfg, generated, model=m, meta=meta)
 
         print(f"Metrics: {out_dir / 'metrics.json'}")

@@ -1,0 +1,47 @@
+experiment:
+  name: gan_degradation_5feat_perclass_v2
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/data_aug
+
+dataset:
+  name: degradation
+  root: data/degradation
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    mtf_degradation: mtf_degradation.csv
+    nonuniformity_degradation: nonuniformity_degradation.csv
+    bad_pixel_degradation: bad_pixel_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  value_columns:
+    - avg_detectivity
+    - NETD_mK
+    - SiTF
+    - signal_gain
+    - read_noise_index
+  unit_column: unit
+  cycle_column: cycle
+  sample_length: 128
+  stride: 64
+  sample_rate: 1.0
+
+model:
+  name: gan
+  z_dim: 64
+  window_size: 128
+  step_length: 64
+  epochs: 120
+  batch_size: 8
+  g_lr: 0.0005
+  d_lr: 0.00005
+  enc_lr: 0.0003
+  recon_weight: 0.5
+  per_class: true
+  per_class_norm: true
+  num_generate_per_class: 300
+  num_compare: 5
+  split_feature_plots: true
+  spectrum_plot_style: vline

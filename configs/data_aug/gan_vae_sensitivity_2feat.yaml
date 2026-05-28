@@ -1,0 +1,34 @@
+experiment:
+  name: gan_vae_sensitivity_2feat_v1
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/data_aug
+
+dataset:
+  name: sensitivity
+  root: data/sensitivity
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  value_columns:
+    - avg_detectivity
+    - NETD_mK
+  unit_column: unit
+  cycle_column: cycle
+  sample_length: 128
+  stride: 64
+  sample_rate: 1.0
+
+model:
+  name: gan_vae
+  seq_len: 128
+  overlap_ratio: 0.5
+  latent_dim: 64
+  epochs: 50
+  batch_size: 32
+  lr: 0.0001
+  alpha: 0.01
+  num_generate: 300

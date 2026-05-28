@@ -1,0 +1,37 @@
+experiment:
+  name: gan_sensitivity_stgan_2feat_perclass_v1
+  seed: 42
+  device: auto
+
+output:
+  root: outputs/data_aug
+
+dataset:
+  name: sensitivity
+  root: data/sensitivity
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  value_columns:
+    - avg_detectivity
+    - NETD_mK
+  unit_column: unit
+  cycle_column: cycle
+  sample_length: 50
+  stride: 10
+  sample_rate: 1.0
+
+model:
+  name: gan
+  z_dim: 100
+  window_size: 50
+  step_length: 10
+  epochs: 50
+  batch_size: 64
+  g_lr: 0.002
+  d_lr: 0.0001
+  enc_lr: 0.0001
+  per_class: true
+  num_generate_per_class: 300
+  spectrum_plot_style: vline

@@ -7,8 +7,15 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.functional as F
 
-from data_aug.common import compare_signals, normalize_to_minus1_1, plot_loss_curves_gan, split_data
+from data_aug.common import (
+    compare_signals,
+    mean_bias_metrics,
+    normalize_to_minus1_1,
+    plot_loss_curves_gan,
+    split_data,
+)
 from data_aug.data_load import AugDataBundle
 from data_aug.io_utils import get_device, save_checkpoint_best, save_json, save_loss_history
 
@@ -118,7 +125,26 @@ class Discriminator(nn.Module):
         return output
 
 
-def train_gan(data, labels=None, z_dim=100, epochs=100, batch_size=32, g_lr=0.002, d_lr=0.0001, lr=0.0001):
+def _normalize_class_windows(class_raw: np.ndarray):
+    dmin = class_raw.min(axis=(0, 1), keepdims=True).astype(np.float32)
+    dmax = class_raw.max(axis=(0, 1), keepdims=True).astype(np.float32)
+    denom = np.where((dmax - dmin) < 1e-8, 1.0, dmax - dmin)
+    segments = (2 * ((class_raw - dmin) / denom) - 1).astype(np.float32)
+    return segments, dmin, dmax
+
+
+def train_gan(
+    data,
+    labels=None,
+    z_dim=100,
+    epochs=100,
+    batch_size=32,
+    g_lr=0.002,
+    d_lr=0.0001,
+    lr=0.0001,
+    recon_weight=0.1,
+    device=None,
+):
     """
     通用GAN训练函数
     data: 形状为 (n_samples, H, W) 或 (n_samples, C, H, W)
@@ -130,17 +156,20 @@ def train_gan(data, labels=None, z_dim=100, epochs=100, batch_size=32, g_lr=0.00
     else:
         raise ValueError(f"数据形状 {data.shape} 不正确，应为 (n, H, W) 或 (n, 1, H, W)")
 
+    device = device or torch.device("cpu")
+    data = data.to(device)
     n_samples, _, H, W = data.shape
 
     if labels is None:
         label_dim = z_dim
-        labels = torch.randn(n_samples, label_dim)
+        labels = torch.randn(n_samples, label_dim, device=device)
     else:
+        labels = labels.to(device)
         label_dim = labels.shape[1]
 
-    enc = Encoder(input_dim=H * W, z_dim=z_dim, label_dim=label_dim)
-    gen = Generator(z_dim=z_dim, output_shape=(H, W))
-    disc = Discriminator(input_shape=(H, W))
+    enc = Encoder(input_dim=H * W, z_dim=z_dim, label_dim=label_dim).to(device)
+    gen = Generator(z_dim=z_dim, output_shape=(H, W)).to(device)
+    disc = Discriminator(input_shape=(H, W)).to(device)
 
     optim_disc = torch.optim.Adam(disc.parameters(), lr=d_lr, betas=(0.5, 0.999))
     optim_gen = torch.optim.Adam(gen.parameters(), lr=g_lr, betas=(0.5, 0.999))
@@ -169,7 +198,7 @@ def train_gan(data, labels=None, z_dim=100, epochs=100, batch_size=32, g_lr=0.00
             real_output = disc(real_data)
             real_loss = criterion(real_output, torch.ones_like(real_output))
 
-            noise = torch.randn(batch_size_actual, z_dim)
+            noise = torch.randn(batch_size_actual, z_dim, device=device)
             fake_data = gen(noise)
             fake_output = disc(fake_data.detach())
             fake_loss = criterion(fake_output, torch.zeros_like(fake_output))
@@ -190,7 +219,7 @@ def train_gan(data, labels=None, z_dim=100, epochs=100, batch_size=32, g_lr=0.00
             reconstructed = gen(z_encoded)
             recon_loss = mse_loss(reconstructed, real_data)
 
-            total_loss = g_loss + 0.1 * recon_loss
+            total_loss = g_loss + recon_weight * recon_loss
             total_loss.backward()
             optim_gen.step()
             optim_enc.step()
@@ -227,29 +256,221 @@ def train_gan(data, labels=None, z_dim=100, epochs=100, batch_size=32, g_lr=0.00
 
 
 def _prepare_segments(bundle: AugDataBundle, cfg: dict[str, Any]):
-    raw_data = bundle.raw_data.astype(np.float32).reshape(-1, 1)
-    column_data, data_min, data_max = normalize_to_minus1_1(raw_data)
-
     window_size = cfg["model"].get("window_size", 50)
     overlap_ratio = cfg["model"].get("overlap_ratio", 0.2)
-    segments = split_data(column_data, window_size=window_size, overlap_ratio=overlap_ratio)
+    raw_data = bundle.raw_data.astype(np.float32)
+
+    if raw_data.ndim == 3:
+        data_min = raw_data.min(axis=(0, 1), keepdims=True)
+        data_max = raw_data.max(axis=(0, 1), keepdims=True)
+        denom = np.where((data_max - data_min) < 1e-8, 1.0, data_max - data_min)
+        segments = 2 * ((raw_data - data_min) / denom) - 1
+    elif raw_data.ndim == 2:
+        data_min = raw_data.min(axis=0, keepdims=True)
+        data_max = raw_data.max(axis=0, keepdims=True)
+        denom = np.where((data_max - data_min) < 1e-8, 1.0, data_max - data_min)
+        data_norm = 2 * ((raw_data - data_min) / denom) - 1
+        stride = int(cfg["model"].get("step_length", max(1, int(window_size * (1 - overlap_ratio)))))
+        segments = np.asarray(
+            [data_norm[i : i + window_size] for i in range(0, len(data_norm) - window_size + 1, stride)],
+            dtype=np.float32,
+        )
+    else:
+        raw_data = raw_data.reshape(-1, 1)
+        column_data, data_min, data_max = normalize_to_minus1_1(raw_data)
+        segments = split_data(column_data, window_size=window_size, overlap_ratio=overlap_ratio)
+
+    segments = segments.astype(np.float32)
     data = torch.tensor(segments, dtype=torch.float32)
     return raw_data, data_min, data_max, segments, data
+
+
+def _load_norm_params(out_dir: Path) -> dict[str, Any]:
+    import json
+
+    norm_path = out_dir / "norm_params.json"
+    if not norm_path.exists():
+        return {}
+    with open(norm_path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _resolve_class_norm(
+    label_name: str | None,
+    norm_params: dict[str, Any],
+    data_min,
+    data_max,
+):
+    per_class_norm = norm_params.get("per_class_norm", {})
+    if label_name and label_name in per_class_norm:
+        entry = per_class_norm[label_name]
+        return entry["data_min"], entry["data_max"]
+    return data_min, data_max
+
+
+def _denormalize_minus1_1(data: np.ndarray, data_min, data_max) -> np.ndarray:
+    """Inverse of training normalize: [-1, 1] -> physical scale."""
+    arr = np.asarray(data, dtype=np.float32)
+    dmin = np.asarray(data_min, dtype=np.float32)
+    dmax = np.asarray(data_max, dtype=np.float32)
+    denom = np.where((dmax - dmin) < 1e-8, 1.0, dmax - dmin)
+    return ((arr + 1.0) / 2.0) * denom + dmin
+
+
+def _physical_statistics(original_phys, generated_phys, feature_names):
+    """Mean-bias metrics on denormalized windows; used by evaluate()."""
+    original_phys = np.asarray(original_phys, dtype=np.float32)
+    generated_phys = np.asarray(generated_phys, dtype=np.float32)
+    stats = {
+        "original_mean": float(np.mean(original_phys)),
+        "original_std": float(np.std(original_phys)),
+        "generated_mean": float(np.mean(generated_phys)),
+        "generated_std": float(np.std(generated_phys)),
+        "mean_bias": mean_bias_metrics(original_phys, generated_phys, feature_names=feature_names),
+        "metric_scale": "physical",
+    }
+    o_flat = original_phys.reshape(-1)
+    g_flat = generated_phys.reshape(-1)
+    if len(o_flat) > 1 and len(g_flat) > 1:
+        stats["correlation"] = float(np.corrcoef(o_flat, g_flat)[0, 1])
+    return stats
 
 
 def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
     model_cfg = cfg["model"]
     _, data_min, data_max, segments, data = _prepare_segments(bundle, cfg)
-
+    device = get_device(cfg)
     z_dim = model_cfg.get("z_dim", 100)
+    H, W = data.shape[1], data.shape[2]
+
+    use_per_class_norm = bool(model_cfg.get("per_class_norm", False))
+    recon_weight = float(model_cfg.get("recon_weight", 0.1))
+    per_class_norm: dict[str, dict[str, Any]] = {}
+
+    if model_cfg.get("per_class", False) and bundle.labels is not None:
+        models: dict[str, tuple[Encoder, Generator, Discriminator]] = {}
+        checkpoint_by_class: dict[str, dict[str, Any]] = {}
+        history_by_class: dict[str, Any] = {}
+        best_by_class: dict[str, Any] = {}
+
+        for label_id, label_name in enumerate(bundle.label_names):
+            class_mask = bundle.labels == label_id
+            if use_per_class_norm:
+                class_raw = bundle.raw_data[class_mask]
+                if len(class_raw) == 0:
+                    continue
+                class_segments, class_min, class_max = _normalize_class_windows(class_raw)
+                per_class_norm[label_name] = {
+                    "data_min": np.asarray(class_min).tolist(),
+                    "data_max": np.asarray(class_max).tolist(),
+                }
+            else:
+                class_segments = segments[class_mask]
+            if len(class_segments) == 0:
+                continue
+
+            print(f"\n--- GAN class: {label_name} ({len(class_segments)} windows) ---")
+            class_data = torch.tensor(class_segments, dtype=torch.float32)
+            class_labels = F.one_hot(
+                torch.full((len(class_segments),), label_id, dtype=torch.long),
+                num_classes=len(bundle.label_names),
+            ).float()
+
+            enc, gen, disc, history, best_state, best_epoch, best_recon = train_gan(
+                data=class_data,
+                labels=class_labels,
+                z_dim=z_dim,
+                epochs=model_cfg.get("epochs", 50),
+                batch_size=model_cfg.get("batch_size", 64),
+                g_lr=model_cfg.get("g_lr", 0.002),
+                d_lr=model_cfg.get("d_lr", 0.0001),
+                lr=model_cfg.get("enc_lr", 0.001),
+                recon_weight=recon_weight,
+                device=device,
+            )
+            models[label_name] = (enc, gen, disc)
+            checkpoint_by_class[label_name] = best_state or {
+                "encoder_state_dict": enc.state_dict(),
+                "generator_state_dict": gen.state_dict(),
+                "discriminator_state_dict": disc.state_dict(),
+            }
+            history_by_class[label_name] = {
+                **history,
+                "epochs": model_cfg.get("epochs", 50),
+                "best_epoch": best_epoch,
+                "best_recon_loss": best_recon,
+            }
+            best_by_class[label_name] = {
+                "best_epoch": best_epoch,
+                "best_recon_loss": best_recon,
+                "num_windows": int(len(class_segments)),
+            }
+            plot_loss_curves_gan(history, str(out_dir / f"{label_name}_loss_curves.png"))
+
+        save_checkpoint_best(
+            out_dir,
+            {
+                "per_class": checkpoint_by_class,
+                "z_dim": z_dim,
+                "H": int(H),
+                "W": int(W),
+                "label_dim": len(bundle.label_names),
+                "feature_columns": bundle.feature_columns,
+                "label_names": bundle.label_names,
+            },
+            epoch=max((item["best_epoch"] for item in best_by_class.values()), default=0),
+            best_metric=float(np.mean([item["best_recon_loss"] for item in best_by_class.values()])),
+            metric_name="mean_train_recon_loss",
+        )
+        save_loss_history({"per_class": history_by_class}, out_dir)
+        save_json(
+            {
+                "z_dim": z_dim,
+                "H": int(H),
+                "W": int(W),
+                "label_dim": len(bundle.label_names),
+                "data_min": data_min,
+                "data_max": data_max,
+                "feature_columns": bundle.feature_columns,
+                "label_names": bundle.label_names,
+                "per_class": best_by_class,
+                "per_class_norm": per_class_norm,
+            },
+            out_dir / "norm_params.json",
+        )
+        meta = {
+            "segments": segments,
+            "labels": bundle.labels,
+            "data_min": data_min,
+            "data_max": data_max,
+            "z_dim": z_dim,
+            "H": int(H),
+            "W": int(W),
+            "label_dim": len(bundle.label_names),
+            "feature_columns": bundle.feature_columns,
+            "label_names": bundle.label_names,
+            "per_class": best_by_class,
+        }
+        return models, None, None, meta
+
+    label_tensor = None
+    label_dim = model_cfg.get("label_dim")
+    if bundle.labels is not None and len(bundle.labels) == len(segments):
+        num_classes = len(bundle.label_names) if bundle.label_names else int(np.max(bundle.labels)) + 1
+        label_tensor = F.one_hot(torch.tensor(bundle.labels, dtype=torch.long), num_classes=num_classes).float()
+        label_dim = num_classes
+
     enc, gen, disc, history, best_state, best_epoch, best_recon = train_gan(
         data=data,
+        labels=label_tensor,
         z_dim=z_dim,
         epochs=model_cfg.get("epochs", 50),
         batch_size=model_cfg.get("batch_size", 64),
         g_lr=model_cfg.get("g_lr", 0.002),
         d_lr=model_cfg.get("d_lr", 0.0001),
         lr=model_cfg.get("enc_lr", 0.001),
+        recon_weight=recon_weight,
+        device=device,
     )
 
     if best_state is not None:
@@ -264,14 +485,16 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
     plot_loss_curves_gan(history, str(out_dir / "loss_curves.png"))
     save_loss_history({**history, "epochs": model_cfg.get("epochs", 50), "best_epoch": best_epoch}, out_dir)
 
-    H, W = data.shape[1], data.shape[2]
     meta = {
         "segments": segments,
-        "data_min": float(data_min),
-        "data_max": float(data_max),
+        "data_min": data_min,
+        "data_max": data_max,
         "z_dim": z_dim,
         "H": int(H),
         "W": int(W),
+        "label_dim": int(label_dim or z_dim),
+        "feature_columns": bundle.feature_columns,
+        "label_names": bundle.label_names,
         "best_epoch": best_epoch,
         "best_recon_loss": best_recon,
     }
@@ -280,8 +503,11 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
             "z_dim": z_dim,
             "H": int(H),
             "W": int(W),
-            "data_min": float(data_min),
-            "data_max": float(data_max),
+            "label_dim": int(label_dim or z_dim),
+            "data_min": data_min,
+            "data_max": data_max,
+            "feature_columns": bundle.feature_columns,
+            "label_names": bundle.label_names,
         },
         out_dir / "norm_params.json",
     )
@@ -301,18 +527,39 @@ def load_checkpoint(path: Path, cfg: dict[str, Any], out_dir: Path | None = None
                 norm = json.load(f)
             H, W = norm["H"], norm["W"]
             z_dim = norm.get("z_dim", model_cfg.get("z_dim", 100))
+            label_dim = norm.get("label_dim", model_cfg.get("label_dim", z_dim))
         else:
             raise FileNotFoundError(f"GAN norm params not found: {norm_path}")
     else:
         z_dim = model_cfg.get("z_dim", 100)
+        label_dim = model_cfg.get("label_dim", z_dim)
         window_size = model_cfg.get("window_size", 50)
         H, W = window_size, 1
 
-    enc = Encoder(input_dim=H * W, z_dim=z_dim, label_dim=z_dim)
-    gen = Generator(z_dim=z_dim, output_shape=(H, W))
-    disc = Discriminator(input_shape=(H, W))
+    enc = Encoder(input_dim=H * W, z_dim=z_dim, label_dim=label_dim).to(device)
+    gen = Generator(z_dim=z_dim, output_shape=(H, W)).to(device)
+    disc = Discriminator(input_shape=(H, W)).to(device)
 
     checkpoint = torch.load(path, map_location=device, weights_only=False)
+    if "per_class" in checkpoint:
+        models = {}
+        label_names = checkpoint.get("label_names", [])
+        for label_name in label_names:
+            class_state = checkpoint["per_class"].get(label_name)
+            if class_state is None:
+                continue
+            enc = Encoder(input_dim=H * W, z_dim=z_dim, label_dim=label_dim).to(device)
+            gen = Generator(z_dim=z_dim, output_shape=(H, W)).to(device)
+            disc = Discriminator(input_shape=(H, W)).to(device)
+            enc.load_state_dict(class_state["encoder_state_dict"])
+            gen.load_state_dict(class_state["generator_state_dict"])
+            disc.load_state_dict(class_state["discriminator_state_dict"])
+            enc.eval()
+            gen.eval()
+            disc.eval()
+            models[label_name] = (enc, gen, disc)
+        return models, None, None
+
     enc.load_state_dict(checkpoint["encoder_state_dict"])
     gen.load_state_dict(checkpoint["generator_state_dict"])
     disc.load_state_dict(checkpoint["discriminator_state_dict"])
@@ -324,14 +571,37 @@ def load_checkpoint(path: Path, cfg: dict[str, Any], out_dir: Path | None = None
 
 def generate(enc, gen, disc, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path) -> np.ndarray:
     model_cfg = cfg["model"]
+    device = get_device(cfg)
     _, _, _, segments, _ = _prepare_segments(bundle, cfg)
 
-    n_generate = model_cfg.get("num_generate", 20)
     z_dim = model_cfg.get("z_dim", 100)
+    if isinstance(enc, dict):
+        per_class = int(model_cfg.get("num_generate_per_class", model_cfg.get("num_generate", 20)))
+        generated_by_class = []
+        generated_labels = []
+        for label_id, label_name in enumerate(bundle.label_names):
+            if label_name not in enc:
+                continue
+            _, class_gen, _ = enc[label_name]
+            class_gen = class_gen.to(device)
+            n_generate = per_class
+            with torch.no_grad():
+                noise = torch.randn(n_generate, z_dim, device=device)
+                generated_class = class_gen(noise).cpu().numpy()
+            np.save(out_dir / f"generated_{label_name}.npy", generated_class)
+            generated_by_class.append(generated_class)
+            generated_labels.extend([label_id] * len(generated_class))
 
+        generated_segments = np.concatenate(generated_by_class, axis=0)
+        np.save(out_dir / "generated_samples.npy", generated_segments)
+        np.save(out_dir / "generated_labels.npy", np.asarray(generated_labels, dtype=np.int64))
+        return generated_segments
+
+    gen = gen.to(device)
+    n_generate = model_cfg.get("num_generate", 20)
     with torch.no_grad():
-        noise = torch.randn(n_generate, z_dim)
-        generated_segments = gen(noise).numpy()
+        noise = torch.randn(n_generate, z_dim, device=device)
+        generated_segments = gen(noise).cpu().numpy()
 
     np.save(out_dir / "generated_samples.npy", generated_segments)
     return generated_segments
@@ -351,31 +621,169 @@ def evaluate(
     sample_rate = float(cfg["dataset"].get("sample_rate", bundle.meta.get("sample_rate", 12000)))
 
     if segments is None:
-        _, _, _, segments, _ = _prepare_segments(bundle, cfg)
+        _, data_min, data_max, segments, _ = _prepare_segments(bundle, cfg)
+    else:
+        _, data_min, data_max, _, _ = _prepare_segments(bundle, cfg)
+
+    norm_params = _load_norm_params(out_dir)
 
     if generated_samples is None:
         generated_samples = np.load(out_dir / "generated_samples.npy")
 
-    n_compare = min(5, len(segments), len(generated_samples))
-    original_for_comparison = segments[:n_compare]
-    generated_for_comparison = generated_samples[:n_compare]
+    spectrum_plot_style = model_cfg.get("spectrum_plot_style", "line")
+    split_feature_plots = bool(model_cfg.get("split_feature_plots", True))
+    num_compare = int(model_cfg.get("num_compare", 5))
+    feature_names = bundle.feature_columns
+    per_class_metrics = {}
+    generated_labels_path = out_dir / "generated_labels.npy"
+    generated_labels = None
+    if bundle.labels is not None and generated_labels_path.exists():
+        generated_labels = np.load(generated_labels_path)
+        for label_id, label_name in enumerate(bundle.label_names):
+            class_mask = bundle.labels == label_id
+            original_class = segments[class_mask]
+            original_phys_class = bundle.raw_data[class_mask]
+            generated_class = generated_samples[generated_labels == label_id]
+            if len(original_class) == 0 or len(generated_class) == 0:
+                continue
 
-    spectrum_stats = compare_signals(
-        original_for_comparison,
-        generated_for_comparison,
+            n_class_compare = min(num_compare, len(original_class), len(generated_class))
+            original_phys_compare = original_phys_class[:n_class_compare]
+            class_dmin, class_dmax = _resolve_class_norm(
+                label_name, norm_params, data_min, data_max
+            )
+            generated_phys_compare = _denormalize_minus1_1(
+                generated_class[:n_class_compare], class_dmin, class_dmax
+            )
+            plot_stats = compare_signals(
+                original_phys_compare,
+                generated_phys_compare,
+                save_dir=str(out_dir),
+                sample_rate=sample_rate,
+                filename_prefix=f"{label_name}_",
+                spectrum_plot_style=spectrum_plot_style,
+                feature_names=feature_names,
+                split_feature_plots=split_feature_plots,
+                use_physical_plot_scale=True,
+                num_compare=n_class_compare,
+            )
+            class_stats = {
+                k: v
+                for k, v in plot_stats.items()
+                if k
+                not in (
+                    "original_mean",
+                    "original_std",
+                    "generated_mean",
+                    "generated_std",
+                    "mean_bias",
+                    "correlation",
+                )
+            }
+            class_stats.update(
+                _physical_statistics(
+                    original_phys_compare, generated_phys_compare, feature_names
+                )
+            )
+
+            class_mse = [
+                mean_squared_error(
+                    original_phys_compare[i].squeeze(),
+                    generated_phys_compare[i].squeeze(),
+                )
+                for i in range(n_class_compare)
+            ]
+            n_check_class = min(10, len(generated_class))
+            selected_class = generated_class[:n_check_class].reshape(n_check_class, -1)
+            class_distances = cdist(selected_class, selected_class, metric="euclidean")
+            np.fill_diagonal(class_distances, np.inf)
+            class_min_distances = class_distances.min(axis=1)
+            per_class_metrics[label_name] = {
+                "statistics": class_stats,
+                "mse": {"avg_mse": float(np.mean(class_mse))},
+                "diversity": {
+                    "min_nearest_neighbor": float(class_min_distances.min()),
+                    "mean_nearest_neighbor": float(class_min_distances.mean()),
+                    "max_nearest_neighbor": float(class_min_distances.max()),
+                    "diversity_ok": bool(class_min_distances.mean() >= 0.1),
+                },
+                "num_original_windows": int(len(original_class)),
+                "num_generated_windows": int(len(generated_class)),
+                "generated_file": f"generated_{label_name}.npy",
+                "feature_plots": plot_stats.get("feature_plots", {}),
+                "generated_vs_original_mean_bias": mean_bias_metrics(
+                    original_phys_class,
+                    _denormalize_minus1_1(
+                        generated_class,
+                        *_resolve_class_norm(label_name, norm_params, data_min, data_max),
+                    ),
+                    feature_names=feature_names,
+                ),
+            }
+
+    n_compare = min(num_compare, len(segments), len(generated_samples))
+    original_phys_compare = bundle.raw_data[:n_compare]
+    if generated_labels_path.exists() and bundle.labels is not None:
+        generated_labels = np.load(generated_labels_path)
+        generated_phys_compare = np.stack(
+            [
+                _denormalize_minus1_1(
+                    generated_samples[i : i + 1],
+                    *_resolve_class_norm(
+                        bundle.label_names[int(generated_labels[i])],
+                        norm_params,
+                        data_min,
+                        data_max,
+                    ),
+                )[0]
+                for i in range(n_compare)
+            ],
+            axis=0,
+        )
+    else:
+        generated_phys_compare = _denormalize_minus1_1(
+            generated_samples[:n_compare], data_min, data_max
+        )
+
+    plot_stats = compare_signals(
+        original_phys_compare,
+        generated_phys_compare,
         save_dir=str(out_dir),
         sample_rate=sample_rate,
+        spectrum_plot_style=spectrum_plot_style,
+        feature_names=feature_names,
+        split_feature_plots=split_feature_plots,
+        use_physical_plot_scale=True,
+        num_compare=n_compare,
+    )
+    spectrum_stats = {
+        k: v
+        for k, v in plot_stats.items()
+        if k
+        not in (
+            "original_mean",
+            "original_std",
+            "generated_mean",
+            "generated_std",
+            "mean_bias",
+            "correlation",
+        )
+    }
+    spectrum_stats.update(
+        _physical_statistics(
+            original_phys_compare, generated_phys_compare, feature_names
+        )
     )
 
     mse_list = []
     mse_per_list = []
     for i in range(n_compare):
         mse = mean_squared_error(
-            original_for_comparison[i].squeeze(),
-            generated_for_comparison[i].squeeze(),
+            original_phys_compare[i].squeeze(),
+            generated_phys_compare[i].squeeze(),
         )
         mse_list.append(mse)
-        denom = np.max(generated_for_comparison[i]) - np.min(generated_for_comparison[i])
+        denom = np.max(original_phys_compare[i]) - np.min(original_phys_compare[i])
         mse_per = mse / denom if denom != 0 else 0.0
         mse_per_list.append(mse_per)
 
@@ -389,6 +797,10 @@ def evaluate(
         "experiment": cfg.get("experiment", {}).get("name"),
         "dataset": cfg["dataset"]["name"],
         "model": "gan",
+        "feature_columns": bundle.feature_columns,
+        "label_names": bundle.label_names,
+        "input_shape": list(segments.shape[1:]),
+        "per_class": per_class_metrics,
         "statistics": spectrum_stats,
         "mse": {
             "avg_mse": float(np.mean(mse_list)),
@@ -400,6 +812,29 @@ def evaluate(
             "max_nearest_neighbor": float(min_distances.max()),
             "diversity_ok": bool(min_distances.mean() >= 0.1),
         },
+        "feature_plots": plot_stats.get("feature_plots", {}),
+        "generated_vs_original_mean_bias": mean_bias_metrics(
+            bundle.raw_data,
+            np.concatenate(
+                [
+                    _denormalize_minus1_1(
+                        generated_samples[i : i + 1],
+                        *_resolve_class_norm(
+                            bundle.label_names[int(generated_labels[i])],
+                            norm_params,
+                            data_min,
+                            data_max,
+                        ),
+                    )
+                    for i in range(len(generated_samples))
+                ],
+                axis=0,
+            )
+            if generated_labels_path.exists() and bundle.labels is not None
+            else _denormalize_minus1_1(generated_samples, data_min, data_max),
+            feature_names=feature_names,
+        ),
+        "metric_scale": "physical",
     }
     save_json(metrics, out_dir / "metrics.json")
     return metrics
