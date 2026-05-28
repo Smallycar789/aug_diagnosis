@@ -6,7 +6,7 @@
 
 项目目前分为两条主线：
 
-- `data_aug/`：数据增强与生成算法，当前已有 `VAE`、`GAN`、`GAN-VAE`、`RVAE` 的工程化入口。
+- `data_aug/`：数据增强与生成算法，当前已有 `VAE`、`GAN`、`GAN-VAE`、`TVAE` 的工程化入口。
 - `diagnosis/`：故障诊断算法，当前已有 `CNN-BiGRU`、`ResNet/STFT`、`TL-Meta` 等诊断验证代码。
 
 `sensitivity` 与 `image_quality` 来自同一个红外退化仿真系统 `Degradation`。当前可以把它们作为两个任务视角分别验证生成算法，但后续数据生成目标应回到统一的 `Degradation` 数据：同时生成灵敏度与成像质量相关参数，并保留统一故障标签。
@@ -14,8 +14,8 @@
 当前数据增强部分已经做了第一步改造：
 
 - `data_aug/data_load.py` 开始支持通用 `class_files` 形式的多类别 CSV 滑窗加载。
-- `data_aug/rvae.py` 已有一版条件 RVAE 改造，支持多维输入和 label embedding。
-- 新增了 `configs/data_aug/smoke_rvae_sensitivity.yaml`，用于先打通 `sensitivity` 数据集的 RVAE 训练、生成、评估链路。
+- `data_aug/tvae.py` 已有一版条件 TVAE 改造，支持多维输入和 label embedding。
+- 新增了 `configs/data_aug/smoke_tvae_sensitivity.yaml`，用于先打通 `sensitivity` 数据集的 TVAE 训练、生成、评估链路。
 
 该链路还需要在目标 conda 环境 `diag` 中实际运行验证。
 
@@ -23,7 +23,7 @@
 
 实现并验证三类数据增强算法：
 
-- `RVAE`
+- `TVAE`
 - `GAN`
 - `VAE-GAN`
 
@@ -54,7 +54,7 @@ value_columns:
 
 - 可以训练一个条件生成模型，通过 label 控制生成类型。
 - 也可以针对每一种数据类型单独训练一个模型，例如：
-  - `normal` 单独训练一个 RVAE/GAN/VAE-GAN。
+  - `normal` 单独训练一个 TVAE/GAN/VAE-GAN。
   - `sensitivity_degradation` 单独训练一个模型。
   - `mtf_degradation` 单独训练一个模型。
   - `nonuniformity_degradation` 单独训练一个模型。
@@ -67,7 +67,7 @@ value_columns:
 - 每类生成结果可以单独保存和评估。
 - 生成样本的维度、特征列顺序、归一化参数可追踪。
 
-初期建议优先打通**每类可独立生成**的最小链路。条件生成可以作为 RVAE 或后续 GAN/VAE-GAN 的增强能力，而不是所有算法的硬性前置条件。
+初期建议优先打通**每类可独立生成**的最小链路。条件生成可以作为 TVAE 或后续 GAN/VAE-GAN 的增强能力，而不是所有算法的硬性前置条件。
 
 ## 验证数据集
 
@@ -176,15 +176,15 @@ label_names:
 
 ## 算法改造计划
 
-### 阶段 1：打通 RVAE
+### 阶段 1：打通 TVAE
 
 目标是先完成一条稳定的端到端链路。
 
 需要完成：
 
 - 通用多类别多维 CSV loader。
-- RVAE 支持 `(N, seq_len, num_features)` 输入输出。
-- RVAE 支持可选 label conditioning。
+- TVAE 支持 `(N, seq_len, num_features)` 输入输出。
+- TVAE 支持可选 label conditioning。
 - 生成结果按类别保存。
 - 反归一化后保存可读样本。
 - smoke 配置可在 `sensitivity` 上跑通。
@@ -198,7 +198,7 @@ label_names:
 
 ```bash
 conda activate diag
-python data_aug/train.py --config configs/data_aug/smoke_rvae_sensitivity.yaml --stage all
+python data_aug/train.py --config configs/data_aug/smoke_tvae_sensitivity.yaml --stage all
 ```
 
 ### 阶段 2：改造 GAN
@@ -253,7 +253,7 @@ generated_{class_name}_denorm.npy
 - 每特征统计：各特征的 mean/std 差异。
 - 均值偏差：mean error、mean absolute error、mean error percent、mean absolute error percent。
 - 每类别统计：每类分别计算分布差异。
-- 重构误差：适用于 VAE/RVAE/VAE-GAN。
+- 重构误差：适用于 VAE/TVAE/VAE-GAN。
 - 多样性指标：适用于 GAN/VAE-GAN。
 - 可视化：时域曲线、特征分布、必要时频谱图；多维特征按特征分行绘制（原始物理尺度），指标保留原始尺度。
 
@@ -282,18 +282,18 @@ generated_{class_name}_denorm.npy
 
 ## 建议执行顺序
 
-1. 在 `diag` 环境跑通 `smoke_rvae_sensitivity.yaml`。
+1. 在 `diag` 环境跑通 `smoke_tvae_sensitivity.yaml`。
 2. 修复 smoke 中暴露的 shape、归一化、保存路径问题。
-3. 固化 `sensitivity` 的正式 RVAE 配置。
+3. 固化 `sensitivity` 的正式 TVAE 配置。
 4. 设计生成样本接入诊断训练的最小流程。
-5. 对 `sensitivity` 做一次 RVAE 增强诊断对照。
+5. 对 `sensitivity` 做一次 TVAE 增强诊断对照。
 6. 改造并验证 `GAN` 的多维生成。
 7. 改造并验证 `VAE-GAN` 的多维生成。
 8. 将同一套流程推广到 `image_quality`、`cooler`、`sifuqi`。
 
 ## 当前待办
 
-- 等 `diag` 环境准备好后运行 RVAE smoke。
+- 等 `diag` 环境准备好后运行 TVAE smoke。
 - 检查生成输出形状是否符合 `(num_samples, seq_len, num_features)`。
 - 检查每类生成文件是否完整。
 - 检查 `metrics.json` 是否能区分类别与特征。

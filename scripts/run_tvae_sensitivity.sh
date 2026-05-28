@@ -4,9 +4,9 @@ set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-CONFIG="${CONFIG:-configs/data_aug/rvae_degradation_5feat.yaml}"
-RUN_ID="rvae_degradation_5feat_$(date +%Y%m%d_%H%M%S)"
-RUN_DIR="outputs/data_aug/degradation/rvae/${RUN_ID}"
+CONFIG="configs/data_aug/tvae_sensitivity.yaml"
+RUN_ID="tvae_sensitivity_matvae_v2_$(date +%Y%m%d_%H%M%S)"
+RUN_DIR="outputs/data_aug/sensitivity/tvae/${RUN_ID}"
 mkdir -p "$RUN_DIR"
 export RUN_DIR
 
@@ -21,6 +21,7 @@ echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
 if command -v conda >/dev/null 2>&1; then
   eval "$(conda shell.bash hook)"
 elif [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+  # Common non-interactive shell path.
   source "$HOME/miniconda3/etc/profile.d/conda.sh"
 elif [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
   source "$HOME/anaconda3/etc/profile.d/conda.sh"

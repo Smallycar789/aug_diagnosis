@@ -1,5 +1,5 @@
 experiment:
-  name: smoke_rvae_degradation_5feat
+  name: smoke_tvae_degradation_5feat
   seed: 42
   device: auto
 
@@ -29,7 +29,7 @@ dataset:
   sample_rate: 1.0
 
 model:
-  name: rvae
+  name: tvae
   conditional: true
   seq_len: 32
   input_dim: 5

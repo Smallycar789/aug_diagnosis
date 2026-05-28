@@ -1,12 +1,12 @@
-# RVAE 算法结构与原理
+# TVAE 算法结构与原理
 
-本文档总结 `data_aug/rvae.py` 中 **Recurrent Variational Autoencoder (RVAE)** 的模型结构、训练策略与数据增强流程。实现源自 `RVAE.ipynb`，用于对时序/滑窗信号进行无监督或条件生成式数据增强。
+本文档总结 `data_aug/tvae.py` 中 **T-VAE（Transformer-based Variational Autoencoder）** 的模型结构、训练策略与数据增强流程。主配置使用自注意力编码与结构化解码；可选 LSTM 编码/解码用于兼容早期单变量实验。实现源自 `TVAE.ipynb`（原 RVAE  notebook），用于对时序/滑窗信号进行无监督或条件生成式数据增强。
 
 ---
 
 ## 1. 总体定位
 
-RVAE 是一种面向**固定长度时序窗口**的变分自编码器（VAE）：
+TVAE 是一种面向**固定长度时序窗口**的变分自编码器（VAE）：
 
 | 维度 | 说明 |
 |------|------|
@@ -77,7 +77,7 @@ flowchart TB
 
 ### 4.1 条件输入拼接
 
-当 `num_classes > 0` 且 `label_embed_dim > 0` 时启用**条件 RVAE**：
+当 `num_classes > 0` 且 `label_embed_dim > 0` 时启用**条件 TVAE**：
 
 ```text
 enc_in = concat(x, label_embedding(y) 沿时间维广播)
@@ -94,7 +94,7 @@ context = concat(h_forward, h_backward)   # 最后一层双向隐状态
 logvar = fc_logvar(context)
 ```
 
-将整个序列压缩为**单个上下文向量**，再映射到潜空间参数。适合较短序列、计算开销较低的场景（如 `rvae_cooler.yaml`）。
+将整个序列压缩为**单个上下文向量**，再映射到潜空间参数。适合较短序列、计算开销较低的场景（如 `tvae_cooler.yaml`）。
 
 ### 4.3 模式 B：Transformer 编码器
 
@@ -105,7 +105,7 @@ logvar = fc_logvar(context)
 3. `TransformerEncoder`（`norm_first=True`，`GELU`）；
 4. 将 `(B, T, hidden_dim)` 展平为 `(B, T·hidden_dim)`，再经 `fc_mu` / `fc_logvar`。
 
-适合多特征、较长窗口、需要全局时间依赖的场景（如 `rvae_sensitivity.yaml`）。
+适合多特征、较长窗口、需要全局时间依赖的场景（如 `tvae_sensitivity.yaml`）。
 
 ### 4.4 重参数化
 
@@ -121,7 +121,7 @@ z = μ + ε * exp(0.5 * logvar),  ε ~ N(0, I)
 
 解码器二选一，由 `structured_decoder` 配置决定。
 
-### 5.1 模式 A：LSTM 自回归解码（经典 RVAE）
+### 5.1 模式 A：LSTM 自回归解码（经典 TVAE）
 
 **训练（Teacher Forcing）**：逐步输入真实 `x_t`，以概率 `teacher_force_ratio` 决定下一步用真值还是模型预测。
 
@@ -257,7 +257,7 @@ L_ol = MSE( decode(μ, first_inputs=x[:,0:1]), x )
 
 | 符号 / 函数 | 职责 |
 |-------------|------|
-| `RVAE` | 主网络：`encode` / `decode` / `forward` / `generate` |
+| `TVAE` | 主网络：`encode` / `decode` / `forward` / `generate` |
 | `loss_function` | 简单 MSE + KL（遗留接口） |
 | `reconstruction_loss` | 训练用重构项（支持结构化 NLL） |
 | `reference_kld_scale` | KL 权重 S 曲线 |
@@ -267,7 +267,7 @@ L_ol = MSE( decode(μ, first_inputs=x[:,0:1]), x )
 | `generate` | 批量合成样本 |
 | `evaluate` | 可视化与指标落盘 |
 
-统一入口：`python data_aug/train.py --config ... --stage {train|generate|evaluate|all}`，`model.name: rvae`。
+统一入口：`python data_aug/train.py --config ... --stage {train|generate|evaluate|all}`，`model.name: tvae`。
 
 ---
 
@@ -293,8 +293,8 @@ L_ol = MSE( decode(μ, first_inputs=x[:,0:1]), x )
 
 | 场景 | 编码器 | 解码器 | TFR / 开环 | 示例配置 |
 |------|--------|--------|------------|----------|
-| 单变量冷却曲线 | 双向 LSTM | LSTM 自回归 | 长 phase1 + 开环辅助 | `rvae_cooler.yaml` |
-| 多特征灵敏度退化 | Transformer | 结构化 + 季节项 | TFR≈0，无开环 | `rvae_sensitivity.yaml` |
+| 单变量冷却曲线 | 双向 LSTM | LSTM 自回归 | 长 phase1 + 开环辅助 | `tvae_cooler.yaml` |
+| 多特征灵敏度退化 | Transformer | 结构化 + 季节项 | TFR≈0，无开环 | `tvae_sensitivity.yaml` |
 
 ---
 
@@ -310,6 +310,6 @@ L_ol = MSE( decode(μ, first_inputs=x[:,0:1]), x )
 
 ## 参考
 
-- 实现文件：[`data_aug/rvae.py`](rvae.py)
+- 实现文件：[`data_aug/tvae.py`](tvae.py)
 - 运行说明：[`data_aug/README.md`](README.md)
-- 配置示例：`configs/data_aug/rvae_cooler.yaml`、`configs/data_aug/rvae_sensitivity.yaml`
+- 配置示例：`configs/data_aug/tvae_cooler.yaml`、`configs/data_aug/tvae_sensitivity.yaml`

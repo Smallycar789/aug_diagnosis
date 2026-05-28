@@ -1,5 +1,5 @@
 experiment:
-  name: rvae_sensitivity_matvae_v2
+  name: tvae_degradation_5feat_matvae_v8
   seed: 42
   device: auto
 
@@ -7,20 +7,22 @@ output:
   root: outputs/data_aug
 
 dataset:
-  name: sensitivity
-  root: data/sensitivity
+  name: degradation
+  root: data/degradation
   class_files:
     normal: normal.csv
     sensitivity_degradation: sensitivity_degradation.csv
+    mtf_degradation: mtf_degradation.csv
+    nonuniformity_degradation: nonuniformity_degradation.csv
+    bad_pixel_degradation: bad_pixel_degradation.csv
     coupled_severe_fault: coupled_severe_fault.csv
+  # 平均探测率 | 噪声等效温差 | MTF(SiTF) | 图像均一性(signal_gain) | 坏点率(read_noise_index)
   value_columns:
     - avg_detectivity
     - NETD_mK
     - SiTF
     - signal_gain
     - read_noise_index
-    - sensitivity_health
-    - physical_degradation_index
   unit_column: unit
   cycle_column: cycle
   sample_length: 96
@@ -28,10 +30,11 @@ dataset:
   sample_rate: 1.0
 
 model:
-  name: rvae
+  name: tvae
   conditional: true
+  per_class_norm: true
   seq_len: 96
-  input_dim: 7
+  input_dim: 5
   label_embed_dim: 8
   latent_dim: 32
   hidden_dim: 128
@@ -66,3 +69,6 @@ model:
   lr_patience: 10
   use_data_start: false
   num_generate_per_class: 300
+  num_compare: 5
+  split_feature_plots: false
+  spectrum_plot_style: vline

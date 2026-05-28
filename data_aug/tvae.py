@@ -46,7 +46,7 @@ def _sinusoidal_position_encoding(seq_len: int, dim: int) -> torch.Tensor:
     return pe.unsqueeze(0)
 
 
-class RVAE(nn.Module):
+class TVAE(nn.Module):
     def __init__(
         self,
         seq_len,
@@ -169,7 +169,7 @@ class RVAE(nn.Module):
         if not self.conditional:
             return None
         if labels is None:
-            raise ValueError("Conditional RVAE requires labels.")
+            raise ValueError("Conditional T-VAE requires labels.")
         labels = labels.to(device).long()
         return self.label_embedding(labels)
 
@@ -476,7 +476,7 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
     MIN_DECODER_LOGVAR = float(model_cfg.get("min_decoder_logvar", -7.0))
     MAX_DECODER_LOGVAR = float(model_cfg.get("max_decoder_logvar", 1.0))
 
-    model = RVAE(
+    model = TVAE(
         SEQ_LEN,
         INPUT_DIM,
         HIDDEN_DIM,
@@ -638,7 +638,7 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
         "best_epoch": best_epoch,
     }
     save_loss_history(history, out_dir)
-    _plot_rvae_curves(history, out_dir / "loss_curves.png")
+    _plot_tvae_curves(history, out_dir / "loss_curves.png")
 
     meta = {
         "sequences": sequences,
@@ -665,7 +665,7 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
     return model, meta
 
 
-def _plot_rvae_curves(history, save_path):
+def _plot_tvae_curves(history, save_path):
     fig, ax = plt.subplots(2, 2, figsize=(12, 8))
     ax[0, 0].plot(history["epochs"], history["total_loss"], label="total")
     ax[0, 0].plot(history["epochs"], history["recon_loss"], label="recon (mean MSE)")
@@ -687,13 +687,13 @@ def _plot_rvae_curves(history, save_path):
     plt.close()
 
 
-def load_checkpoint(path: Path, cfg: dict[str, Any]) -> RVAE:
+def load_checkpoint(path: Path, cfg: dict[str, Any]) -> TVAE:
     device = get_device(cfg)
     model_cfg = cfg["model"]
     checkpoint = torch.load(path, map_location=device, weights_only=False)
     num_classes = int(checkpoint.get("num_classes", model_cfg.get("num_classes", 0)))
     label_embed_dim = int(model_cfg.get("label_embed_dim", 8 if num_classes else 0))
-    model = RVAE(
+    model = TVAE(
         model_cfg.get("seq_len", 128),
         checkpoint.get("input_dim", model_cfg.get("input_dim", 1)),
         model_cfg.get("hidden_dim", 128),
@@ -730,7 +730,7 @@ def load_checkpoint(path: Path, cfg: dict[str, Any]) -> RVAE:
     return model
 
 
-def generate(model: RVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path, meta: dict) -> np.ndarray:
+def generate(model: TVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path, meta: dict) -> np.ndarray:
     device = get_device(cfg)
     model = model.to(device)
     model_cfg = cfg["model"]
@@ -805,7 +805,7 @@ def evaluate(
     out_dir: Path,
     cfg: dict[str, Any],
     generated_samples: np.ndarray | None = None,
-    model: RVAE | None = None,
+    model: TVAE | None = None,
     meta: dict | None = None,
 ) -> dict[str, Any]:
     from sklearn.metrics import mean_squared_error
@@ -964,7 +964,7 @@ def evaluate(
     metrics = {
         "experiment": cfg.get("experiment", {}).get("name"),
         "dataset": cfg["dataset"]["name"],
-        "model": "rvae",
+        "model": "tvae",
         "feature_columns": bundle.feature_columns,
         "label_names": bundle.label_names,
         "input_shape": list(original_phys.shape[1:]),

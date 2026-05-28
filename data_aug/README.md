@@ -7,7 +7,7 @@
 | `vae.py` | `vae` | VAE.ipynb |
 | `gan.py` | `gan` | GAN.ipynb |
 | `gan_vae.py` | `gan_vae` | GAN-VAE.ipynb |
-| `rvae.py` | `rvae` | RVAE.ipynb |
+| `tvae.py` | `tvae` | TVAE.ipynb |
 
 ## 运行方式
 
@@ -21,8 +21,8 @@ cd C:\Users\86188\Desktop\ATE\光电探测
 python data_aug/train.py --config configs/data_aug/gan_cooler.yaml --stage all
 
 # 分阶段（需指定同一 output 目录）
-python data_aug/train.py --config configs/data_aug/rvae_cooler.yaml --stage train
-python data_aug/train.py --config configs/data_aug/rvae_cooler.yaml --stage generate --output-dir outputs/data_aug/cooler/rvae/rvae_cooler_v1_YYYYMMDD_HHMMSS
+python data_aug/train.py --config configs/data_aug/tvae_cooler.yaml --stage train
+python data_aug/train.py --config configs/data_aug/tvae_cooler.yaml --stage generate --output-dir outputs/data_aug/cooler/tvae/tvae_cooler_v1_YYYYMMDD_HHMMSS
 ```
 
 一键冒烟测试：
@@ -37,7 +37,7 @@ powershell -File scripts/run_data_aug_smoke.ps1
 python data_aug/train.py --config configs/data_aug/smoke_vae_cooler.yaml --stage all
 python data_aug/train.py --config configs/data_aug/smoke_gan_cooler.yaml --stage all
 python data_aug/train.py --config configs/data_aug/smoke_gan_vae_sifuqi.yaml --stage all
-python data_aug/train.py --config configs/data_aug/smoke_rvae_cooler.yaml --stage all
+python data_aug/train.py --config configs/data_aug/smoke_tvae_cooler.yaml --stage all
 ```
 
 ## 输出目录
@@ -51,8 +51,8 @@ outputs/data_aug/{dataset}/{model}/{experiment}_{timestamp}/
 ├── generated_samples.npy
 ├── norm_params.json
 ├── metrics.json
-├── signal_comparison.png          # gan / gan_vae / rvae
-├── frequency_comparison.png       # gan / gan_vae / rvae
+├── signal_comparison.png          # gan / gan_vae / tvae
+├── frequency_comparison.png       # gan / gan_vae / tvae
 └── vae_comprehensive_results.png  # vae
 ```
 
@@ -63,7 +63,7 @@ outputs/data_aug/{dataset}/{model}/{experiment}_{timestamp}/
 - `cooler` — `data/cooler/cooler_simulation_results/`
 - `sifuqi` — `data/sifuqi/servo_*.csv`
 - `cwru` — CWRU CSV
-- `sensitivity` / 其他 `class_files` 数据 — 多类别 CSV 滑窗，支持 RVAE 条件生成
+- `sensitivity` / 其他 `class_files` 数据 — 多类别 CSV 滑窗，支持 TVAE 条件生成
 - `degradation` / `Degradation` — 红外退化仿真系统的统一生成视角，可合并灵敏度与成像质量相关指标和故障类型
 
 ### 性能退化指标与特征参数

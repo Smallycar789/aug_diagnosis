@@ -54,7 +54,7 @@ def normalize_unit_interval(ts_data: np.ndarray, ts_min, ts_max) -> np.ndarray:
 
 
 def denormalize_minus1_1_array(data: np.ndarray, data_min, data_max) -> np.ndarray:
-    """Inverse of [-1, 1] window normalization (RVAE / GAN)."""
+    """Inverse of [-1, 1] window normalization (TVAE / GAN)."""
     return denormalize_from_minus1_1(np.asarray(data, dtype=np.float32), data_min, data_max).astype(
         np.float32
     )

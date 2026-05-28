@@ -14,7 +14,7 @@ $configs = @(
     "configs/data_aug/smoke_vae_cooler.yaml",
     "configs/data_aug/smoke_gan_cooler.yaml",
     "configs/data_aug/smoke_gan_vae_sifuqi.yaml",
-    "configs/data_aug/smoke_rvae_cooler.yaml"
+    "configs/data_aug/smoke_tvae_cooler.yaml"
 )
 
 foreach ($cfg in $configs) {

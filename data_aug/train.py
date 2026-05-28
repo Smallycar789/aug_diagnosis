@@ -10,7 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from data_aug import gan, gan_vae, rvae, vae
+from data_aug import gan, gan_vae, tvae, vae
 from data_aug.data_load import load_data
 from data_aug.io_utils import (
     get_device,
@@ -24,7 +24,7 @@ MODELS = {
     "vae": vae,
     "gan": gan,
     "gan_vae": gan_vae,
-    "rvae": rvae,
+    "tvae": tvae,
 }
 
 
@@ -99,11 +99,11 @@ def main(config_path: str, stage: str = "all", output_dir: str | None = None) ->
             if model is None:
                 model = mod.load_checkpoint(ckpt, cfg)
             mod.generate(model, bundle, cfg, out_dir)
-        elif model_name == "rvae":
+        elif model_name == "tvae":
             if model is None:
                 model = mod.load_checkpoint(ckpt, cfg)
             if not meta:
-                _, _, data_min, data_max, sequences, labels, _, per_class_norm = rvae._prepare_data(
+                _, _, data_min, data_max, sequences, labels, _, per_class_norm = tvae._prepare_data(
                     bundle, cfg
                 )
                 meta = {
@@ -140,12 +140,12 @@ def main(config_path: str, stage: str = "all", output_dir: str | None = None) ->
             if m is None:
                 m = mod.load_checkpoint(out_dir / "checkpoint_best.pth", cfg)
             mod.evaluate(bundle, out_dir, cfg, generated, model=m, meta=meta)
-        elif model_name == "rvae":
+        elif model_name == "tvae":
             m = model
             if m is None:
                 m = mod.load_checkpoint(out_dir / "checkpoint_best.pth", cfg)
             if not meta:
-                _, _, data_min, data_max, sequences, labels, _, per_class_norm = rvae._prepare_data(
+                _, _, data_min, data_max, sequences, labels, _, per_class_norm = tvae._prepare_data(
                     bundle, cfg
                 )
                 meta = {

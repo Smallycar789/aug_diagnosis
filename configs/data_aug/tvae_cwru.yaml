@@ -1,5 +1,5 @@
 experiment:
-  name: rvae_cwru_v1
+  name: tvae_cwru_v1
   seed: 42
   device: auto
 
@@ -13,7 +13,7 @@ dataset:
   sample_rate: 12000
 
 model:
-  name: rvae
+  name: tvae
   seq_len: 128
   stride: 32
   input_dim: 1

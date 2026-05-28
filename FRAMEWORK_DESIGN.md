@@ -32,7 +32,7 @@
 │   │   └── tl_meta_degradation.yaml
 │   └── data_aug/                      # 数据生成配置
 │       ├── vae_degradation.yaml
-│       ├── rvae_cooler.yaml
+│       ├── tvae_cooler.yaml
 │       └── gan_vae_sifuqi.yaml
 │
 ├── diagnosis/                         # 故障诊断
@@ -48,7 +48,7 @@
 │   ├── vae.py                         # VAE（来自 notebook）
 │   ├── gan.py                         # GAN（来自 notebook）
 │   ├── gan_vae.py                     # GAN-VAE 1D（来自 notebook）
-│   └── rvae.py                        # RVAE（来自 notebook）
+│   └── tvae.py                        # TVAE（来自 notebook）
 │
 ├── outputs/                           # 统一输出根目录
 │   ├── diagnosis/
@@ -58,7 +58,7 @@
 │
 ├── test_pre/                          # 初期 Jupyter 实验（保留对照）
 │   └── jupyter_test/
-│       ├── augmetation/               # VAE / GAN / GAN-VAE / RVAE
+│       ├── augmetation/               # VAE / GAN / GAN-VAE / TVAE
 │       └── diagnosis/                 # 1DCNN-BiGRU / ResNet / TL-Meta
 │
 └── FRAMEWORK_DESIGN.md                # 本文档
@@ -87,7 +87,7 @@
 | `vae.py` | `test_pre/jupyter_test/augmetation/VAE.ipynb` | 全连接 VAE，[-1,1] 归一化 |
 | `gan.py` | `test_pre/jupyter_test/augmetation/GAN.ipynb` | 条件 GAN（Encoder + Generator + LSTM） |
 | `gan_vae.py` | `test_pre/jupyter_test/augmetation/GAN-VAE.ipynb` | 1D Conv VAE-GAN |
-| `rvae.py` | `test_pre/jupyter_test/augmetation/RVAE.ipynb` | 双向 LSTM RVAE |
+| `tvae.py` | `test_pre/jupyter_test/augmetation/TVAE.ipynb` | 双向 LSTM TVAE |
 
 ### 4.2 故障诊断（`diagnosis/`）
 
@@ -159,7 +159,7 @@ MODELS = {
     "vae":     "data_aug.vae",
     "gan":     "data_aug.gan",
     "gan_vae": "data_aug.gan_vae",
-    "rvae":    "data_aug.rvae",
+    "tvae":    "data_aug.tvae",
 }
 
 def main(config_path, stage="all"):
@@ -190,7 +190,7 @@ def main(config_path, stage="all"):
 **命令：**
 
 ```bash
-python data_aug/train.py --config configs/data_aug/rvae_cooler.yaml --stage all
+python data_aug/train.py --config configs/data_aug/tvae_cooler.yaml --stage all
 ```
 
 ---
@@ -279,10 +279,10 @@ model:
 ### 7.3 数据生成配置示例
 
 ```yaml
-# configs/data_aug/rvae_cooler.yaml
+# configs/data_aug/tvae_cooler.yaml
 
 experiment:
-  name: rvae_cooler_v1
+  name: tvae_cooler_v1
   seed: 42
   device: auto
 
@@ -300,7 +300,7 @@ dataset:
   sample_rate: 1.0             # FFT 用；CWRU 类数据可设 12000
 
 model:
-  name: rvae
+  name: tvae
   latent_dim: 64
   hidden_dim: 128
   num_layers: 1
@@ -330,7 +330,7 @@ outputs/
 
 ```text
 outputs/diagnosis/degradation/cnn_bigru/cnn_bigru_degradation_v1_20260525_143022/
-outputs/data_aug/cooler/rvae/rvae_cooler_v1_20260525_150000/
+outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 ```
 
 ### 8.2 故障诊断输出（单次 train + test）
@@ -405,13 +405,13 @@ outputs/data_aug/cooler/rvae/rvae_cooler_v1_20260525_150000/
 
 ### 8.5 `metrics.json` 结构（数据生成）
 
-参考 `test_pre` 中 VAE / RVAE / GAN-VAE notebook 的评估逻辑：
+参考 `test_pre` 中 VAE / TVAE / GAN-VAE notebook 的评估逻辑：
 
 ```json
 {
-  "experiment": "rvae_cooler_v1",
+  "experiment": "tvae_cooler_v1",
   "dataset": "cooler",
-  "model": "rvae",
+  "model": "tvae",
   "num_generated": 500,
   "statistics": {
     "original": {"mean": -0.001510, "std": 0.236105},
@@ -443,11 +443,11 @@ outputs/data_aug/cooler/rvae/rvae_cooler_v1_20260525_150000/
 
 | 指标 | 来源 Notebook | 计算方式 |
 |------|---------------|----------|
-| mean / std / mean_diff / std_diff | VAE, RVAE, GAN-VAE | 展平后 numpy 统计 |
+| mean / std / mean_diff / std_diff | VAE, TVAE, GAN-VAE | 展平后 numpy 统计 |
 | js_divergence | VAE.ipynb `evaluate_samples` | 直方图近似 JS 散度 |
-| correlation | VAE / RVAE | `np.corrcoef`（RVAE 中 concatenated correlation 可选记录） |
-| mse_teacher_forced / mse_open_loop | RVAE.ipynb `validate_and_visualize` | 同窗口 teacher forcing vs open-loop 诊断 |
-| FFT 频谱图 | RVAE, GAN-VAE | `np.fft.fft` + `np.fft.fftfreq`，保存为 `frequency_comparison.png` |
+| correlation | VAE / TVAE | `np.corrcoef`（TVAE 中 concatenated correlation 可选记录） |
+| mse_teacher_forced / mse_open_loop | TVAE.ipynb `validate_and_visualize` | 同窗口 teacher forcing vs open-loop 诊断 |
+| FFT 频谱图 | TVAE, GAN-VAE | `np.fft.fft` + `np.fft.fftfreq`，保存为 `frequency_comparison.png` |
 | 时域对比图 | 全部 aug notebook | 多子图 `signal_comparison.png` |
 
 算法模块的 `evaluate()` 应**直接复用 notebook 中的评估函数**，仅将 print 结果写入 `metrics.json`、将 plt 保存到 `out_dir`。
@@ -489,7 +489,7 @@ outputs/data_aug/cooler/rvae/rvae_cooler_v1_20260525_150000/
 |------|--------|----------|
 | 诊断 cnn_bigru / resnet | val_accuracy ↑ | 验证 acc 创新高时覆盖 `checkpoint_best.pth` |
 | 诊断 tl_meta | val_accuracy ↑ | 验证 episode acc 创新高时保存 |
-| 数据生成 VAE / RVAE / GAN-VAE | val_recon_loss ↓ | 验证重建 loss 创新低时保存 |
+| 数据生成 VAE / TVAE / GAN-VAE | val_recon_loss ↓ | 验证重建 loss 创新低时保存 |
 | 数据生成 GAN | g_loss + 可选 recon | 按 notebook 原有逻辑（如固定 epoch 或 recon 稳定后） |
 
 `checkpoint_best.pth` 建议同时保存：
@@ -563,7 +563,7 @@ def load_data(dataset_cfg, split="train"):
 
 | 步骤 | 诊断 | 数据生成 |
 |------|------|----------|
-| 1 | 复制 TL-Meta / 1DCNN / ResNet 代码 | 复制 VAE / GAN / RVAE 代码 |
+| 1 | 复制 TL-Meta / 1DCNN / ResNet 代码 | 复制 VAE / GAN / TVAE 代码 |
 | 2 | 改 `diagnosis/train.py` 的 MODELS | 改 `data_aug/train.py` 的 MODELS |
 | 3 | 跑 `train.py` + `test.py` | 跑 `train.py --stage all` |
 | 4 | 检查 8.2 输出 | 检查 8.3 输出 |
@@ -577,7 +577,7 @@ def load_data(dataset_cfg, split="train"):
 3. 实现 `data_aug/train.py` 骨架
 4. 实现 `diagnosis/data_preprocess.py`（三类 loader）
 5. **模板算法 1**：`diagnosis/cnn_bigru.py` + `degradation` 配置
-6. **模板算法 2**：`data_aug/rvae.py` + `cooler` 配置
+6. **模板算法 2**：`data_aug/tvae.py` + `cooler` 配置
 7. 其余算法按模板逐个迁入
 
 ---
