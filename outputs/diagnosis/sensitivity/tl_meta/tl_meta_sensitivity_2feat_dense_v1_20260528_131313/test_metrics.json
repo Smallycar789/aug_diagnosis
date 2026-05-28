@@ -1,0 +1,66 @@
+{
+  "experiment": "tl_meta_sensitivity_2feat_dense_v1",
+  "dataset": "sensitivity",
+  "model": "tl_meta",
+  "split": "test",
+  "accuracy_percent": 99.7,
+  "accuracy": 0.997,
+  "precision_macro": 0.997000165708687,
+  "recall_macro": 0.9969999999999999,
+  "f1_macro": 0.9970000101888384,
+  "classification_report": {
+    "0": {
+      "precision": 0.9965026230327254,
+      "recall": 0.99725,
+      "f1-score": 0.9968761714357116,
+      "support": 4000.0
+    },
+    "1": {
+      "precision": 0.9969984992496248,
+      "recall": 0.9965,
+      "f1-score": 0.9967491872968242,
+      "support": 4000.0
+    },
+    "2": {
+      "precision": 0.9974993748437109,
+      "recall": 0.99725,
+      "f1-score": 0.9973746718339792,
+      "support": 4000.0
+    },
+    "accuracy": 0.997,
+    "macro avg": {
+      "precision": 0.997000165708687,
+      "recall": 0.9969999999999999,
+      "f1-score": 0.9970000101888384,
+      "support": 12000.0
+    },
+    "weighted avg": {
+      "precision": 0.997000165708687,
+      "recall": 0.997,
+      "f1-score": 0.9970000101888384,
+      "support": 12000.0
+    }
+  },
+  "label_names": [
+    "normal",
+    "sensitivity_degradation",
+    "coupled_severe_fault"
+  ],
+  "confusion_matrix": [
+    [
+      3989,
+      5,
+      6
+    ],
+    [
+      10,
+      3986,
+      4
+    ],
+    [
+      4,
+      7,
+      3989
+    ]
+  ]
+}

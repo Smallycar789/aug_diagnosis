@@ -1,0 +1,1289 @@
+{
+  "experiment": "gan_vae_degradation_5feat_perclass_v2",
+  "dataset": "degradation",
+  "model": "gan_vae",
+  "feature_columns": [
+    "avg_detectivity",
+    "NETD_mK",
+    "SiTF",
+    "signal_gain",
+    "read_noise_index"
+  ],
+  "label_names": [
+    "normal",
+    "sensitivity_degradation",
+    "mtf_degradation",
+    "nonuniformity_degradation",
+    "bad_pixel_degradation",
+    "coupled_severe_fault"
+  ],
+  "input_shape": [
+    128,
+    5
+  ],
+  "per_class": {
+    "normal": {
+      "num_original_windows": 29,
+      "generated_file": "generated_normal.npy",
+      "signal_comparison": "normal_signal_comparison.png",
+      "frequency_comparison": "normal_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 4965224960.0,
+        "original_std": 10005700608.0,
+        "generated_mean": 5011304448.0,
+        "generated_std": 10023619584.0,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 4965224960.0,
+            "generated_mean": 5011304448.0,
+            "mean_error": 46079488.0,
+            "mean_abs_error": 46079488.0,
+            "mean_error_percent": 0.9280443156396281,
+            "mean_abs_error_percent": 0.9280443156396281
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 24826126336.0,
+              "generated_mean": 25056522240.0,
+              "mean_error": 230395904.0,
+              "mean_abs_error": 230395904.0,
+              "mean_error_percent": 0.9280380711907774,
+              "mean_abs_error_percent": 0.9280380711907774
+            },
+            "NETD_mK": {
+              "original_mean": 15.354879379272461,
+              "generated_mean": 14.75152587890625,
+              "mean_error": -0.6033535003662109,
+              "mean_abs_error": 0.6033535003662109,
+              "mean_error_percent": -3.9293926410172735,
+              "mean_abs_error_percent": 3.9293926410172735
+            },
+            "SiTF": {
+              "original_mean": 0.977566123008728,
+              "generated_mean": 0.989486038684845,
+              "mean_error": 0.011919915676116943,
+              "mean_abs_error": 0.011919915676116943,
+              "mean_error_percent": 1.2193462309669787,
+              "mean_abs_error_percent": 1.2193462309669787
+            },
+            "signal_gain": {
+              "original_mean": 0.977566123008728,
+              "generated_mean": 0.9957057237625122,
+              "mean_error": 0.01813960075378418,
+              "mean_abs_error": 0.01813960075378418,
+              "mean_error_percent": 1.855588110802631,
+              "mean_abs_error_percent": 1.855588110802631
+            },
+            "read_noise_index": {
+              "original_mean": 1.0101897716522217,
+              "generated_mean": 1.0082030296325684,
+              "mean_error": -0.0019867420196533203,
+              "mean_abs_error": 0.0019867420196533203,
+              "mean_error_percent": -0.19667017776312398,
+              "mean_abs_error_percent": 0.19667017776312398
+            }
+          }
+        },
+        "plot_mode": "per_feature_minmax_display",
+        "display_normalization": {
+          "mode": "per_feature_minmax",
+          "applied_to": [
+            "avg_detectivity",
+            "NETD_mK",
+            "SiTF",
+            "signal_gain",
+            "read_noise_index"
+          ],
+          "note": "Only signal/frequency plots use normalized values; metrics stay on raw scale."
+        },
+        "correlation": 0.9921016386819169
+      },
+      "num_generated_windows": 300,
+      "random_generated": {
+        "mean": 5013052416.0,
+        "std": 10026963968.0,
+        "min": 0.9701369404792786,
+        "max": 26217625600.0
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 4984616960.0,
+          "generated_mean": 5013052416.0,
+          "mean_error": 28435456.0,
+          "mean_abs_error": 28435456.0,
+          "mean_error_percent": 0.5704642147668655,
+          "mean_abs_error_percent": 0.5704642147668655
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 24923086848.0,
+            "generated_mean": 25065265152.0,
+            "mean_error": 142178304.0,
+            "mean_abs_error": 142178304.0,
+            "mean_error_percent": 0.5704682765305589,
+            "mean_abs_error_percent": 0.5704682765305589
+          },
+          "NETD_mK": {
+            "original_mean": 14.85420036315918,
+            "generated_mean": 14.771053314208984,
+            "mean_error": -0.08314704895019531,
+            "mean_abs_error": 0.08314704895019531,
+            "mean_error_percent": -0.5597544594619408,
+            "mean_abs_error_percent": 0.5597544594619408
+          },
+          "SiTF": {
+            "original_mean": 0.9909182786941528,
+            "generated_mean": 0.9891365766525269,
+            "mean_error": -0.0017817020416259766,
+            "mean_abs_error": 0.0017817020416259766,
+            "mean_error_percent": -0.1798031260432425,
+            "mean_abs_error_percent": 0.1798031260432425
+          },
+          "signal_gain": {
+            "original_mean": 0.9909182786941528,
+            "generated_mean": 0.9953590631484985,
+            "mean_error": 0.004440784454345703,
+            "mean_abs_error": 0.004440784454345703,
+            "mean_error_percent": 0.4481484043465054,
+            "mean_abs_error_percent": 0.4481484043465054
+          },
+          "read_noise_index": {
+            "original_mean": 1.0077993869781494,
+            "generated_mean": 1.0082212686538696,
+            "mean_error": 0.00042188167572021484,
+            "mean_abs_error": 0.00042188167572021484,
+            "mean_error_percent": 0.04186167219105104,
+            "mean_abs_error_percent": 0.04186167219105104
+          }
+        }
+      },
+      "reconstruction_mean_bias": {
+        "overall": {
+          "original_mean": 4965224960.0,
+          "generated_mean": 5051877888.0,
+          "mean_error": 86652928.0,
+          "mean_abs_error": 86652928.0,
+          "mean_error_percent": 1.7451964150280916,
+          "mean_abs_error_percent": 1.7451964150280916
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 24826126336.0,
+            "generated_mean": 25259388928.0,
+            "mean_error": 433262592.0,
+            "mean_abs_error": 433262592.0,
+            "mean_error_percent": 1.7451880576783028,
+            "mean_abs_error_percent": 1.7451880576783028
+          },
+          "NETD_mK": {
+            "original_mean": 15.354879379272461,
+            "generated_mean": 15.226156234741211,
+            "mean_error": -0.12872314453125,
+            "mean_abs_error": 0.12872314453125,
+            "mean_error_percent": -0.8383207796800622,
+            "mean_abs_error_percent": 0.8383207796800622
+          },
+          "SiTF": {
+            "original_mean": 0.977566123008728,
+            "generated_mean": 0.9775886535644531,
+            "mean_error": 2.2530555725097656e-05,
+            "mean_abs_error": 2.2530555725097656e-05,
+            "mean_error_percent": 0.0023047602811514874,
+            "mean_abs_error_percent": 0.0023047602811514874
+          },
+          "signal_gain": {
+            "original_mean": 0.977566123008728,
+            "generated_mean": 0.9675341844558716,
+            "mean_error": -0.010031938552856445,
+            "mean_abs_error": 0.010031938552856445,
+            "mean_error_percent": -1.0262158555556735,
+            "mean_abs_error_percent": 1.0262158555556735
+          },
+          "read_noise_index": {
+            "original_mean": 1.0101897716522217,
+            "generated_mean": 1.0107208490371704,
+            "mean_error": 0.0005310773849487305,
+            "mean_abs_error": 0.0005310773849487305,
+            "mean_error_percent": 0.05257204139773894,
+            "mean_abs_error_percent": 0.05257204139773894
+          }
+        }
+      }
+    },
+    "sensitivity_degradation": {
+      "num_original_windows": 35,
+      "generated_file": "generated_sensitivity_degradation.npy",
+      "signal_comparison": "sensitivity_degradation_signal_comparison.png",
+      "frequency_comparison": "sensitivity_degradation_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 3524446720.0,
+        "original_std": 7268621824.0,
+        "generated_mean": 3963596288.0,
+        "generated_std": 7929136128.0,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 3524446720.0,
+            "generated_mean": 3963596288.0,
+            "mean_error": 439149568.0,
+            "mean_abs_error": 439149568.0,
+            "mean_error_percent": 12.460099496127437,
+            "mean_abs_error_percent": 12.460099496127437
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 17622233088.0,
+              "generated_mean": 19817981952.0,
+              "mean_error": 2195748864.0,
+              "mean_abs_error": 2195748864.0,
+              "mean_error_percent": 12.460105668987053,
+              "mean_abs_error_percent": 12.460105668987053
+            },
+            "NETD_mK": {
+              "original_mean": 21.075204849243164,
+              "generated_mean": 27.777416229248047,
+              "mean_error": 6.702211380004883,
+              "mean_abs_error": 6.702211380004883,
+              "mean_error_percent": 31.801405623089675,
+              "mean_abs_error_percent": 31.801405623089675
+            },
+            "SiTF": {
+              "original_mean": 0.7866178750991821,
+              "generated_mean": 0.7351750731468201,
+              "mean_error": -0.05144280195236206,
+              "mean_abs_error": 0.05144280195236206,
+              "mean_error_percent": -6.539744846997762,
+              "mean_abs_error_percent": 6.539744846997762
+            },
+            "signal_gain": {
+              "original_mean": 0.7866178750991821,
+              "generated_mean": 0.7002087235450745,
+              "mean_error": -0.08640915155410767,
+              "mean_abs_error": 0.08640915155410767,
+              "mean_error_percent": -10.984895498746786,
+              "mean_abs_error_percent": 10.984895498746786
+            },
+            "read_noise_index": {
+              "original_mean": 1.3434901237487793,
+              "generated_mean": 1.8922992944717407,
+              "mean_error": 0.5488091707229614,
+              "mean_abs_error": 0.5488091707229614,
+              "mean_error_percent": 40.84951284878845,
+              "mean_abs_error_percent": 40.84951284878845
+            }
+          }
+        },
+        "plot_mode": "per_feature_minmax_display",
+        "display_normalization": {
+          "mode": "per_feature_minmax",
+          "applied_to": [
+            "avg_detectivity",
+            "NETD_mK",
+            "SiTF",
+            "signal_gain",
+            "read_noise_index"
+          ],
+          "note": "Only signal/frequency plots use normalized values; metrics stay on raw scale."
+        },
+        "correlation": 0.969594516683233
+      },
+      "num_generated_windows": 300,
+      "random_generated": {
+        "mean": 3967186176.0,
+        "std": 7936396288.0,
+        "min": 0.6323976516723633,
+        "max": 22114854912.0
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 3801568512.0,
+          "generated_mean": 3967186176.0,
+          "mean_error": 165617664.0,
+          "mean_abs_error": 165617664.0,
+          "mean_error_percent": 4.356561337174712,
+          "mean_abs_error_percent": 4.356561337174712
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 19007844352.0,
+            "generated_mean": 19835930624.0,
+            "mean_error": 828086272.0,
+            "mean_abs_error": 828086272.0,
+            "mean_error_percent": 4.356550151952759,
+            "mean_abs_error_percent": 4.356550151952759
+          },
+          "NETD_mK": {
+            "original_mean": 19.77027702331543,
+            "generated_mean": 27.741804122924805,
+            "mean_error": 7.971527099609375,
+            "mean_abs_error": 7.971527099609375,
+            "mean_error_percent": 40.32076581531162,
+            "mean_abs_error_percent": 40.32076581531162
+          },
+          "SiTF": {
+            "original_mean": 0.7944409251213074,
+            "generated_mean": 0.734645664691925,
+            "mean_error": -0.059795260429382324,
+            "mean_abs_error": 0.059795260429382324,
+            "mean_error_percent": -7.526709480664263,
+            "mean_abs_error_percent": 7.526709480664263
+          },
+          "signal_gain": {
+            "original_mean": 0.7944409251213074,
+            "generated_mean": 0.7012938261032104,
+            "mean_error": -0.09314709901809692,
+            "mean_abs_error": 0.09314709901809692,
+            "mean_error_percent": -11.724861606780115,
+            "mean_abs_error_percent": 11.724861606780115
+          },
+          "read_noise_index": {
+            "original_mean": 1.290947675704956,
+            "generated_mean": 1.8931176662445068,
+            "mean_error": 0.6021699905395508,
+            "mean_abs_error": 0.6021699905395508,
+            "mean_error_percent": 46.64557687907219,
+            "mean_abs_error_percent": 46.64557687907219
+          }
+        }
+      },
+      "reconstruction_mean_bias": {
+        "overall": {
+          "original_mean": 3524446720.0,
+          "generated_mean": 4027803904.0,
+          "mean_error": 503357184.0,
+          "mean_abs_error": 503357184.0,
+          "mean_error_percent": 14.28187809291099,
+          "mean_abs_error_percent": 14.28187809291099
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 17622233088.0,
+            "generated_mean": 20139020288.0,
+            "mean_error": 2516787200.0,
+            "mean_abs_error": 2516787200.0,
+            "mean_error_percent": 14.281885771411265,
+            "mean_abs_error_percent": 14.281885771411265
+          },
+          "NETD_mK": {
+            "original_mean": 21.075204849243164,
+            "generated_mean": 18.682668685913086,
+            "mean_error": -2.392536163330078,
+            "mean_abs_error": 2.392536163330078,
+            "mean_error_percent": -11.352374415549262,
+            "mean_abs_error_percent": 11.352374415549262
+          },
+          "SiTF": {
+            "original_mean": 0.7866178750991821,
+            "generated_mean": 0.8267034292221069,
+            "mean_error": 0.040085554122924805,
+            "mean_abs_error": 0.040085554122924805,
+            "mean_error_percent": 5.095937353047125,
+            "mean_abs_error_percent": 5.095937353047125
+          },
+          "signal_gain": {
+            "original_mean": 0.7866178750991821,
+            "generated_mean": 0.8023405075073242,
+            "mean_error": 0.01572263240814209,
+            "mean_abs_error": 0.01572263240814209,
+            "mean_error_percent": 1.9987636825770931,
+            "mean_abs_error_percent": 1.9987636825770931
+          },
+          "read_noise_index": {
+            "original_mean": 1.3434901237487793,
+            "generated_mean": 1.2870094776153564,
+            "mean_error": -0.05648064613342285,
+            "mean_abs_error": 0.05648064613342285,
+            "mean_error_percent": -4.204023917632031,
+            "mean_abs_error_percent": 4.204023917632031
+          }
+        }
+      }
+    },
+    "mtf_degradation": {
+      "num_original_windows": 31,
+      "generated_file": "generated_mtf_degradation.npy",
+      "signal_comparison": "mtf_degradation_signal_comparison.png",
+      "frequency_comparison": "mtf_degradation_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 4584845312.0,
+        "original_std": 9236001792.0,
+        "generated_mean": 4724338688.0,
+        "generated_std": 9449773056.0,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 4584845312.0,
+            "generated_mean": 4724338688.0,
+            "mean_error": 139493376.0,
+            "mean_abs_error": 139493376.0,
+            "mean_error_percent": 3.0424881649747575,
+            "mean_abs_error_percent": 3.0424881649747575
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 22924226560.0,
+              "generated_mean": 23621693440.0,
+              "mean_error": 697466880.0,
+              "mean_abs_error": 697466880.0,
+              "mean_error_percent": 3.0424881649747575,
+              "mean_abs_error_percent": 3.0424881649747575
+            },
+            "NETD_mK": {
+              "original_mean": 14.853877067565918,
+              "generated_mean": 15.273065567016602,
+              "mean_error": 0.4191884994506836,
+              "mean_abs_error": 0.4191884994506836,
+              "mean_error_percent": 2.8220813834927974,
+              "mean_abs_error_percent": 2.8220813834927974
+            },
+            "SiTF": {
+              "original_mean": 0.9940159916877747,
+              "generated_mean": 0.9676521420478821,
+              "mean_error": -0.026363849639892578,
+              "mean_abs_error": 0.026363849639892578,
+              "mean_error_percent": -2.6522560864567652,
+              "mean_abs_error_percent": 2.6522560864567652
+            },
+            "signal_gain": {
+              "original_mean": 0.9940159916877747,
+              "generated_mean": 0.9591202735900879,
+              "mean_error": -0.03489571809768677,
+              "mean_abs_error": 0.03489571809768677,
+              "mean_error_percent": -3.510579144550391,
+              "mean_abs_error_percent": 3.510579144550391
+            },
+            "read_noise_index": {
+              "original_mean": 1.026423692703247,
+              "generated_mean": 1.0587198734283447,
+              "mean_error": 0.032296180725097656,
+              "mean_abs_error": 0.032296180725097656,
+              "mean_error_percent": 3.146476543233392,
+              "mean_abs_error_percent": 3.146476543233392
+            }
+          }
+        },
+        "plot_mode": "per_feature_minmax_display",
+        "display_normalization": {
+          "mode": "per_feature_minmax",
+          "applied_to": [
+            "avg_detectivity",
+            "NETD_mK",
+            "SiTF",
+            "signal_gain",
+            "read_noise_index"
+          ],
+          "note": "Only signal/frequency plots use normalized values; metrics stay on raw scale."
+        },
+        "correlation": 0.9926012022460484
+      },
+      "num_generated_windows": 300,
+      "random_generated": {
+        "mean": 4726640640.0,
+        "std": 9454352384.0,
+        "min": 0.9261313676834106,
+        "max": 24893468672.0
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 4781731328.0,
+          "generated_mean": 4726640640.0,
+          "mean_error": -55090688.0,
+          "mean_abs_error": 55090688.0,
+          "mean_error_percent": -1.1521075573069086,
+          "mean_abs_error_percent": 1.1521075573069086
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 23908657152.0,
+            "generated_mean": 23633199104.0,
+            "mean_error": -275458048.0,
+            "mean_abs_error": 275458048.0,
+            "mean_error_percent": -1.152126805988171,
+            "mean_abs_error_percent": 1.152126805988171
+          },
+          "NETD_mK": {
+            "original_mean": 15.586501121520996,
+            "generated_mean": 15.285335540771484,
+            "mean_error": -0.3011655807495117,
+            "mean_abs_error": 0.3011655807495117,
+            "mean_error_percent": -1.9322205695906864,
+            "mean_abs_error_percent": 1.9322205695906864
+          },
+          "SiTF": {
+            "original_mean": 0.9783656001091003,
+            "generated_mean": 0.9674981832504272,
+            "mean_error": -0.010867416858673096,
+            "mean_abs_error": 0.010867416858673096,
+            "mean_error_percent": -1.110772584140452,
+            "mean_abs_error_percent": 1.110772584140452
+          },
+          "signal_gain": {
+            "original_mean": 0.9783656001091003,
+            "generated_mean": 0.9591528177261353,
+            "mean_error": -0.019212782382965088,
+            "mean_abs_error": 0.019212782382965088,
+            "mean_error_percent": -1.9637630739288683,
+            "mean_abs_error_percent": 1.9637630739288683
+          },
+          "read_noise_index": {
+            "original_mean": 1.0259900093078613,
+            "generated_mean": 1.0588102340698242,
+            "mean_error": 0.03282022476196289,
+            "mean_abs_error": 0.03282022476196289,
+            "mean_error_percent": 3.198883465161966,
+            "mean_abs_error_percent": 3.198883465161966
+          }
+        }
+      },
+      "reconstruction_mean_bias": {
+        "overall": {
+          "original_mean": 4584845312.0,
+          "generated_mean": 4721049088.0,
+          "mean_error": 136203776.0,
+          "mean_abs_error": 136203776.0,
+          "mean_error_percent": 2.970738743213677,
+          "mean_abs_error_percent": 2.970738743213677
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 22924226560.0,
+            "generated_mean": 23605243904.0,
+            "mean_error": 681017344.0,
+            "mean_abs_error": 681017344.0,
+            "mean_error_percent": 2.970732042878571,
+            "mean_abs_error_percent": 2.970732042878571
+          },
+          "NETD_mK": {
+            "original_mean": 14.853877067565918,
+            "generated_mean": 14.739492416381836,
+            "mean_error": -0.11438465118408203,
+            "mean_abs_error": 0.11438465118408203,
+            "mean_error_percent": -0.7700659609863465,
+            "mean_abs_error_percent": 0.7700659609863465
+          },
+          "SiTF": {
+            "original_mean": 0.9940159916877747,
+            "generated_mean": 0.9503211975097656,
+            "mean_error": -0.04369479417800903,
+            "mean_abs_error": 0.04369479417800903,
+            "mean_error_percent": -4.395783824746935,
+            "mean_abs_error_percent": 4.395783824746935
+          },
+          "signal_gain": {
+            "original_mean": 0.9940159916877747,
+            "generated_mean": 0.9996247291564941,
+            "mean_error": 0.005608737468719482,
+            "mean_abs_error": 0.005608737468719482,
+            "mean_error_percent": 0.5642502249079725,
+            "mean_abs_error_percent": 0.5642502249079725
+          },
+          "read_noise_index": {
+            "original_mean": 1.026423692703247,
+            "generated_mean": 1.0200517177581787,
+            "mean_error": -0.006371974945068359,
+            "mean_abs_error": 0.006371974945068359,
+            "mean_error_percent": -0.6207938291337342,
+            "mean_abs_error_percent": 0.6207938291337342
+          }
+        }
+      }
+    },
+    "nonuniformity_degradation": {
+      "num_original_windows": 37,
+      "generated_file": "generated_nonuniformity_degradation.npy",
+      "signal_comparison": "nonuniformity_degradation_signal_comparison.png",
+      "frequency_comparison": "nonuniformity_degradation_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 4684500992.0,
+        "original_std": 9494521856.0,
+        "generated_mean": 4910804992.0,
+        "generated_std": 9822288896.0,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 4684500992.0,
+            "generated_mean": 4910804992.0,
+            "mean_error": 226304000.0,
+            "mean_abs_error": 226304000.0,
+            "mean_error_percent": 4.830909426350272,
+            "mean_abs_error_percent": 4.830909426350272
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 23422504960.0,
+              "generated_mean": 24554024960.0,
+              "mean_error": 1131520000.0,
+              "mean_abs_error": 1131520000.0,
+              "mean_error_percent": 4.830909426350272,
+              "mean_abs_error_percent": 4.830909426350272
+            },
+            "NETD_mK": {
+              "original_mean": 15.681869506835938,
+              "generated_mean": 17.0404052734375,
+              "mean_error": 1.3585357666015625,
+              "mean_abs_error": 1.3585357666015625,
+              "mean_error_percent": 8.66309827415257,
+              "mean_abs_error_percent": 8.66309827415257
+            },
+            "SiTF": {
+              "original_mean": 1.0044753551483154,
+              "generated_mean": 0.8951705694198608,
+              "mean_error": -0.10930478572845459,
+              "mean_abs_error": 0.10930478572845459,
+              "mean_error_percent": -10.881778748301418,
+              "mean_abs_error_percent": 10.881778748301418
+            },
+            "signal_gain": {
+              "original_mean": 1.0044753551483154,
+              "generated_mean": 0.9245615005493164,
+              "mean_error": -0.07991385459899902,
+              "mean_abs_error": 0.07991385459899902,
+              "mean_error_percent": -7.955780516606042,
+              "mean_abs_error_percent": 7.955780516606042
+            },
+            "read_noise_index": {
+              "original_mean": 1.0236049890518188,
+              "generated_mean": 1.2059485912322998,
+              "mean_error": 0.18234360218048096,
+              "mean_abs_error": 0.18234360218048096,
+              "mean_error_percent": 17.813864149820983,
+              "mean_abs_error_percent": 17.813864149820983
+            }
+          }
+        },
+        "plot_mode": "per_feature_minmax_display",
+        "display_normalization": {
+          "mode": "per_feature_minmax",
+          "applied_to": [
+            "avg_detectivity",
+            "NETD_mK",
+            "SiTF",
+            "signal_gain",
+            "read_noise_index"
+          ],
+          "note": "Only signal/frequency plots use normalized values; metrics stay on raw scale."
+        },
+        "correlation": 0.9868634961841865
+      },
+      "num_generated_windows": 300,
+      "random_generated": {
+        "mean": 4911058432.0,
+        "std": 9822710784.0,
+        "min": 0.8681501150131226,
+        "max": 25970405376.0
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 4576762368.0,
+          "generated_mean": 4911058432.0,
+          "mean_error": 334296064.0,
+          "mean_abs_error": 334296064.0,
+          "mean_error_percent": 7.304204088404181,
+          "mean_abs_error_percent": 7.304204088404181
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 22883815424.0,
+            "generated_mean": 24555290624.0,
+            "mean_error": 1671475200.0,
+            "mean_abs_error": 1671475200.0,
+            "mean_error_percent": 7.304180570548549,
+            "mean_abs_error_percent": 7.304180570548549
+          },
+          "NETD_mK": {
+            "original_mean": 16.2943115234375,
+            "generated_mean": 17.022443771362305,
+            "mean_error": 0.7281322479248047,
+            "mean_abs_error": 0.7281322479248047,
+            "mean_error_percent": 4.468628495763506,
+            "mean_abs_error_percent": 4.468628495763506
+          },
+          "SiTF": {
+            "original_mean": 0.9641374349594116,
+            "generated_mean": 0.8939453363418579,
+            "mean_error": -0.07019209861755371,
+            "mean_abs_error": 0.07019209861755371,
+            "mean_error_percent": -7.280300097517597,
+            "mean_abs_error_percent": 7.280300097517597
+          },
+          "signal_gain": {
+            "original_mean": 0.9641374349594116,
+            "generated_mean": 0.9232330322265625,
+            "mean_error": -0.04090440273284912,
+            "mean_abs_error": 0.04090440273284912,
+            "mean_error_percent": -4.2425904492102955,
+            "mean_abs_error_percent": 4.2425904492102955
+          },
+          "read_noise_index": {
+            "original_mean": 1.0499180555343628,
+            "generated_mean": 1.2097259759902954,
+            "mean_error": 0.15980792045593262,
+            "mean_abs_error": 0.15980792045593262,
+            "mean_error_percent": 15.220989829972712,
+            "mean_abs_error_percent": 15.220989829972712
+          }
+        }
+      },
+      "reconstruction_mean_bias": {
+        "overall": {
+          "original_mean": 4684500992.0,
+          "generated_mean": 4545525760.0,
+          "mean_error": -138975232.0,
+          "mean_abs_error": 138975232.0,
+          "mean_error_percent": -2.9667030114271773,
+          "mean_abs_error_percent": 2.9667030114271773
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 23422504960.0,
+            "generated_mean": 22727628800.0,
+            "mean_error": -694876160.0,
+            "mean_abs_error": 694876160.0,
+            "mean_error_percent": -2.9667030114271773,
+            "mean_abs_error_percent": 2.9667030114271773
+          },
+          "NETD_mK": {
+            "original_mean": 15.681869506835938,
+            "generated_mean": 16.20656967163086,
+            "mean_error": 0.5247001647949219,
+            "mean_abs_error": 0.5247001647949219,
+            "mean_error_percent": 3.3459031435390916,
+            "mean_abs_error_percent": 3.3459031435390916
+          },
+          "SiTF": {
+            "original_mean": 1.0044753551483154,
+            "generated_mean": 0.9479061365127563,
+            "mean_error": -0.05656921863555908,
+            "mean_abs_error": 0.05656921863555908,
+            "mean_error_percent": -5.631717925743073,
+            "mean_abs_error_percent": 5.631717925743073
+          },
+          "signal_gain": {
+            "original_mean": 1.0044753551483154,
+            "generated_mean": 0.9713851809501648,
+            "mean_error": -0.033090174198150635,
+            "mean_abs_error": 0.033090174198150635,
+            "mean_error_percent": -3.2942743720441716,
+            "mean_abs_error_percent": 3.2942743720441716
+          },
+          "read_noise_index": {
+            "original_mean": 1.0236049890518188,
+            "generated_mean": 1.0361864566802979,
+            "mean_error": 0.012581467628479004,
+            "mean_abs_error": 0.012581467628479004,
+            "mean_error_percent": 1.2291330897217894,
+            "mean_abs_error_percent": 1.2291330897217894
+          }
+        }
+      }
+    },
+    "bad_pixel_degradation": {
+      "num_original_windows": 43,
+      "generated_file": "generated_bad_pixel_degradation.npy",
+      "signal_comparison": "bad_pixel_degradation_signal_comparison.png",
+      "frequency_comparison": "bad_pixel_degradation_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 5092341760.0,
+        "original_std": 10223539200.0,
+        "generated_mean": 4834813952.0,
+        "generated_std": 9670446080.0,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 5092341760.0,
+            "generated_mean": 4834813952.0,
+            "mean_error": -257527808.0,
+            "mean_abs_error": 257527808.0,
+            "mean_error_percent": -5.05715877168464,
+            "mean_abs_error_percent": 5.05715877168464
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 25461708800.0,
+              "generated_mean": 24174071808.0,
+              "mean_error": -1287636992.0,
+              "mean_abs_error": 1287636992.0,
+              "mean_error_percent": -5.057150728233919,
+              "mean_abs_error_percent": 5.057150728233919
+            },
+            "NETD_mK": {
+              "original_mean": 15.797327041625977,
+              "generated_mean": 22.453943252563477,
+              "mean_error": 6.6566162109375,
+              "mean_abs_error": 6.6566162109375,
+              "mean_error_percent": 42.13761096036885,
+              "mean_abs_error_percent": 42.13761096036885
+            },
+            "SiTF": {
+              "original_mean": 0.978194534778595,
+              "generated_mean": 0.8863779902458191,
+              "mean_error": -0.09181654453277588,
+              "mean_abs_error": 0.09181654453277588,
+              "mean_error_percent": -9.386327695396261,
+              "mean_abs_error_percent": 9.386327695396261
+            },
+            "signal_gain": {
+              "original_mean": 0.978194534778595,
+              "generated_mean": 0.875251293182373,
+              "mean_error": -0.10294324159622192,
+              "mean_abs_error": 0.10294324159622192,
+              "mean_error_percent": -10.52380052598864,
+              "mean_abs_error_percent": 10.52380052598864
+            },
+            "read_noise_index": {
+              "original_mean": 1.0292984247207642,
+              "generated_mean": 1.2342755794525146,
+              "mean_error": 0.2049771547317505,
+              "mean_abs_error": 0.2049771547317505,
+              "mean_error_percent": 19.91425905342838,
+              "mean_abs_error_percent": 19.91425905342838
+            }
+          }
+        },
+        "plot_mode": "per_feature_minmax_display",
+        "display_normalization": {
+          "mode": "per_feature_minmax",
+          "applied_to": [
+            "avg_detectivity",
+            "NETD_mK",
+            "SiTF",
+            "signal_gain",
+            "read_noise_index"
+          ],
+          "note": "Only signal/frequency plots use normalized values; metrics stay on raw scale."
+        },
+        "correlation": 0.9961394342571596
+      },
+      "num_generated_windows": 300,
+      "random_generated": {
+        "mean": 4836285952.0,
+        "std": 9673450496.0,
+        "min": 0.8373942375183105,
+        "max": 26879954944.0
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 4810199552.0,
+          "generated_mean": 4836285952.0,
+          "mean_error": 26086400.0,
+          "mean_abs_error": 26086400.0,
+          "mean_error_percent": 0.5423142993964505,
+          "mean_abs_error_percent": 0.5423142993964505
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 24050997248.0,
+            "generated_mean": 24181428224.0,
+            "mean_error": 130430976.0,
+            "mean_abs_error": 130430976.0,
+            "mean_error_percent": 0.5423100533215777,
+            "mean_abs_error_percent": 0.5423100533215777
+          },
+          "NETD_mK": {
+            "original_mean": 15.980156898498535,
+            "generated_mean": 22.3437442779541,
+            "mean_error": 6.363587379455566,
+            "mean_abs_error": 6.363587379455566,
+            "mean_error_percent": 39.82180788258391,
+            "mean_abs_error_percent": 39.82180788258391
+          },
+          "SiTF": {
+            "original_mean": 0.9630831480026245,
+            "generated_mean": 0.8885819315910339,
+            "mean_error": -0.07450121641159058,
+            "mean_abs_error": 0.07450121641159058,
+            "mean_error_percent": -7.735699307593694,
+            "mean_abs_error_percent": 7.735699307593694
+          },
+          "signal_gain": {
+            "original_mean": 0.9630831480026245,
+            "generated_mean": 0.8768296241760254,
+            "mean_error": -0.08625352382659912,
+            "mean_abs_error": 0.08625352382659912,
+            "mean_error_percent": -8.955978931360562,
+            "mean_abs_error_percent": 8.955978931360562
+          },
+          "read_noise_index": {
+            "original_mean": 1.0391134023666382,
+            "generated_mean": 1.229972004890442,
+            "mean_error": 0.1908586025238037,
+            "mean_abs_error": 0.1908586025238037,
+            "mean_error_percent": 18.367446910906228,
+            "mean_abs_error_percent": 18.367446910906228
+          }
+        }
+      },
+      "reconstruction_mean_bias": {
+        "overall": {
+          "original_mean": 5092341760.0,
+          "generated_mean": 4922529792.0,
+          "mean_error": -169811968.0,
+          "mean_abs_error": 169811968.0,
+          "mean_error_percent": -3.334653799826664,
+          "mean_abs_error_percent": 3.334653799826664
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 25461708800.0,
+            "generated_mean": 24612646912.0,
+            "mean_error": -849061888.0,
+            "mean_abs_error": 849061888.0,
+            "mean_error_percent": -3.3346618432773845,
+            "mean_abs_error_percent": 3.3346618432773845
+          },
+          "NETD_mK": {
+            "original_mean": 15.797327041625977,
+            "generated_mean": 15.789754867553711,
+            "mean_error": -0.007572174072265625,
+            "mean_abs_error": 0.007572174072265625,
+            "mean_error_percent": -0.04793326144551503,
+            "mean_abs_error_percent": 0.04793326144551503
+          },
+          "SiTF": {
+            "original_mean": 0.978194534778595,
+            "generated_mean": 0.996900200843811,
+            "mean_error": 0.018705666065216064,
+            "mean_abs_error": 0.018705666065216064,
+            "mean_error_percent": 1.9122644218667522,
+            "mean_abs_error_percent": 1.9122644218667522
+          },
+          "signal_gain": {
+            "original_mean": 0.978194534778595,
+            "generated_mean": 0.9714571833610535,
+            "mean_error": -0.006737351417541504,
+            "mean_abs_error": 0.006737351417541504,
+            "mean_error_percent": -0.6887537374216101,
+            "mean_abs_error_percent": 0.6887537374216101
+          },
+          "read_noise_index": {
+            "original_mean": 1.0292984247207642,
+            "generated_mean": 1.0406560897827148,
+            "mean_error": 0.011357665061950684,
+            "mean_abs_error": 0.011357665061950684,
+            "mean_error_percent": 1.1034375249366457,
+            "mean_abs_error_percent": 1.1034375249366457
+          }
+        }
+      }
+    },
+    "coupled_severe_fault": {
+      "num_original_windows": 55,
+      "generated_file": "generated_coupled_severe_fault.npy",
+      "signal_comparison": "coupled_severe_fault_signal_comparison.png",
+      "frequency_comparison": "coupled_severe_fault_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 3610764544.0,
+        "original_std": 7476169216.0,
+        "generated_mean": 3783308800.0,
+        "generated_std": 7575546880.0,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 3610764544.0,
+            "generated_mean": 3783308800.0,
+            "mean_error": 172544256.0,
+            "mean_abs_error": 172544256.0,
+            "mean_error_percent": 4.778607242245037,
+            "mean_abs_error_percent": 4.778607242245037
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 18053822464.0,
+              "generated_mean": 18916544512.0,
+              "mean_error": 862722048.0,
+              "mean_abs_error": 862722048.0,
+              "mean_error_percent": 4.778611563951624,
+              "mean_abs_error_percent": 4.778611563951624
+            },
+            "NETD_mK": {
+              "original_mean": 24.418853759765625,
+              "generated_mean": 28.873279571533203,
+              "mean_error": 4.454425811767578,
+              "mean_abs_error": 4.454425811767578,
+              "mean_error_percent": 18.2417481819193,
+              "mean_abs_error_percent": 18.2417481819193
+            },
+            "SiTF": {
+              "original_mean": 0.7504082918167114,
+              "generated_mean": 0.6060668230056763,
+              "mean_error": -0.14434146881103516,
+              "mean_abs_error": 0.14434146881103516,
+              "mean_error_percent": -19.23505781920262,
+              "mean_abs_error_percent": 19.23505781920262
+            },
+            "signal_gain": {
+              "original_mean": 0.7504082918167114,
+              "generated_mean": 0.584915280342102,
+              "mean_error": -0.16549301147460938,
+              "mean_abs_error": 0.16549301147460938,
+              "mean_error_percent": -22.053729053813726,
+              "mean_abs_error_percent": 22.053729053813726
+            },
+            "read_noise_index": {
+              "original_mean": 1.4515470266342163,
+              "generated_mean": 2.7989890575408936,
+              "mean_error": 1.3474420309066772,
+              "mean_abs_error": 1.3474420309066772,
+              "mean_error_percent": 92.82799703920492,
+              "mean_abs_error_percent": 92.82799703920492
+            }
+          }
+        },
+        "plot_mode": "per_feature_minmax_display",
+        "display_normalization": {
+          "mode": "per_feature_minmax",
+          "applied_to": [
+            "avg_detectivity",
+            "NETD_mK",
+            "SiTF",
+            "signal_gain",
+            "read_noise_index"
+          ],
+          "note": "Only signal/frequency plots use normalized values; metrics stay on raw scale."
+        },
+        "correlation": 0.9654294531855195
+      },
+      "num_generated_windows": 300,
+      "random_generated": {
+        "mean": 3780338688.0,
+        "std": 7569370112.0,
+        "min": 0.43305703997612,
+        "max": 21850427392.0
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 3534573824.0,
+          "generated_mean": 3780338688.0,
+          "mean_error": 245764864.0,
+          "mean_abs_error": 245764864.0,
+          "mean_error_percent": 6.953168224447305,
+          "mean_abs_error_percent": 6.953168224447305
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 17672869888.0,
+            "generated_mean": 18901696512.0,
+            "mean_error": 1228826624.0,
+            "mean_abs_error": 1228826624.0,
+            "mean_error_percent": 6.953180959219203,
+            "mean_abs_error_percent": 6.953180959219203
+          },
+          "NETD_mK": {
+            "original_mean": 22.58649253845215,
+            "generated_mean": 29.202152252197266,
+            "mean_error": 6.615659713745117,
+            "mean_abs_error": 6.615659713745117,
+            "mean_error_percent": 29.29033670226731,
+            "mean_abs_error_percent": 29.29033670226731
+          },
+          "SiTF": {
+            "original_mean": 0.7477434873580933,
+            "generated_mean": 0.6017985939979553,
+            "mean_error": -0.14594489336013794,
+            "mean_abs_error": 0.14594489336013794,
+            "mean_error_percent": -19.518042728233773,
+            "mean_abs_error_percent": 19.518042728233773
+          },
+          "signal_gain": {
+            "original_mean": 0.7477434873580933,
+            "generated_mean": 0.5807399749755859,
+            "mean_error": -0.16700351238250732,
+            "mean_abs_error": 0.16700351238250732,
+            "mean_error_percent": -22.334331920771326,
+            "mean_abs_error_percent": 22.334331920771326
+          },
+          "read_noise_index": {
+            "original_mean": 1.4121776819229126,
+            "generated_mean": 2.8395652770996094,
+            "mean_error": 1.4273875951766968,
+            "mean_abs_error": 1.4273875951766968,
+            "mean_error_percent": 101.07705379064436,
+            "mean_abs_error_percent": 101.07705379064436
+          }
+        }
+      },
+      "reconstruction_mean_bias": {
+        "overall": {
+          "original_mean": 3610764544.0,
+          "generated_mean": 3776204544.0,
+          "mean_error": 165440000.0,
+          "mean_abs_error": 165440000.0,
+          "mean_error_percent": 4.581855116388337,
+          "mean_abs_error_percent": 4.581855116388337
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 18053822464.0,
+            "generated_mean": 18881024000.0,
+            "mean_error": 827201536.0,
+            "mean_abs_error": 827201536.0,
+            "mean_error_percent": 4.581863689251796,
+            "mean_abs_error_percent": 4.581863689251796
+          },
+          "NETD_mK": {
+            "original_mean": 24.418853759765625,
+            "generated_mean": 22.89083480834961,
+            "mean_error": -1.5280189514160156,
+            "mean_abs_error": 1.5280189514160156,
+            "mean_error_percent": -6.257537583249287,
+            "mean_abs_error_percent": 6.257537583249287
+          },
+          "SiTF": {
+            "original_mean": 0.7504082918167114,
+            "generated_mean": 0.7847444415092468,
+            "mean_error": 0.0343361496925354,
+            "mean_abs_error": 0.0343361496925354,
+            "mean_error_percent": 4.575662351679086,
+            "mean_abs_error_percent": 4.575662351679086
+          },
+          "signal_gain": {
+            "original_mean": 0.7504082918167114,
+            "generated_mean": 0.7628722190856934,
+            "mean_error": 0.012463927268981934,
+            "mean_abs_error": 0.012463927268981934,
+            "mean_error_percent": 1.6609527646352646,
+            "mean_abs_error_percent": 1.6609527646352646
+          },
+          "read_noise_index": {
+            "original_mean": 1.4515470266342163,
+            "generated_mean": 1.3734079599380493,
+            "mean_error": -0.07813906669616699,
+            "mean_abs_error": 0.07813906669616699,
+            "mean_error_percent": -5.3831577801066794,
+            "mean_abs_error_percent": 5.3831577801066794
+          }
+        }
+      }
+    }
+  },
+  "statistics": {
+    "original_mean": 4965224960.0,
+    "original_std": 10005700608.0,
+    "generated_mean": 5011304448.0,
+    "generated_std": 10023619584.0,
+    "mean_bias": {
+      "overall": {
+        "original_mean": 4965224960.0,
+        "generated_mean": 5011304448.0,
+        "mean_error": 46079488.0,
+        "mean_abs_error": 46079488.0,
+        "mean_error_percent": 0.9280443156396281,
+        "mean_abs_error_percent": 0.9280443156396281
+      },
+      "per_feature": {
+        "avg_detectivity": {
+          "original_mean": 24826126336.0,
+          "generated_mean": 25056522240.0,
+          "mean_error": 230395904.0,
+          "mean_abs_error": 230395904.0,
+          "mean_error_percent": 0.9280380711907774,
+          "mean_abs_error_percent": 0.9280380711907774
+        },
+        "NETD_mK": {
+          "original_mean": 15.354879379272461,
+          "generated_mean": 14.75152587890625,
+          "mean_error": -0.6033535003662109,
+          "mean_abs_error": 0.6033535003662109,
+          "mean_error_percent": -3.9293926410172735,
+          "mean_abs_error_percent": 3.9293926410172735
+        },
+        "SiTF": {
+          "original_mean": 0.977566123008728,
+          "generated_mean": 0.989486038684845,
+          "mean_error": 0.011919915676116943,
+          "mean_abs_error": 0.011919915676116943,
+          "mean_error_percent": 1.2193462309669787,
+          "mean_abs_error_percent": 1.2193462309669787
+        },
+        "signal_gain": {
+          "original_mean": 0.977566123008728,
+          "generated_mean": 0.9957057237625122,
+          "mean_error": 0.01813960075378418,
+          "mean_abs_error": 0.01813960075378418,
+          "mean_error_percent": 1.855588110802631,
+          "mean_abs_error_percent": 1.855588110802631
+        },
+        "read_noise_index": {
+          "original_mean": 1.0101897716522217,
+          "generated_mean": 1.0082030296325684,
+          "mean_error": -0.0019867420196533203,
+          "mean_abs_error": 0.0019867420196533203,
+          "mean_error_percent": -0.19667017776312398,
+          "mean_abs_error_percent": 0.19667017776312398
+        }
+      }
+    },
+    "plot_mode": "per_feature_minmax_display",
+    "display_normalization": {
+      "mode": "per_feature_minmax",
+      "applied_to": [
+        "avg_detectivity",
+        "NETD_mK",
+        "SiTF",
+        "signal_gain",
+        "read_noise_index"
+      ],
+      "note": "Only signal/frequency plots use normalized values; metrics stay on raw scale."
+    },
+    "correlation": 0.9921016386819169,
+    "random_generated": {
+      "mean": 4539090944.0,
+      "std": 9143824384.0,
+      "min": 0.43305703997612,
+      "max": 26879954944.0
+    },
+    "original": {
+      "mean": 4332272640.0,
+      "std": 8892827648.0,
+      "min": 0.17190921306610107,
+      "max": 32892594176.0
+    },
+    "generated_vs_original_mean_bias": {
+      "overall": {
+        "original_mean": 4332272640.0,
+        "generated_mean": 4539090944.0,
+        "mean_error": 206818304.0,
+        "mean_abs_error": 206818304.0,
+        "mean_error_percent": 4.773898625179786,
+        "mean_abs_error_percent": 4.773898625179786
+      },
+      "per_feature": {
+        "avg_detectivity": {
+          "original_mean": 21661366272.0,
+          "generated_mean": 22695467008.0,
+          "mean_error": 1034100736.0,
+          "mean_abs_error": 1034100736.0,
+          "mean_error_percent": 4.773940493941526,
+          "mean_abs_error_percent": 4.773940493941526
+        },
+        "NETD_mK": {
+          "original_mean": 17.992202758789062,
+          "generated_mean": 21.06108856201172,
+          "mean_error": 3.0688858032226562,
+          "mean_abs_error": 3.0688858032226562,
+          "mean_error_percent": 17.05675421939944,
+          "mean_abs_error_percent": 17.05675421939944
+        },
+        "SiTF": {
+          "original_mean": 0.8916650414466858,
+          "generated_mean": 0.845934271812439,
+          "mean_error": -0.045730769634246826,
+          "mean_abs_error": 0.045730769634246826,
+          "mean_error_percent": -5.128693792912498,
+          "mean_abs_error_percent": 5.128693792912498
+        },
+        "signal_gain": {
+          "original_mean": 0.8916650414466858,
+          "generated_mean": 0.8394347429275513,
+          "mean_error": -0.05223029851913452,
+          "mean_abs_error": 0.05223029851913452,
+          "mean_error_percent": -5.85761424877589,
+          "mean_abs_error_percent": 5.85761424877589
+        },
+        "read_noise_index": {
+          "original_mean": 1.1626681089401245,
+          "generated_mean": 1.5399019718170166,
+          "mean_error": 0.3772338628768921,
+          "mean_abs_error": 0.3772338628768921,
+          "mean_error_percent": 32.445532820262386,
+          "mean_abs_error_percent": 32.445532820262386
+        }
+      }
+    }
+  }
+}

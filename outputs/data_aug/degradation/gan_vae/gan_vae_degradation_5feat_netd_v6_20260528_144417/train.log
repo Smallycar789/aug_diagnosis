@@ -1,0 +1,175 @@
+Model: gan_vae | Dataset: degradation | Device: cuda
+Output: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/gan_vae/gan_vae_degradation_5feat_netd_v6_20260528_144417
+
+=== Training ===
+
+--- VAE-GAN class: normal (29 windows) ---
+Epoch [ 10/250] | D_loss: 0.677504 | G_loss: 3.754297 | Recon: 0.282160 | MeanMatch: 1.400104 | RandMeanMatch: 1.405627 | KL: 7.929851
+Epoch [ 20/250] | D_loss: 0.655978 | G_loss: 3.703871 | Recon: 0.270268 | MeanMatch: 1.347700 | RandMeanMatch: 1.396124 | KL: 10.042374
+Epoch [ 30/250] | D_loss: 0.625833 | G_loss: 2.721977 | Recon: 0.192131 | MeanMatch: 0.873106 | RandMeanMatch: 0.926136 | KL: 13.767839
+Epoch [ 40/250] | D_loss: 0.578033 | G_loss: 3.438456 | Recon: 0.234110 | MeanMatch: 1.117594 | RandMeanMatch: 1.282788 | KL: 24.810955
+Epoch [ 50/250] | D_loss: 0.515634 | G_loss: 3.539141 | Recon: 0.225494 | MeanMatch: 1.060398 | RandMeanMatch: 1.345692 | KL: 49.872574
+Epoch [ 60/250] | D_loss: 0.446268 | G_loss: 3.152682 | Recon: 0.175857 | MeanMatch: 0.717263 | RandMeanMatch: 1.203390 | KL: 93.650192
+Epoch [ 70/250] | D_loss: 0.434634 | G_loss: 3.389528 | Recon: 0.159639 | MeanMatch: 0.581584 | RandMeanMatch: 1.431369 | KL: 179.319885
+Epoch [ 80/250] | D_loss: 0.500882 | G_loss: 2.989993 | Recon: 0.128714 | MeanMatch: 0.318660 | RandMeanMatch: 1.311729 | KL: 296.945679
+Epoch [ 90/250] | D_loss: 0.602420 | G_loss: 2.510667 | Recon: 0.110768 | MeanMatch: 0.114067 | RandMeanMatch: 1.191412 | KL: 390.389343
+Epoch [100/250] | D_loss: 0.726328 | G_loss: 2.589911 | Recon: 0.112567 | MeanMatch: 0.039716 | RandMeanMatch: 1.357482 | KL: 488.542847
+Epoch [110/250] | D_loss: 0.720699 | G_loss: 2.653319 | Recon: 0.142410 | MeanMatch: 0.127007 | RandMeanMatch: 1.090380 | KL: 556.016846
+Epoch [120/250] | D_loss: 0.666277 | G_loss: 2.585943 | Recon: 0.153495 | MeanMatch: 0.096738 | RandMeanMatch: 1.241904 | KL: 578.696899
+Epoch [130/250] | D_loss: 0.581120 | G_loss: 2.765992 | Recon: 0.146553 | MeanMatch: 0.123287 | RandMeanMatch: 1.318932 | KL: 543.197876
+Epoch [140/250] | D_loss: 0.431775 | G_loss: 2.902985 | Recon: 0.139086 | MeanMatch: 0.089983 | RandMeanMatch: 1.416766 | KL: 506.036957
+Epoch [150/250] | D_loss: 0.435697 | G_loss: 2.633254 | Recon: 0.135223 | MeanMatch: 0.123232 | RandMeanMatch: 1.164510 | KL: 444.368286
+Epoch [160/250] | D_loss: 0.430183 | G_loss: 2.869051 | Recon: 0.118981 | MeanMatch: 0.078508 | RandMeanMatch: 1.529208 | KL: 391.865936
+Epoch [170/250] | D_loss: 0.449093 | G_loss: 2.455998 | Recon: 0.106927 | MeanMatch: 0.070175 | RandMeanMatch: 1.162515 | KL: 331.907318
+Epoch [180/250] | D_loss: 0.497650 | G_loss: 2.633168 | Recon: 0.113606 | MeanMatch: 0.159032 | RandMeanMatch: 1.218080 | KL: 298.924500
+Epoch [190/250] | D_loss: 0.475278 | G_loss: 2.911997 | Recon: 0.110401 | MeanMatch: 0.130259 | RandMeanMatch: 1.538935 | KL: 308.107697
+Epoch [200/250] | D_loss: 0.466269 | G_loss: 2.265200 | Recon: 0.101136 | MeanMatch: 0.071364 | RandMeanMatch: 0.979579 | KL: 300.025024
+Epoch [210/250] | D_loss: 0.461951 | G_loss: 2.631159 | Recon: 0.101954 | MeanMatch: 0.086509 | RandMeanMatch: 1.278614 | KL: 321.615021
+Epoch [220/250] | D_loss: 0.477093 | G_loss: 3.172981 | Recon: 0.144521 | MeanMatch: 0.291985 | RandMeanMatch: 1.521168 | KL: 325.250977
+Epoch [230/250] | D_loss: 0.469966 | G_loss: 2.768810 | Recon: 0.119826 | MeanMatch: 0.162628 | RandMeanMatch: 1.277551 | KL: 350.362427
+Epoch [240/250] | D_loss: 0.484160 | G_loss: 3.003826 | Recon: 0.113765 | MeanMatch: 0.172514 | RandMeanMatch: 1.563799 | KL: 343.627747
+Epoch [250/250] | D_loss: 0.463456 | G_loss: 2.590024 | Recon: 0.106349 | MeanMatch: 0.104844 | RandMeanMatch: 1.313053 | KL: 358.442413
+
+--- VAE-GAN class: sensitivity_degradation (35 windows) ---
+Epoch [ 10/250] | D_loss: 0.551369 | G_loss: 6.262772 | Recon: 0.491086 | MeanMatch: 2.385842 | RandMeanMatch: 2.461073 | KL: 13.468166
+Epoch [ 20/250] | D_loss: 0.255968 | G_loss: 6.480553 | Recon: 0.442335 | MeanMatch: 2.092351 | RandMeanMatch: 2.341920 | KL: 38.624645
+Epoch [ 30/250] | D_loss: 0.069243 | G_loss: 6.904172 | Recon: 0.333081 | MeanMatch: 1.421247 | RandMeanMatch: 2.234448 | KL: 112.889053
+Epoch [ 40/250] | D_loss: 0.030686 | G_loss: 6.476865 | Recon: 0.168180 | MeanMatch: 0.317706 | RandMeanMatch: 2.085273 | KL: 285.818329
+Epoch [ 50/250] | D_loss: 0.023931 | G_loss: 6.457022 | Recon: 0.144492 | MeanMatch: 0.060465 | RandMeanMatch: 2.039255 | KL: 509.563004
+Epoch [ 60/250] | D_loss: 0.021760 | G_loss: 6.585320 | Recon: 0.153015 | MeanMatch: 0.102086 | RandMeanMatch: 2.034492 | KL: 676.397064
+Epoch [ 70/250] | D_loss: 0.032240 | G_loss: 6.550921 | Recon: 0.170245 | MeanMatch: 0.154540 | RandMeanMatch: 2.065374 | KL: 895.984528
+Epoch [ 80/250] | D_loss: 0.070818 | G_loss: 6.051805 | Recon: 0.204961 | MeanMatch: 0.187512 | RandMeanMatch: 2.125605 | KL: 1283.324707
+Epoch [ 90/250] | D_loss: 0.072327 | G_loss: 5.943252 | Recon: 0.248095 | MeanMatch: 0.124465 | RandMeanMatch: 2.068861 | KL: 1705.458740
+Epoch [100/250] | D_loss: 0.042140 | G_loss: 6.707963 | Recon: 0.304679 | MeanMatch: 0.159679 | RandMeanMatch: 2.078721 | KL: 1899.438354
+Epoch [110/250] | D_loss: 0.104690 | G_loss: 5.657805 | Recon: 0.290598 | MeanMatch: 0.229225 | RandMeanMatch: 1.954064 | KL: 1620.632019
+Epoch [120/250] | D_loss: 0.102357 | G_loss: 5.381170 | Recon: 0.192567 | MeanMatch: 0.104998 | RandMeanMatch: 2.042195 | KL: 1112.385376
+Epoch [130/250] | D_loss: 0.044183 | G_loss: 5.317307 | Recon: 0.128651 | MeanMatch: 0.079209 | RandMeanMatch: 1.844120 | KL: 516.168610
+Epoch [140/250] | D_loss: 0.033626 | G_loss: 5.656106 | Recon: 0.107370 | MeanMatch: 0.113010 | RandMeanMatch: 1.791677 | KL: 401.719116
+Epoch [150/250] | D_loss: 0.045461 | G_loss: 5.481572 | Recon: 0.084325 | MeanMatch: 0.120134 | RandMeanMatch: 1.843439 | KL: 367.196289
+Epoch [160/250] | D_loss: 0.111839 | G_loss: 4.542342 | Recon: 0.083627 | MeanMatch: 0.207692 | RandMeanMatch: 1.623449 | KL: 430.896072
+Epoch [170/250] | D_loss: 0.269490 | G_loss: 4.082880 | Recon: 0.099269 | MeanMatch: 0.311925 | RandMeanMatch: 1.710737 | KL: 642.039368
+Epoch [180/250] | D_loss: 0.271599 | G_loss: 3.781034 | Recon: 0.099025 | MeanMatch: 0.263799 | RandMeanMatch: 1.596083 | KL: 700.285095
+Epoch [190/250] | D_loss: 0.207480 | G_loss: 4.336677 | Recon: 0.075704 | MeanMatch: 0.095331 | RandMeanMatch: 1.600806 | KL: 533.894623
+Epoch [200/250] | D_loss: 0.373000 | G_loss: 3.815159 | Recon: 0.056457 | MeanMatch: 0.083457 | RandMeanMatch: 1.643776 | KL: 346.970123
+Epoch [210/250] | D_loss: 0.723703 | G_loss: 2.691827 | Recon: 0.057264 | MeanMatch: 0.098752 | RandMeanMatch: 1.607999 | KL: 386.880905
+Epoch [220/250] | D_loss: 0.472507 | G_loss: 3.194957 | Recon: 0.055728 | MeanMatch: 0.079977 | RandMeanMatch: 1.527768 | KL: 347.285202
+Epoch [230/250] | D_loss: 0.300355 | G_loss: 3.119705 | Recon: 0.046672 | MeanMatch: 0.069487 | RandMeanMatch: 1.542950 | KL: 338.164841
+Epoch [240/250] | D_loss: 0.486109 | G_loss: 2.759391 | Recon: 0.047833 | MeanMatch: 0.090290 | RandMeanMatch: 1.547463 | KL: 391.179993
+Epoch [250/250] | D_loss: 0.813153 | G_loss: 2.545645 | Recon: 0.064510 | MeanMatch: 0.121072 | RandMeanMatch: 1.486610 | KL: 455.516342
+
+--- VAE-GAN class: mtf_degradation (31 windows) ---
+Epoch [ 10/250] | D_loss: 0.664941 | G_loss: 2.682399 | Recon: 0.199052 | MeanMatch: 0.898358 | RandMeanMatch: 0.906707 | KL: 8.162974
+Epoch [ 20/250] | D_loss: 0.630990 | G_loss: 3.036482 | Recon: 0.224114 | MeanMatch: 1.030777 | RandMeanMatch: 1.042824 | KL: 9.185833
+Epoch [ 30/250] | D_loss: 0.566019 | G_loss: 3.293135 | Recon: 0.230896 | MeanMatch: 1.104865 | RandMeanMatch: 1.130159 | KL: 12.890680
+Epoch [ 40/250] | D_loss: 0.476704 | G_loss: 3.044581 | Recon: 0.202894 | MeanMatch: 0.908960 | RandMeanMatch: 0.965558 | KL: 18.448603
+Epoch [ 50/250] | D_loss: 0.403144 | G_loss: 3.854258 | Recon: 0.239302 | MeanMatch: 1.144232 | RandMeanMatch: 1.277272 | KL: 34.349380
+Epoch [ 60/250] | D_loss: 0.273990 | G_loss: 4.276231 | Recon: 0.248769 | MeanMatch: 1.150908 | RandMeanMatch: 1.375646 | KL: 67.918823
+Epoch [ 70/250] | D_loss: 0.257360 | G_loss: 3.468628 | Recon: 0.157648 | MeanMatch: 0.590497 | RandMeanMatch: 0.943685 | KL: 127.714546
+Epoch [ 80/250] | D_loss: 0.260732 | G_loss: 3.254718 | Recon: 0.118577 | MeanMatch: 0.238674 | RandMeanMatch: 0.762849 | KL: 240.398041
+Epoch [ 90/250] | D_loss: 0.373550 | G_loss: 3.874048 | Recon: 0.170147 | MeanMatch: 0.255108 | RandMeanMatch: 1.156571 | KL: 414.099243
+Epoch [100/250] | D_loss: 0.571609 | G_loss: 3.253833 | Recon: 0.192654 | MeanMatch: 0.071251 | RandMeanMatch: 0.844264 | KL: 576.622803
+Epoch [110/250] | D_loss: 0.583067 | G_loss: 3.535782 | Recon: 0.304755 | MeanMatch: 0.235116 | RandMeanMatch: 1.173074 | KL: 750.011108
+Epoch [120/250] | D_loss: 0.475695 | G_loss: 3.387606 | Recon: 0.367295 | MeanMatch: 0.282513 | RandMeanMatch: 1.030786 | KL: 819.986328
+Epoch [130/250] | D_loss: 0.396984 | G_loss: 3.261958 | Recon: 0.377770 | MeanMatch: 0.092842 | RandMeanMatch: 1.152878 | KL: 859.560669
+Epoch [140/250] | D_loss: 0.370585 | G_loss: 2.924193 | Recon: 0.337094 | MeanMatch: 0.143084 | RandMeanMatch: 0.708951 | KL: 782.218140
+Epoch [150/250] | D_loss: 0.397503 | G_loss: 2.960157 | Recon: 0.312846 | MeanMatch: 0.128531 | RandMeanMatch: 0.963231 | KL: 711.203735
+Epoch [160/250] | D_loss: 0.429702 | G_loss: 3.373167 | Recon: 0.286301 | MeanMatch: 0.252894 | RandMeanMatch: 1.238057 | KL: 620.037109
+Epoch [170/250] | D_loss: 0.348765 | G_loss: 3.287312 | Recon: 0.254892 | MeanMatch: 0.238254 | RandMeanMatch: 1.173620 | KL: 527.935791
+Epoch [180/250] | D_loss: 0.415056 | G_loss: 3.253393 | Recon: 0.210903 | MeanMatch: 0.294952 | RandMeanMatch: 1.139475 | KL: 428.771362
+Epoch [190/250] | D_loss: 0.341963 | G_loss: 3.064816 | Recon: 0.184123 | MeanMatch: 0.274104 | RandMeanMatch: 1.066901 | KL: 374.156769
+Epoch [200/250] | D_loss: 0.310953 | G_loss: 2.738284 | Recon: 0.149938 | MeanMatch: 0.191204 | RandMeanMatch: 0.843338 | KL: 330.359467
+Epoch [210/250] | D_loss: 0.309880 | G_loss: 2.865007 | Recon: 0.147511 | MeanMatch: 0.263946 | RandMeanMatch: 0.929084 | KL: 289.823364
+Epoch [220/250] | D_loss: 0.286783 | G_loss: 2.590657 | Recon: 0.128185 | MeanMatch: 0.199336 | RandMeanMatch: 0.773539 | KL: 289.808899
+Epoch [230/250] | D_loss: 0.356509 | G_loss: 2.938307 | Recon: 0.147311 | MeanMatch: 0.302114 | RandMeanMatch: 1.025784 | KL: 316.302216
+Epoch [240/250] | D_loss: 0.363427 | G_loss: 2.575846 | Recon: 0.121430 | MeanMatch: 0.212562 | RandMeanMatch: 0.764662 | KL: 312.075745
+Epoch [250/250] | D_loss: 0.359049 | G_loss: 2.659948 | Recon: 0.135444 | MeanMatch: 0.231905 | RandMeanMatch: 0.950056 | KL: 331.176361
+
+--- VAE-GAN class: nonuniformity_degradation (37 windows) ---
+Epoch [ 10/250] | D_loss: 0.548688 | G_loss: 2.574486 | Recon: 0.217190 | MeanMatch: 0.733437 | RandMeanMatch: 0.762549 | KL: 11.163328
+Epoch [ 20/250] | D_loss: 0.257725 | G_loss: 3.103528 | Recon: 0.189100 | MeanMatch: 0.625698 | RandMeanMatch: 0.742567 | KL: 29.190052
+Epoch [ 30/250] | D_loss: 0.076850 | G_loss: 4.022638 | Recon: 0.164466 | MeanMatch: 0.394213 | RandMeanMatch: 0.733566 | KL: 92.378700
+Epoch [ 40/250] | D_loss: 0.028053 | G_loss: 4.568470 | Recon: 0.132800 | MeanMatch: 0.160997 | RandMeanMatch: 0.586989 | KL: 221.685196
+Epoch [ 50/250] | D_loss: 0.063112 | G_loss: 5.026375 | Recon: 0.133617 | MeanMatch: 0.107832 | RandMeanMatch: 0.598735 | KL: 484.792755
+Epoch [ 60/250] | D_loss: 0.255550 | G_loss: 5.045984 | Recon: 0.144897 | MeanMatch: 0.098545 | RandMeanMatch: 0.592282 | KL: 940.777130
+Epoch [ 70/250] | D_loss: 0.472260 | G_loss: 3.501218 | Recon: 0.193290 | MeanMatch: 0.195003 | RandMeanMatch: 0.609257 | KL: 1413.586914
+Epoch [ 80/250] | D_loss: 0.402457 | G_loss: 3.617350 | Recon: 0.216036 | MeanMatch: 0.263979 | RandMeanMatch: 0.724077 | KL: 1501.764343
+Epoch [ 90/250] | D_loss: 0.407159 | G_loss: 2.854429 | Recon: 0.192678 | MeanMatch: 0.150579 | RandMeanMatch: 0.727728 | KL: 1434.706604
+Epoch [100/250] | D_loss: 0.436555 | G_loss: 2.555198 | Recon: 0.160175 | MeanMatch: 0.156616 | RandMeanMatch: 0.678097 | KL: 1229.043030
+Epoch [110/250] | D_loss: 0.396643 | G_loss: 2.607389 | Recon: 0.125460 | MeanMatch: 0.174137 | RandMeanMatch: 0.713459 | KL: 881.088837
+Epoch [120/250] | D_loss: 0.368653 | G_loss: 2.323172 | Recon: 0.108454 | MeanMatch: 0.146636 | RandMeanMatch: 0.576994 | KL: 753.752533
+Epoch [130/250] | D_loss: 0.361427 | G_loss: 2.367312 | Recon: 0.096719 | MeanMatch: 0.125124 | RandMeanMatch: 0.602797 | KL: 750.427551
+Epoch [140/250] | D_loss: 0.389289 | G_loss: 2.408784 | Recon: 0.088457 | MeanMatch: 0.126514 | RandMeanMatch: 0.658342 | KL: 689.534271
+Epoch [150/250] | D_loss: 0.449462 | G_loss: 2.245528 | Recon: 0.089754 | MeanMatch: 0.157631 | RandMeanMatch: 0.604736 | KL: 654.416016
+Epoch [160/250] | D_loss: 0.500403 | G_loss: 2.171146 | Recon: 0.080216 | MeanMatch: 0.117009 | RandMeanMatch: 0.608203 | KL: 629.941406
+Epoch [170/250] | D_loss: 0.545031 | G_loss: 2.092086 | Recon: 0.079997 | MeanMatch: 0.129179 | RandMeanMatch: 0.629952 | KL: 608.243652
+Epoch [180/250] | D_loss: 0.557268 | G_loss: 2.004489 | Recon: 0.080277 | MeanMatch: 0.149382 | RandMeanMatch: 0.688359 | KL: 590.715179
+Epoch [190/250] | D_loss: 0.539921 | G_loss: 1.985456 | Recon: 0.082728 | MeanMatch: 0.145203 | RandMeanMatch: 0.647194 | KL: 564.871368
+Epoch [200/250] | D_loss: 0.497619 | G_loss: 2.040301 | Recon: 0.085325 | MeanMatch: 0.157550 | RandMeanMatch: 0.665449 | KL: 435.726868
+Epoch [210/250] | D_loss: 0.593613 | G_loss: 1.769195 | Recon: 0.078288 | MeanMatch: 0.147830 | RandMeanMatch: 0.539641 | KL: 390.733032
+Epoch [220/250] | D_loss: 0.601073 | G_loss: 1.796993 | Recon: 0.074946 | MeanMatch: 0.139008 | RandMeanMatch: 0.665709 | KL: 388.414352
+Epoch [230/250] | D_loss: 0.570263 | G_loss: 1.794333 | Recon: 0.074488 | MeanMatch: 0.135952 | RandMeanMatch: 0.630418 | KL: 368.159271
+Epoch [240/250] | D_loss: 0.614733 | G_loss: 1.790602 | Recon: 0.074972 | MeanMatch: 0.130060 | RandMeanMatch: 0.647319 | KL: 360.558884
+Epoch [250/250] | D_loss: 0.674452 | G_loss: 1.683066 | Recon: 0.071306 | MeanMatch: 0.109428 | RandMeanMatch: 0.662614 | KL: 363.617584
+
+--- VAE-GAN class: bad_pixel_degradation (43 windows) ---
+Epoch [ 10/250] | D_loss: 0.518085 | G_loss: 8.419815 | Recon: 0.636764 | MeanMatch: 3.401256 | RandMeanMatch: 3.465636 | KL: 11.634828
+Epoch [ 20/250] | D_loss: 0.221209 | G_loss: 8.952807 | Recon: 0.606821 | MeanMatch: 3.216566 | RandMeanMatch: 3.429899 | KL: 29.363891
+Epoch [ 30/250] | D_loss: 0.071871 | G_loss: 9.347839 | Recon: 0.520534 | MeanMatch: 2.645457 | RandMeanMatch: 3.352148 | KL: 81.307457
+Epoch [ 40/250] | D_loss: 0.040906 | G_loss: 8.798288 | Recon: 0.414245 | MeanMatch: 1.491526 | RandMeanMatch: 3.453009 | KL: 209.238777
+Epoch [ 50/250] | D_loss: 0.054995 | G_loss: 7.215610 | Recon: 0.406107 | MeanMatch: 0.365817 | RandMeanMatch: 3.137888 | KL: 396.816010
+Epoch [ 60/250] | D_loss: 0.121741 | G_loss: 6.379148 | Recon: 0.424167 | MeanMatch: 0.180666 | RandMeanMatch: 3.084363 | KL: 600.286774
+Epoch [ 70/250] | D_loss: 0.223591 | G_loss: 6.204748 | Recon: 0.330609 | MeanMatch: 0.132664 | RandMeanMatch: 3.400592 | KL: 836.711914
+Epoch [ 80/250] | D_loss: 0.070912 | G_loss: 7.189347 | Recon: 0.273784 | MeanMatch: 0.422244 | RandMeanMatch: 3.168236 | KL: 1046.592773
+Epoch [ 90/250] | D_loss: 0.104607 | G_loss: 7.097889 | Recon: 0.214898 | MeanMatch: 0.631275 | RandMeanMatch: 3.043839 | KL: 1142.542847
+Epoch [100/250] | D_loss: 0.393365 | G_loss: 5.761246 | Recon: 0.221852 | MeanMatch: 0.775489 | RandMeanMatch: 2.879625 | KL: 1104.422729
+Epoch [110/250] | D_loss: 0.313216 | G_loss: 5.839807 | Recon: 0.234005 | MeanMatch: 0.694578 | RandMeanMatch: 2.893874 | KL: 1002.032104
+Epoch [120/250] | D_loss: 0.079033 | G_loss: 6.818955 | Recon: 0.156004 | MeanMatch: 0.216387 | RandMeanMatch: 2.785223 | KL: 991.122192
+Epoch [130/250] | D_loss: 0.075672 | G_loss: 6.741971 | Recon: 0.143525 | MeanMatch: 0.092002 | RandMeanMatch: 3.018678 | KL: 606.755463
+Epoch [140/250] | D_loss: 0.128479 | G_loss: 5.792300 | Recon: 0.149110 | MeanMatch: 0.146297 | RandMeanMatch: 2.991531 | KL: 324.663727
+Epoch [150/250] | D_loss: 0.249258 | G_loss: 5.472311 | Recon: 0.172806 | MeanMatch: 0.262964 | RandMeanMatch: 3.042384 | KL: 333.189880
+Epoch [160/250] | D_loss: 0.281800 | G_loss: 4.824119 | Recon: 0.137411 | MeanMatch: 0.122260 | RandMeanMatch: 2.778416 | KL: 471.851547
+Epoch [170/250] | D_loss: 0.271586 | G_loss: 4.687178 | Recon: 0.108879 | MeanMatch: 0.050673 | RandMeanMatch: 2.697045 | KL: 494.407150
+Epoch [180/250] | D_loss: 0.401298 | G_loss: 4.268446 | Recon: 0.092845 | MeanMatch: 0.042809 | RandMeanMatch: 2.714067 | KL: 430.935516
+Epoch [190/250] | D_loss: 0.352321 | G_loss: 4.325967 | Recon: 0.078806 | MeanMatch: 0.033592 | RandMeanMatch: 2.683392 | KL: 520.553741
+Epoch [200/250] | D_loss: 0.361084 | G_loss: 4.275401 | Recon: 0.084293 | MeanMatch: 0.030424 | RandMeanMatch: 2.562513 | KL: 563.039246
+Epoch [210/250] | D_loss: 0.331651 | G_loss: 4.273576 | Recon: 0.084550 | MeanMatch: 0.020232 | RandMeanMatch: 2.609560 | KL: 510.100128
+Epoch [220/250] | D_loss: 0.381439 | G_loss: 4.251290 | Recon: 0.069510 | MeanMatch: 0.013952 | RandMeanMatch: 2.614924 | KL: 470.254150
+Epoch [230/250] | D_loss: 0.548292 | G_loss: 4.013552 | Recon: 0.062294 | MeanMatch: 0.012821 | RandMeanMatch: 2.586416 | KL: 441.449982
+Epoch [240/250] | D_loss: 0.654660 | G_loss: 3.517987 | Recon: 0.074165 | MeanMatch: 0.037782 | RandMeanMatch: 2.468727 | KL: 361.385971
+Epoch [250/250] | D_loss: 0.631102 | G_loss: 3.651247 | Recon: 0.077114 | MeanMatch: 0.065471 | RandMeanMatch: 2.507838 | KL: 340.086609
+
+--- VAE-GAN class: coupled_severe_fault (55 windows) ---
+Epoch [ 10/250] | D_loss: 0.501803 | G_loss: 4.503204 | Recon: 0.405898 | MeanMatch: 1.439289 | RandMeanMatch: 1.680271 | KL: 36.183938
+Epoch [ 20/250] | D_loss: 0.130424 | G_loss: 4.579258 | Recon: 0.267384 | MeanMatch: 0.487441 | RandMeanMatch: 1.574652 | KL: 187.330332
+Epoch [ 30/250] | D_loss: 0.055160 | G_loss: 4.847505 | Recon: 0.184474 | MeanMatch: 0.049695 | RandMeanMatch: 1.476369 | KL: 329.702637
+Epoch [ 40/250] | D_loss: 0.126494 | G_loss: 4.857345 | Recon: 0.209495 | MeanMatch: 0.367379 | RandMeanMatch: 1.467880 | KL: 643.814677
+Epoch [ 50/250] | D_loss: 0.170555 | G_loss: 4.386154 | Recon: 0.189399 | MeanMatch: 0.317072 | RandMeanMatch: 1.447201 | KL: 793.111145
+Epoch [ 60/250] | D_loss: 0.376197 | G_loss: 3.604105 | Recon: 0.152264 | MeanMatch: 0.249077 | RandMeanMatch: 1.473446 | KL: 939.229818
+Epoch [ 70/250] | D_loss: 0.194086 | G_loss: 3.923243 | Recon: 0.132200 | MeanMatch: 0.177412 | RandMeanMatch: 1.484840 | KL: 936.650533
+Epoch [ 80/250] | D_loss: 0.302918 | G_loss: 3.640124 | Recon: 0.109353 | MeanMatch: 0.136711 | RandMeanMatch: 1.581939 | KL: 796.449178
+Epoch [ 90/250] | D_loss: 0.674660 | G_loss: 2.850434 | Recon: 0.111667 | MeanMatch: 0.173914 | RandMeanMatch: 1.531219 | KL: 794.445679
+Epoch [100/250] | D_loss: 0.858216 | G_loss: 2.681190 | Recon: 0.108454 | MeanMatch: 0.191651 | RandMeanMatch: 1.422513 | KL: 712.358276
+Epoch [110/250] | D_loss: 0.622982 | G_loss: 2.658077 | Recon: 0.102120 | MeanMatch: 0.162806 | RandMeanMatch: 1.319874 | KL: 657.238139
+Epoch [120/250] | D_loss: 0.362292 | G_loss: 2.999337 | Recon: 0.102205 | MeanMatch: 0.186632 | RandMeanMatch: 1.299901 | KL: 605.030965
+Epoch [130/250] | D_loss: 0.500726 | G_loss: 2.892446 | Recon: 0.091658 | MeanMatch: 0.178731 | RandMeanMatch: 1.374237 | KL: 644.269897
+Epoch [140/250] | D_loss: 0.712918 | G_loss: 2.635472 | Recon: 0.115089 | MeanMatch: 0.155303 | RandMeanMatch: 1.324286 | KL: 781.356730
+Epoch [150/250] | D_loss: 0.672374 | G_loss: 2.521141 | Recon: 0.102200 | MeanMatch: 0.202444 | RandMeanMatch: 1.253772 | KL: 456.956757
+Epoch [160/250] | D_loss: 0.775147 | G_loss: 2.123981 | Recon: 0.070869 | MeanMatch: 0.099792 | RandMeanMatch: 1.135240 | KL: 364.649038
+Epoch [170/250] | D_loss: 0.600599 | G_loss: 2.321265 | Recon: 0.093455 | MeanMatch: 0.151505 | RandMeanMatch: 1.065952 | KL: 405.324280
+Epoch [180/250] | D_loss: 0.505508 | G_loss: 2.391047 | Recon: 0.096465 | MeanMatch: 0.157862 | RandMeanMatch: 0.987158 | KL: 400.550028
+Epoch [190/250] | D_loss: 0.637133 | G_loss: 2.210377 | Recon: 0.088766 | MeanMatch: 0.181372 | RandMeanMatch: 0.945516 | KL: 381.847890
+Epoch [200/250] | D_loss: 0.781318 | G_loss: 1.811606 | Recon: 0.081783 | MeanMatch: 0.183360 | RandMeanMatch: 0.861366 | KL: 327.156779
+Epoch [210/250] | D_loss: 0.733260 | G_loss: 1.878657 | Recon: 0.081523 | MeanMatch: 0.174600 | RandMeanMatch: 0.836575 | KL: 346.073100
+Epoch [220/250] | D_loss: 0.676550 | G_loss: 1.944408 | Recon: 0.067222 | MeanMatch: 0.144497 | RandMeanMatch: 0.821758 | KL: 333.026103
+Epoch [230/250] | D_loss: 0.704985 | G_loss: 1.824747 | Recon: 0.073107 | MeanMatch: 0.150781 | RandMeanMatch: 0.806715 | KL: 385.469371
+Epoch [240/250] | D_loss: 0.700354 | G_loss: 1.811706 | Recon: 0.060553 | MeanMatch: 0.091567 | RandMeanMatch: 0.763839 | KL: 374.303630
+Epoch [250/250] | D_loss: 0.663199 | G_loss: 1.764965 | Recon: 0.069644 | MeanMatch: 0.114424 | RandMeanMatch: 0.688550 | KL: 313.198446
+Training done. Best checkpoint: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/gan_vae/gan_vae_degradation_5feat_netd_v6_20260528_144417/checkpoint_best.pth
+
+=== Generation ===
+Generated samples: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/gan_vae/gan_vae_degradation_5feat_netd_v6_20260528_144417/generated_samples.npy
+
+=== Evaluation ===
+Metrics: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/gan_vae/gan_vae_degradation_5feat_netd_v6_20260528_144417/metrics.json
+
+Done.

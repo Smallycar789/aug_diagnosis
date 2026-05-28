@@ -1,0 +1,65 @@
+Project: /home/ze.qian/workspace/aug_diagnosis
+Config:  configs/data_aug/rvae_degradation_5feat.yaml
+Output:  outputs/data_aug/degradation/rvae/rvae_degradation_5feat_20260528_175809
+Started: 2026-05-28 17:58:09
+Python: Python 3.9.23
+Conda env: diag
+/home/ze.qian/miniconda3/envs/diag/lib/python3.9/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+Model: rvae | Dataset: degradation | Device: cuda
+Output: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/rvae/rvae_degradation_5feat_20260528_175809
+
+=== Training ===
+Training on cuda | steps 11400 | KL delay 4788
+Epoch   1/200  loss=44.78836  recon=44.78836  kl=3702.26713  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch   5/200  loss=13.21996  recon=13.21996  kl=176.80394  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  10/200  loss=-0.65549  recon=-0.65549  kl=138.31655  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  15/200  loss=-1.59937  recon=-1.59937  kl=148.49123  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  20/200  loss=-1.70106  recon=-1.70106  kl=154.63631  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  25/200  loss=-1.77946  recon=-1.77946  kl=155.63004  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  30/200  loss=-1.85325  recon=-1.85325  kl=150.92130  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  35/200  loss=-1.87634  recon=-1.87634  kl=153.08823  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  40/200  loss=-1.91919  recon=-1.91919  kl=156.08621  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  45/200  loss=-1.94890  recon=-1.94890  kl=153.21446  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  50/200  loss=-1.98813  recon=-1.98813  kl=154.39465  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  55/200  loss=-2.00970  recon=-2.00970  kl=156.10386  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  60/200  loss=-2.02459  recon=-2.02459  kl=152.26749  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  65/200  loss=-2.06081  recon=-2.06081  kl=158.81865  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  70/200  loss=-2.06521  recon=-2.06521  kl=160.56053  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  75/200  loss=-2.08492  recon=-2.08492  kl=157.63026  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  80/200  loss=-2.09533  recon=-2.09533  kl=153.62668  ol=0.00000  beta~0.0000  tfr=0.000  lr=1.00e-03
+Epoch  85/200  loss=-2.10306  recon=-2.11244  kl=137.21727  ol=0.00000  beta~0.0001  tfr=0.000  lr=1.00e-03
+Epoch  90/200  loss=-2.08868  recon=-2.10346  kl=116.73092  ol=0.00000  beta~0.0001  tfr=0.000  lr=1.00e-03
+Epoch  95/200  loss=-2.08194  recon=-2.10661  kl=105.50863  ol=0.00000  beta~0.0002  tfr=0.000  lr=1.00e-03
+Epoch 100/200  loss=-2.07794  recon=-2.11824  kl=93.65451  ol=0.00000  beta~0.0004  tfr=0.000  lr=1.00e-03
+Epoch 105/200  loss=-2.05149  recon=-2.11540  kl=80.88906  ol=0.00000  beta~0.0008  tfr=0.000  lr=1.00e-03
+Epoch 110/200  loss=-2.07179  recon=-2.16735  kl=66.47729  ol=0.00000  beta~0.0014  tfr=0.000  lr=5.00e-04
+Epoch 115/200  loss=-2.01868  recon=-2.15686  kl=53.53648  ol=0.00000  beta~0.0026  tfr=0.000  lr=5.00e-04
+Epoch 120/200  loss=-1.93557  recon=-2.12715  kl=42.27989  ol=0.00000  beta~0.0045  tfr=0.000  lr=5.00e-04
+Epoch 125/200  loss=-1.86985  recon=-2.11536  kl=32.09096  ol=0.00000  beta~0.0077  tfr=0.000  lr=2.50e-04
+Epoch 130/200  loss=-1.76298  recon=-2.06040  kl=24.40692  ol=0.00000  beta~0.0122  tfr=0.000  lr=2.50e-04
+Epoch 135/200  loss=-1.67267  recon=-2.01652  kl=19.21990  ol=0.00000  beta~0.0179  tfr=0.000  lr=1.25e-04
+Epoch 140/200  loss=-1.58503  recon=-1.96567  kl=15.87035  ol=0.00000  beta~0.0240  tfr=0.000  lr=1.25e-04
+Epoch 145/200  loss=-1.53002  recon=-1.92617  kl=13.47465  ol=0.00000  beta~0.0294  tfr=0.000  lr=6.25e-05
+Epoch 150/200  loss=-1.48913  recon=-1.90478  kl=12.41366  ol=0.00000  beta~0.0335  tfr=0.000  lr=6.25e-05
+Epoch 155/200  loss=-1.46202  recon=-1.88116  kl=11.58031  ol=0.00000  beta~0.0362  tfr=0.000  lr=3.13e-05
+Epoch 160/200  loss=-1.46030  recon=-1.88501  kl=11.22099  ol=0.00000  beta~0.0378  tfr=0.000  lr=3.13e-05
+Epoch 165/200  loss=-1.44444  recon=-1.86904  kl=10.94064  ol=0.00000  beta~0.0388  tfr=0.000  lr=3.13e-05
+Epoch 170/200  loss=-1.45778  recon=-1.87904  kl=10.70645  ol=0.00000  beta~0.0393  tfr=0.000  lr=1.56e-05
+Epoch 175/200  loss=-1.44720  recon=-1.87091  kl=10.68763  ol=0.00000  beta~0.0396  tfr=0.000  lr=1.56e-05
+Epoch 180/200  loss=-1.44894  recon=-1.87172  kl=10.62064  ol=0.00000  beta~0.0398  tfr=0.000  lr=7.81e-06
+Epoch 185/200  loss=-1.45480  recon=-1.87466  kl=10.52404  ol=0.00000  beta~0.0399  tfr=0.000  lr=7.81e-06
+Epoch 190/200  loss=-1.44608  recon=-1.86701  kl=10.53820  ol=0.00000  beta~0.0399  tfr=0.000  lr=3.91e-06
+Epoch 195/200  loss=-1.44622  recon=-1.86728  kl=10.53444  ol=0.00000  beta~0.0400  tfr=0.000  lr=3.91e-06
+Epoch 200/200  loss=-1.45384  recon=-1.87605  kl=10.55954  ol=0.00000  beta~0.0400  tfr=0.000  lr=1.95e-06
+Training done. Best checkpoint: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/rvae/rvae_degradation_5feat_20260528_175809/checkpoint_best.pth
+
+=== Generation ===
+Generated samples: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/rvae/rvae_degradation_5feat_20260528_175809/generated_samples.npy
+
+=== Evaluation ===
+Metrics: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/rvae/rvae_degradation_5feat_20260528_175809/metrics.json
+
+Done.
+Quality summary saved: outputs/data_aug/degradation/rvae/rvae_degradation_5feat_20260528_175809/generation_quality_summary.json
+Finished: 2026-05-28 17:59:49

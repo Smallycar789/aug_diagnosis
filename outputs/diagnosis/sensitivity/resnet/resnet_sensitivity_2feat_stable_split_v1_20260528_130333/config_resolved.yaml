@@ -1,0 +1,36 @@
+experiment:
+  name: resnet_sensitivity_2feat_stable_split_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/diagnosis
+dataset:
+  name: sensitivity
+  root: data/sensitivity
+  value_columns:
+  - avg_detectivity
+  - NETD_mK
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  sample_length: 96
+  stride: 4
+  stft_input: channel
+  normalize: per_window
+model:
+  name: resnet
+  sample_len: 96
+  nperseg: 64
+  noverlap: 32
+  nfft: 224
+  target_size: 224
+  batch_size: 16
+  epochs: 40
+  lr: 0.001
+  weight_decay: 0.001
+  num_classes: 3
+  train_ratio: 0.7
+  val_ratio: 0.15
+  freeze_layers: true
+output_dir: /home/ze.qian/workspace/aug_diagnosis/outputs/diagnosis/sensitivity/resnet/resnet_sensitivity_2feat_stable_split_v1_20260528_130333

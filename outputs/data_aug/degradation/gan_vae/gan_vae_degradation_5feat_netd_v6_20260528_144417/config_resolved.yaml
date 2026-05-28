@@ -1,0 +1,39 @@
+experiment:
+  name: gan_vae_degradation_5feat_perclass_v2
+  seed: 42
+  device: auto
+output:
+  root: outputs/data_aug
+dataset:
+  name: degradation
+  root: data/degradation
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    mtf_degradation: mtf_degradation.csv
+    nonuniformity_degradation: nonuniformity_degradation.csv
+    bad_pixel_degradation: bad_pixel_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  value_columns:
+  - avg_detectivity
+  - NETD_mK
+  - SiTF
+  - signal_gain
+  - read_noise_index
+  unit_column: unit
+  cycle_column: cycle
+  sample_length: 128
+  stride: 64
+  sample_rate: 1.0
+model:
+  name: gan_vae
+  seq_len: 128
+  overlap_ratio: 0.5
+  latent_dim: 64
+  epochs: 50
+  batch_size: 16
+  lr: 0.0001
+  alpha: 0.01
+  per_class: true
+  num_generate_per_class: 300
+output_dir: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/degradation/gan_vae/gan_vae_degradation_5feat_netd_v6_20260528_144417

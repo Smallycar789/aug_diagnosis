@@ -1,0 +1,1214 @@
+{
+  "run_dir": "outputs/data_aug/degradation/rvae/rvae_degradation_5feat_20260528_175809",
+  "metrics": {
+    "experiment": "rvae_degradation_5feat_matvae_v8",
+    "dataset": "degradation",
+    "model": "rvae",
+    "feature_columns": [
+      "avg_detectivity",
+      "NETD_mK",
+      "SiTF",
+      "signal_gain",
+      "read_noise_index"
+    ],
+    "label_names": [
+      "normal",
+      "sensitivity_degradation",
+      "mtf_degradation",
+      "nonuniformity_degradation",
+      "bad_pixel_degradation",
+      "coupled_severe_fault"
+    ],
+    "input_shape": [
+      96,
+      5
+    ],
+    "per_class": {
+      "normal": {
+        "statistics": {
+          "plot_mode": "class_multifeature_combined_physical",
+          "feature_plots": {
+            "combined": {
+              "signal_comparison": "normal_signal_comparison.png",
+              "frequency_comparison": "normal_frequency_comparison.png",
+              "window_index": 0
+            }
+          },
+          "original_mean": 4950034432.0,
+          "original_std": 9994900480.0,
+          "generated_mean": 2991376640.0,
+          "generated_std": 6115932672.0,
+          "mean_bias": {
+            "overall": {
+              "original_mean": 4950034432.0,
+              "generated_mean": 2991376640.0,
+              "mean_error": -1958657792.0,
+              "mean_abs_error": 1958657792.0,
+              "mean_error_percent": -39.568569045460734,
+              "mean_abs_error_percent": 39.568569045460734
+            },
+            "per_feature": {
+              "avg_detectivity": {
+                "original_mean": 24750172160.0,
+                "generated_mean": 14956883968.0,
+                "mean_error": -9793288192.0,
+                "mean_abs_error": 9793288192.0,
+                "mean_error_percent": -39.56856594245202,
+                "mean_abs_error_percent": 39.56856594245202
+              },
+              "NETD_mK": {
+                "original_mean": 15.647589683532715,
+                "generated_mean": 44.01702880859375,
+                "mean_error": 28.369439125061035,
+                "mean_abs_error": 28.369439125061035,
+                "mean_error_percent": 181.30229446722137,
+                "mean_abs_error_percent": 181.30229446722137
+              },
+              "SiTF": {
+                "original_mean": 0.992669939994812,
+                "generated_mean": 0.5706914067268372,
+                "mean_error": -0.42197853326797485,
+                "mean_abs_error": 0.42197853326797485,
+                "mean_error_percent": -42.50945014716374,
+                "mean_abs_error_percent": 42.50945014716374
+              },
+              "signal_gain": {
+                "original_mean": 0.992669939994812,
+                "generated_mean": 0.5692623257637024,
+                "mean_error": -0.4234076142311096,
+                "mean_abs_error": 0.4234076142311096,
+                "mean_error_percent": -42.65341350351785,
+                "mean_abs_error_percent": 42.65341350351785
+              },
+              "read_noise_index": {
+                "original_mean": 1.0036664009094238,
+                "generated_mean": 2.887638568878174,
+                "mean_error": 1.88397216796875,
+                "mean_abs_error": 1.88397216796875,
+                "mean_error_percent": 187.70900034729465,
+                "mean_abs_error_percent": 187.70900034729465
+              }
+            }
+          },
+          "metric_scale": "physical",
+          "correlation": 0.9878003607621925
+        },
+        "reconstruction_diagnostic": {
+          "mse_teacher_forced": 0.015860844403505325,
+          "mse_open_loop": 0.011686950922012329
+        },
+        "mse": {
+          "avg_mse": 2.037421214645669e+19
+        },
+        "diversity": {
+          "min_nearest_neighbor": 8943589970.653288,
+          "mean_nearest_neighbor": 11303025758.596472,
+          "max_nearest_neighbor": 13353742973.367775,
+          "diversity_ok": true
+        },
+        "num_original_windows": 123,
+        "num_generated_windows": 300,
+        "generated_file": "generated_normal.npy",
+        "signal_comparison": "normal_signal_comparison.png",
+        "frequency_comparison": "normal_frequency_comparison.png",
+        "feature_plots": {
+          "combined": {
+            "signal_comparison": "normal_signal_comparison.png",
+            "frequency_comparison": "normal_frequency_comparison.png",
+            "window_index": 0
+          }
+        },
+        "generated_vs_original_mean_bias": {
+          "overall": {
+            "original_mean": 4915524608.0,
+            "generated_mean": 3391315968.0,
+            "mean_error": -1524208640.0,
+            "mean_abs_error": 1524208640.0,
+            "mean_error_percent": -31.008056342945682,
+            "mean_abs_error_percent": 31.008056342945682
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 24577624064.0,
+              "generated_mean": 16956579840.0,
+              "mean_error": -7621044224.0,
+              "mean_abs_error": 7621044224.0,
+              "mean_error_percent": -31.008059217420048,
+              "mean_abs_error_percent": 31.008059217420048
+            },
+            "NETD_mK": {
+              "original_mean": 14.954476356506348,
+              "generated_mean": 37.74858856201172,
+              "mean_error": 22.79411220550537,
+              "mean_abs_error": 22.79411220550537,
+              "mean_error_percent": 152.42333908661521,
+              "mean_abs_error_percent": 152.42333908661521
+            },
+            "SiTF": {
+              "original_mean": 0.9894622564315796,
+              "generated_mean": 0.626118004322052,
+              "mean_error": -0.3633442521095276,
+              "mean_abs_error": 0.3633442521095276,
+              "mean_error_percent": -36.72138575754279,
+              "mean_abs_error_percent": 36.72138575754279
+            },
+            "signal_gain": {
+              "original_mean": 0.9894622564315796,
+              "generated_mean": 0.6253330707550049,
+              "mean_error": -0.3641291856765747,
+              "mean_abs_error": 0.3641291856765747,
+              "mean_error_percent": -36.800715066159164,
+              "mean_abs_error_percent": 36.800715066159164
+            },
+            "read_noise_index": {
+              "original_mean": 1.0068359375,
+              "generated_mean": 2.831429958343506,
+              "mean_error": 1.8245940208435059,
+              "mean_abs_error": 1.8245940208435059,
+              "mean_error_percent": 181.2205894610815,
+              "mean_abs_error_percent": 181.2205894610815
+            }
+          }
+        }
+      },
+      "sensitivity_degradation": {
+        "statistics": {
+          "plot_mode": "class_multifeature_combined_physical",
+          "feature_plots": {
+            "combined": {
+              "signal_comparison": "sensitivity_degradation_signal_comparison.png",
+              "frequency_comparison": "sensitivity_degradation_frequency_comparison.png",
+              "window_index": 0
+            }
+          },
+          "original_mean": 4350773760.0,
+          "original_std": 8851920896.0,
+          "generated_mean": 3503038464.0,
+          "generated_std": 7323764736.0,
+          "mean_bias": {
+            "overall": {
+              "original_mean": 4350773760.0,
+              "generated_mean": 3503038464.0,
+              "mean_error": -847735296.0,
+              "mean_abs_error": 847735296.0,
+              "mean_error_percent": -19.48470186599636,
+              "mean_abs_error_percent": 19.48470186599636
+            },
+            "per_feature": {
+              "avg_detectivity": {
+                "original_mean": 21753866240.0,
+                "generated_mean": 17515190272.0,
+                "mean_error": -4238675968.0,
+                "mean_abs_error": 4238675968.0,
+                "mean_error_percent": -19.484701805355957,
+                "mean_abs_error_percent": 19.484701805355957
+              },
+              "NETD_mK": {
+                "original_mean": 19.354488372802734,
+                "generated_mean": 20.594247817993164,
+                "mean_error": 1.2397594451904297,
+                "mean_abs_error": 1.2397594451904297,
+                "mean_error_percent": 6.405539745150595,
+                "mean_abs_error_percent": 6.405539745150595
+              },
+              "SiTF": {
+                "original_mean": 0.8508754372596741,
+                "generated_mean": 0.7788109183311462,
+                "mean_error": -0.07206451892852783,
+                "mean_abs_error": 0.07206451892852783,
+                "mean_error_percent": -8.469455783165927,
+                "mean_abs_error_percent": 8.469455783165927
+              },
+              "signal_gain": {
+                "original_mean": 0.8508754372596741,
+                "generated_mean": 0.7774028182029724,
+                "mean_error": -0.07347261905670166,
+                "mean_abs_error": 0.07347261905670166,
+                "mean_error_percent": -8.634944180939959,
+                "mean_abs_error_percent": 8.634944180939959
+              },
+              "read_noise_index": {
+                "original_mean": 1.2171679735183716,
+                "generated_mean": 1.534912347793579,
+                "mean_error": 0.3177443742752075,
+                "mean_abs_error": 0.3177443742752075,
+                "mean_error_percent": 26.105219755062148,
+                "mean_abs_error_percent": 26.105219755062148
+              }
+            }
+          },
+          "metric_scale": "physical",
+          "correlation": 0.9711521685973058
+        },
+        "reconstruction_diagnostic": {
+          "mse_teacher_forced": 0.0054726870730519295,
+          "mse_open_loop": 0.0034945541992783546
+        },
+        "mse": {
+          "avg_mse": 6.794292465865064e+18
+        },
+        "diversity": {
+          "min_nearest_neighbor": 8273620187.457317,
+          "mean_nearest_neighbor": 12742737409.067144,
+          "max_nearest_neighbor": 21790474072.055946,
+          "diversity_ok": true
+        },
+        "num_original_windows": 150,
+        "num_generated_windows": 300,
+        "generated_file": "generated_sensitivity_degradation.npy",
+        "signal_comparison": "sensitivity_degradation_signal_comparison.png",
+        "frequency_comparison": "sensitivity_degradation_frequency_comparison.png",
+        "feature_plots": {
+          "combined": {
+            "signal_comparison": "sensitivity_degradation_signal_comparison.png",
+            "frequency_comparison": "sensitivity_degradation_frequency_comparison.png",
+            "window_index": 0
+          }
+        },
+        "generated_vs_original_mean_bias": {
+          "overall": {
+            "original_mean": 3890940672.0,
+            "generated_mean": 3620503296.0,
+            "mean_error": -270437376.0,
+            "mean_abs_error": 270437376.0,
+            "mean_error_percent": -6.9504368942482815,
+            "mean_abs_error_percent": 6.9504368942482815
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 19454703616.0,
+              "generated_mean": 18102517760.0,
+              "mean_error": -1352185856.0,
+              "mean_abs_error": 1352185856.0,
+              "mean_error_percent": -6.950431539280459,
+              "mean_abs_error_percent": 6.950431539280459
+            },
+            "NETD_mK": {
+              "original_mean": 19.17023468017578,
+              "generated_mean": 21.819692611694336,
+              "mean_error": 2.6494579315185547,
+              "mean_abs_error": 2.6494579315185547,
+              "mean_error_percent": 13.820685952574163,
+              "mean_abs_error_percent": 13.820685952574163
+            },
+            "SiTF": {
+              "original_mean": 0.8087130784988403,
+              "generated_mean": 0.7651607394218445,
+              "mean_error": -0.04355233907699585,
+              "mean_abs_error": 0.04355233907699585,
+              "mean_error_percent": -5.385388246451897,
+              "mean_abs_error_percent": 5.385388246451897
+            },
+            "signal_gain": {
+              "original_mean": 0.8087130784988403,
+              "generated_mean": 0.765067458152771,
+              "mean_error": -0.043645620346069336,
+              "mean_abs_error": 0.043645620346069336,
+              "mean_error_percent": -5.396922778482297,
+              "mean_abs_error_percent": 5.396922778482297
+            },
+            "read_noise_index": {
+              "original_mean": 1.2677260637283325,
+              "generated_mean": 1.5587352514266968,
+              "mean_error": 0.29100918769836426,
+              "mean_abs_error": 0.29100918769836426,
+              "mean_error_percent": 22.95521059514369,
+              "mean_abs_error_percent": 22.95521059514369
+            }
+          }
+        }
+      },
+      "mtf_degradation": {
+        "statistics": {
+          "plot_mode": "class_multifeature_combined_physical",
+          "feature_plots": {
+            "combined": {
+              "signal_comparison": "mtf_degradation_signal_comparison.png",
+              "frequency_comparison": "mtf_degradation_frequency_comparison.png",
+              "window_index": 0
+            }
+          },
+          "original_mean": 4239484160.0,
+          "original_std": 8530455040.0,
+          "generated_mean": 3446929152.0,
+          "generated_std": 6993324544.0,
+          "mean_bias": {
+            "overall": {
+              "original_mean": 4239484160.0,
+              "generated_mean": 3446929152.0,
+              "mean_error": -792555008.0,
+              "mean_abs_error": 792555008.0,
+              "mean_error_percent": -18.69460948758445,
+              "mean_abs_error_percent": 18.69460948758445
+            },
+            "per_feature": {
+              "avg_detectivity": {
+                "original_mean": 21197422592.0,
+                "generated_mean": 17234644992.0,
+                "mean_error": -3962777600.0,
+                "mean_abs_error": 3962777600.0,
+                "mean_error_percent": -18.69461998410868,
+                "mean_abs_error_percent": 18.69461998410868
+              },
+              "NETD_mK": {
+                "original_mean": 15.700000762939453,
+                "generated_mean": 37.37922668457031,
+                "mean_error": 21.67922592163086,
+                "mean_abs_error": 21.67922592163086,
+                "mean_error_percent": 138.08423482886468,
+                "mean_abs_error_percent": 138.08423482886468
+              },
+              "SiTF": {
+                "original_mean": 0.9804869294166565,
+                "generated_mean": 0.7489389181137085,
+                "mean_error": -0.231548011302948,
+                "mean_abs_error": 0.231548011302948,
+                "mean_error_percent": -23.61561427858178,
+                "mean_abs_error_percent": 23.61561427858178
+              },
+              "signal_gain": {
+                "original_mean": 0.9804869294166565,
+                "generated_mean": 0.7495003938674927,
+                "mean_error": -0.23098653554916382,
+                "mean_abs_error": 0.23098653554916382,
+                "mean_error_percent": -23.55834928738825,
+                "mean_abs_error_percent": 23.55834928738825
+              },
+              "read_noise_index": {
+                "original_mean": 1.0212756395339966,
+                "generated_mean": 1.7570589780807495,
+                "mean_error": 0.7357833385467529,
+                "mean_abs_error": 0.7357833385467529,
+                "mean_error_percent": 72.0455193548421,
+                "mean_abs_error_percent": 72.0455193548421
+              }
+            }
+          },
+          "metric_scale": "physical",
+          "correlation": 0.9950706293622281
+        },
+        "reconstruction_diagnostic": {
+          "mse_teacher_forced": 0.012762363068759441,
+          "mse_open_loop": 0.010326053947210312
+        },
+        "mse": {
+          "avg_mse": 3.579047512486445e+18
+        },
+        "diversity": {
+          "min_nearest_neighbor": 9043949543.151485,
+          "mean_nearest_neighbor": 11638132023.30043,
+          "max_nearest_neighbor": 20121561330.625828,
+          "diversity_ok": true
+        },
+        "num_original_windows": 141,
+        "num_generated_windows": 300,
+        "generated_file": "generated_mtf_degradation.npy",
+        "signal_comparison": "mtf_degradation_signal_comparison.png",
+        "frequency_comparison": "mtf_degradation_frequency_comparison.png",
+        "feature_plots": {
+          "combined": {
+            "signal_comparison": "mtf_degradation_signal_comparison.png",
+            "frequency_comparison": "mtf_degradation_frequency_comparison.png",
+            "window_index": 0
+          }
+        },
+        "generated_vs_original_mean_bias": {
+          "overall": {
+            "original_mean": 4722533376.0,
+            "generated_mean": 3452444416.0,
+            "mean_error": -1270088960.0,
+            "mean_abs_error": 1270088960.0,
+            "mean_error_percent": -26.89422940777116,
+            "mean_abs_error_percent": 26.89422940777116
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 23612669952.0,
+              "generated_mean": 17262221312.0,
+              "mean_error": -6350448640.0,
+              "mean_abs_error": 6350448640.0,
+              "mean_error_percent": -26.894242171297172,
+              "mean_abs_error_percent": 26.894242171297172
+            },
+            "NETD_mK": {
+              "original_mean": 15.470005989074707,
+              "generated_mean": 36.75941848754883,
+              "mean_error": 21.28941249847412,
+              "mean_abs_error": 21.28941249847412,
+              "mean_error_percent": 137.61735136695629,
+              "mean_abs_error_percent": 137.61735136695629
+            },
+            "SiTF": {
+              "original_mean": 0.9803938865661621,
+              "generated_mean": 0.7441790699958801,
+              "mean_error": -0.23621481657028198,
+              "mean_abs_error": 0.23621481657028198,
+              "mean_error_percent": -24.093868781416656,
+              "mean_abs_error_percent": 24.093868781416656
+            },
+            "signal_gain": {
+              "original_mean": 0.9803938865661621,
+              "generated_mean": 0.7441439032554626,
+              "mean_error": -0.23624998331069946,
+              "mean_abs_error": 0.23624998331069946,
+              "mean_error_percent": -24.097455782610705,
+              "mean_abs_error_percent": 24.097455782610705
+            },
+            "read_noise_index": {
+              "original_mean": 1.0247535705566406,
+              "generated_mean": 1.7743630409240723,
+              "mean_error": 0.7496094703674316,
+              "mean_abs_error": 0.7496094703674316,
+              "mean_error_percent": 73.15021795535172,
+              "mean_abs_error_percent": 73.15021795535172
+            }
+          }
+        }
+      },
+      "nonuniformity_degradation": {
+        "statistics": {
+          "plot_mode": "class_multifeature_combined_physical",
+          "feature_plots": {
+            "combined": {
+              "signal_comparison": "nonuniformity_degradation_signal_comparison.png",
+              "frequency_comparison": "nonuniformity_degradation_frequency_comparison.png",
+              "window_index": 0
+            }
+          },
+          "original_mean": 4620527616.0,
+          "original_std": 9289896960.0,
+          "generated_mean": 3844682496.0,
+          "generated_std": 7742658560.0,
+          "mean_bias": {
+            "overall": {
+              "original_mean": 4620527616.0,
+              "generated_mean": 3844682496.0,
+              "mean_error": -775845120.0,
+              "mean_abs_error": 775845120.0,
+              "mean_error_percent": -16.791266809301113,
+              "mean_abs_error_percent": 16.791266809301113
+            },
+            "per_feature": {
+              "avg_detectivity": {
+                "original_mean": 23102638080.0,
+                "generated_mean": 19223412736.0,
+                "mean_error": -3879225344.0,
+                "mean_abs_error": 3879225344.0,
+                "mean_error_percent": -16.791265701202555,
+                "mean_abs_error_percent": 16.791265701202555
+              },
+              "NETD_mK": {
+                "original_mean": 16.179468154907227,
+                "generated_mean": 32.21529769897461,
+                "mean_error": 16.035829544067383,
+                "mean_abs_error": 16.035829544067383,
+                "mean_error_percent": 99.11221673379741,
+                "mean_abs_error_percent": 99.11221673379741
+              },
+              "SiTF": {
+                "original_mean": 0.9729586243629456,
+                "generated_mean": 0.8384601473808289,
+                "mean_error": -0.1344984769821167,
+                "mean_abs_error": 0.1344984769821167,
+                "mean_error_percent": -13.823658438731753,
+                "mean_abs_error_percent": 13.823658438731753
+              },
+              "signal_gain": {
+                "original_mean": 0.9729586243629456,
+                "generated_mean": 0.8407049775123596,
+                "mean_error": -0.13225364685058594,
+                "mean_abs_error": 0.13225364685058594,
+                "mean_error_percent": -13.592936383824167,
+                "mean_abs_error_percent": 13.592936383824167
+              },
+              "read_noise_index": {
+                "original_mean": 1.047363519668579,
+                "generated_mean": 1.4951831102371216,
+                "mean_error": 0.4478195905685425,
+                "mean_abs_error": 0.4478195905685425,
+                "mean_error_percent": 42.75684441541821,
+                "mean_abs_error_percent": 42.75684441541821
+              }
+            }
+          },
+          "metric_scale": "physical",
+          "correlation": 0.9848752354403166
+        },
+        "reconstruction_diagnostic": {
+          "mse_teacher_forced": 0.009859669953584671,
+          "mse_open_loop": 0.007769962307065725
+        },
+        "mse": {
+          "avg_mse": 5.171684882639749e+18
+        },
+        "diversity": {
+          "min_nearest_neighbor": 9554197828.74448,
+          "mean_nearest_neighbor": 16792640507.719982,
+          "max_nearest_neighbor": 50085314515.10247,
+          "diversity_ok": true
+        },
+        "num_original_windows": 149,
+        "num_generated_windows": 300,
+        "generated_file": "generated_nonuniformity_degradation.npy",
+        "signal_comparison": "nonuniformity_degradation_signal_comparison.png",
+        "frequency_comparison": "nonuniformity_degradation_frequency_comparison.png",
+        "feature_plots": {
+          "combined": {
+            "signal_comparison": "nonuniformity_degradation_signal_comparison.png",
+            "frequency_comparison": "nonuniformity_degradation_frequency_comparison.png",
+            "window_index": 0
+          }
+        },
+        "generated_vs_original_mean_bias": {
+          "overall": {
+            "original_mean": 4621743616.0,
+            "generated_mean": 3505272832.0,
+            "mean_error": -1116470784.0,
+            "mean_abs_error": 1116470784.0,
+            "mean_error_percent": -24.156917318712644,
+            "mean_abs_error_percent": 24.156917318712644
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 23108720640.0,
+              "generated_mean": 17526362112.0,
+              "mean_error": -5582358528.0,
+              "mean_abs_error": 5582358528.0,
+              "mean_error_percent": -24.156934583116758,
+              "mean_abs_error_percent": 24.156934583116758
+            },
+            "NETD_mK": {
+              "original_mean": 16.209665298461914,
+              "generated_mean": 30.512733459472656,
+              "mean_error": 14.303068161010742,
+              "mean_abs_error": 14.303068161010742,
+              "mean_error_percent": 88.2378994115808,
+              "mean_abs_error_percent": 88.2378994115808
+            },
+            "SiTF": {
+              "original_mean": 0.9622570872306824,
+              "generated_mean": 0.773974597454071,
+              "mean_error": -0.18828248977661133,
+              "mean_abs_error": 0.18828248977661133,
+              "mean_error_percent": -19.566755316760194,
+              "mean_abs_error_percent": 19.566755316760194
+            },
+            "signal_gain": {
+              "original_mean": 0.9622570872306824,
+              "generated_mean": 0.7743119597434998,
+              "mean_error": -0.18794512748718262,
+              "mean_abs_error": 0.18794512748718262,
+              "mean_error_percent": -19.531695841085185,
+              "mean_abs_error_percent": 19.531695841085185
+            },
+            "read_noise_index": {
+              "original_mean": 1.046433925628662,
+              "generated_mean": 1.6183544397354126,
+              "mean_error": 0.5719205141067505,
+              "mean_abs_error": 0.5719205141067505,
+              "mean_error_percent": 54.65424047324918,
+              "mean_abs_error_percent": 54.65424047324918
+            }
+          }
+        }
+      },
+      "bad_pixel_degradation": {
+        "statistics": {
+          "plot_mode": "class_multifeature_combined_physical",
+          "feature_plots": {
+            "combined": {
+              "signal_comparison": "bad_pixel_degradation_signal_comparison.png",
+              "frequency_comparison": "bad_pixel_degradation_frequency_comparison.png",
+              "window_index": 0
+            }
+          },
+          "original_mean": 4529658368.0,
+          "original_std": 9146363904.0,
+          "generated_mean": 3855351808.0,
+          "generated_std": 7867581440.0,
+          "mean_bias": {
+            "overall": {
+              "original_mean": 4529658368.0,
+              "generated_mean": 3855351808.0,
+              "mean_error": -674306560.0,
+              "mean_abs_error": 674306560.0,
+              "mean_error_percent": -14.88647719580074,
+              "mean_abs_error_percent": 14.88647719580074
+            },
+            "per_feature": {
+              "avg_detectivity": {
+                "original_mean": 22648293376.0,
+                "generated_mean": 19276759040.0,
+                "mean_error": -3371534336.0,
+                "mean_abs_error": 3371534336.0,
+                "mean_error_percent": -14.886482968172587,
+                "mean_abs_error_percent": 14.886482968172587
+              },
+              "NETD_mK": {
+                "original_mean": 15.514786720275879,
+                "generated_mean": 19.822742462158203,
+                "mean_error": 4.307955741882324,
+                "mean_abs_error": 4.307955741882324,
+                "mean_error_percent": 27.766773849700215,
+                "mean_abs_error_percent": 27.766773849700215
+              },
+              "SiTF": {
+                "original_mean": 0.9840145707130432,
+                "generated_mean": 0.8730064034461975,
+                "mean_error": -0.1110081672668457,
+                "mean_abs_error": 0.1110081672668457,
+                "mean_error_percent": -11.28115076450608,
+                "mean_abs_error_percent": 11.28115076450608
+              },
+              "signal_gain": {
+                "original_mean": 0.9840145707130432,
+                "generated_mean": 0.8723836541175842,
+                "mean_error": -0.11163091659545898,
+                "mean_abs_error": 0.11163091659545898,
+                "mean_error_percent": -11.344437360776908,
+                "mean_abs_error_percent": 11.344437360776908
+              },
+              "read_noise_index": {
+                "original_mean": 1.034786343574524,
+                "generated_mean": 1.3443621397018433,
+                "mean_error": 0.30957579612731934,
+                "mean_abs_error": 0.30957579612731934,
+                "mean_error_percent": 29.916880721283324,
+                "mean_abs_error_percent": 29.916880721283324
+              }
+            }
+          },
+          "metric_scale": "physical",
+          "correlation": 0.9626076146045585
+        },
+        "reconstruction_diagnostic": {
+          "mse_teacher_forced": 0.007793764118105173,
+          "mse_open_loop": 0.006188766565173864
+        },
+        "mse": {
+          "avg_mse": 7.47146848327277e+18
+        },
+        "diversity": {
+          "min_nearest_neighbor": 8824644755.294619,
+          "mean_nearest_neighbor": 18317074812.956474,
+          "max_nearest_neighbor": 40381046071.91953,
+          "diversity_ok": true
+        },
+        "num_original_windows": 156,
+        "num_generated_windows": 300,
+        "generated_file": "generated_bad_pixel_degradation.npy",
+        "signal_comparison": "bad_pixel_degradation_signal_comparison.png",
+        "frequency_comparison": "bad_pixel_degradation_frequency_comparison.png",
+        "feature_plots": {
+          "combined": {
+            "signal_comparison": "bad_pixel_degradation_signal_comparison.png",
+            "frequency_comparison": "bad_pixel_degradation_frequency_comparison.png",
+            "window_index": 0
+          }
+        },
+        "generated_vs_original_mean_bias": {
+          "overall": {
+            "original_mean": 4782780928.0,
+            "generated_mean": 3957351936.0,
+            "mean_error": -825428992.0,
+            "mean_abs_error": 825428992.0,
+            "mean_error_percent": -17.258348321322067,
+            "mean_abs_error_percent": 17.258348321322067
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 23913904128.0,
+              "generated_mean": 19786760192.0,
+              "mean_error": -4127143936.0,
+              "mean_abs_error": 4127143936.0,
+              "mean_error_percent": -17.258344408797992,
+              "mean_abs_error_percent": 17.258344408797992
+            },
+            "NETD_mK": {
+              "original_mean": 15.782855033874512,
+              "generated_mean": 22.091806411743164,
+              "mean_error": 6.308951377868652,
+              "mean_abs_error": 6.308951377868652,
+              "mean_error_percent": 39.97344817732813,
+              "mean_abs_error_percent": 39.97344817732813
+            },
+            "SiTF": {
+              "original_mean": 0.9685994982719421,
+              "generated_mean": 0.8529610633850098,
+              "mean_error": -0.11563843488693237,
+              "mean_abs_error": 0.11563843488693237,
+              "mean_error_percent": -11.938725458070177,
+              "mean_abs_error_percent": 11.938725458070177
+            },
+            "signal_gain": {
+              "original_mean": 0.9685994982719421,
+              "generated_mean": 0.8529555201530457,
+              "mean_error": -0.11564397811889648,
+              "mean_abs_error": 0.11564397811889648,
+              "mean_error_percent": -11.939297751569606,
+              "mean_abs_error_percent": 11.939297751569606
+            },
+            "read_noise_index": {
+              "original_mean": 1.0342695713043213,
+              "generated_mean": 1.4404188394546509,
+              "mean_error": 0.4061492681503296,
+              "mean_abs_error": 0.4061492681503296,
+              "mean_error_percent": 39.26918855769229,
+              "mean_abs_error_percent": 39.26918855769229
+            }
+          }
+        }
+      },
+      "coupled_severe_fault": {
+        "statistics": {
+          "plot_mode": "class_multifeature_combined_physical",
+          "feature_plots": {
+            "combined": {
+              "signal_comparison": "coupled_severe_fault_signal_comparison.png",
+              "frequency_comparison": "coupled_severe_fault_frequency_comparison.png",
+              "window_index": 0
+            }
+          },
+          "original_mean": 4115761408.0,
+          "original_std": 8419811328.0,
+          "generated_mean": 4132070912.0,
+          "generated_std": 8466823168.0,
+          "mean_bias": {
+            "overall": {
+              "original_mean": 4115761408.0,
+              "generated_mean": 4132070912.0,
+              "mean_error": 16309504.0,
+              "mean_abs_error": 16309504.0,
+              "mean_error_percent": 0.3962694233999679,
+              "mean_abs_error_percent": 0.3962694233999679
+            },
+            "per_feature": {
+              "avg_detectivity": {
+                "original_mean": 20578805760.0,
+                "generated_mean": 20660355072.0,
+                "mean_error": 81549312.0,
+                "mean_abs_error": 81549312.0,
+                "mean_error_percent": 0.3962781560362033,
+                "mean_abs_error_percent": 0.3962781560362033
+              },
+              "NETD_mK": {
+                "original_mean": 22.464916229248047,
+                "generated_mean": 21.428966522216797,
+                "mean_error": -1.03594970703125,
+                "mean_abs_error": 1.03594970703125,
+                "mean_error_percent": -4.6114113957055505,
+                "mean_abs_error_percent": 4.6114113957055505
+              },
+              "SiTF": {
+                "original_mean": 0.7963994145393372,
+                "generated_mean": 0.7894197702407837,
+                "mean_error": -0.006979644298553467,
+                "mean_abs_error": 0.006979644298553467,
+                "mean_error_percent": -0.8763999785950013,
+                "mean_abs_error_percent": 0.8763999785950013
+              },
+              "signal_gain": {
+                "original_mean": 0.7963994145393372,
+                "generated_mean": 0.7915551662445068,
+                "mean_error": -0.004844248294830322,
+                "mean_abs_error": 0.004844248294830322,
+                "mean_error_percent": -0.6082686911105265,
+                "mean_abs_error_percent": 0.6082686911105265
+              },
+              "read_noise_index": {
+                "original_mean": 1.2654703855514526,
+                "generated_mean": 1.332603931427002,
+                "mean_error": 0.06713354587554932,
+                "mean_abs_error": 0.06713354587554932,
+                "mean_error_percent": 5.305027019363603,
+                "mean_abs_error_percent": 5.305027019363603
+              }
+            }
+          },
+          "metric_scale": "physical",
+          "correlation": 0.9747644616920749
+        },
+        "reconstruction_diagnostic": {
+          "mse_teacher_forced": 0.004809940233826637,
+          "mse_open_loop": 0.0029072174802422523
+        },
+        "mse": {
+          "avg_mse": 3.600511628728074e+18
+        },
+        "diversity": {
+          "min_nearest_neighbor": 12699419428.21053,
+          "mean_nearest_neighbor": 17112073870.720926,
+          "max_nearest_neighbor": 36567679262.61632,
+          "diversity_ok": true
+        },
+        "num_original_windows": 187,
+        "num_generated_windows": 300,
+        "generated_file": "generated_coupled_severe_fault.npy",
+        "signal_comparison": "coupled_severe_fault_signal_comparison.png",
+        "frequency_comparison": "coupled_severe_fault_frequency_comparison.png",
+        "feature_plots": {
+          "combined": {
+            "signal_comparison": "coupled_severe_fault_signal_comparison.png",
+            "frequency_comparison": "coupled_severe_fault_frequency_comparison.png",
+            "window_index": 0
+          }
+        },
+        "generated_vs_original_mean_bias": {
+          "overall": {
+            "original_mean": 3627920128.0,
+            "generated_mean": 3745438208.0,
+            "mean_error": 117518080.0,
+            "mean_abs_error": 117518080.0,
+            "mean_error_percent": 3.2392686678244313,
+            "mean_abs_error_percent": 3.2392686678244313
+          },
+          "per_feature": {
+            "avg_detectivity": {
+              "original_mean": 18139600896.0,
+              "generated_mean": 18727192576.0,
+              "mean_error": 587591680.0,
+              "mean_abs_error": 587591680.0,
+              "mean_error_percent": 3.239275678493957,
+              "mean_abs_error_percent": 3.239275678493957
+            },
+            "NETD_mK": {
+              "original_mean": 21.712060928344727,
+              "generated_mean": 21.159940719604492,
+              "mean_error": -0.5521202087402344,
+              "mean_abs_error": 0.5521202087402344,
+              "mean_error_percent": -2.542919396561986,
+              "mean_abs_error_percent": 2.542919396561986
+            },
+            "SiTF": {
+              "original_mean": 0.7671933174133301,
+              "generated_mean": 0.8036390542984009,
+              "mean_error": 0.0364457368850708,
+              "mean_abs_error": 0.0364457368850708,
+              "mean_error_percent": 4.75052845975657,
+              "mean_abs_error_percent": 4.75052845975657
+            },
+            "signal_gain": {
+              "original_mean": 0.7671933174133301,
+              "generated_mean": 0.8040494918823242,
+              "mean_error": 0.03685617446899414,
+              "mean_abs_error": 0.03685617446899414,
+              "mean_error_percent": 4.8040270466977555,
+              "mean_abs_error_percent": 4.8040270466977555
+            },
+            "read_noise_index": {
+              "original_mean": 1.3593502044677734,
+              "generated_mean": 1.3190973997116089,
+              "mean_error": -0.04025280475616455,
+              "mean_abs_error": 0.04025280475616455,
+              "mean_error_percent": -2.9611798802005356,
+              "mean_abs_error_percent": 2.9611798802005356
+            }
+          }
+        }
+      }
+    },
+    "statistics": {
+      "plot_mode": "class_multifeature_combined_physical",
+      "feature_plots": {
+        "combined": {
+          "signal_comparison": "signal_comparison.png",
+          "frequency_comparison": "frequency_comparison.png",
+          "window_index": 0
+        }
+      },
+      "original_mean": 4950034432.0,
+      "original_std": 9994900480.0,
+      "generated_mean": 2991376640.0,
+      "generated_std": 6115932672.0,
+      "mean_bias": {
+        "overall": {
+          "original_mean": 4950034432.0,
+          "generated_mean": 2991376640.0,
+          "mean_error": -1958657792.0,
+          "mean_abs_error": 1958657792.0,
+          "mean_error_percent": -39.568569045460734,
+          "mean_abs_error_percent": 39.568569045460734
+        },
+        "per_feature": {
+          "avg_detectivity": {
+            "original_mean": 24750172160.0,
+            "generated_mean": 14956883968.0,
+            "mean_error": -9793288192.0,
+            "mean_abs_error": 9793288192.0,
+            "mean_error_percent": -39.56856594245202,
+            "mean_abs_error_percent": 39.56856594245202
+          },
+          "NETD_mK": {
+            "original_mean": 15.647589683532715,
+            "generated_mean": 44.01702880859375,
+            "mean_error": 28.369439125061035,
+            "mean_abs_error": 28.369439125061035,
+            "mean_error_percent": 181.30229446722137,
+            "mean_abs_error_percent": 181.30229446722137
+          },
+          "SiTF": {
+            "original_mean": 0.992669939994812,
+            "generated_mean": 0.5706914067268372,
+            "mean_error": -0.42197853326797485,
+            "mean_abs_error": 0.42197853326797485,
+            "mean_error_percent": -42.50945014716374,
+            "mean_abs_error_percent": 42.50945014716374
+          },
+          "signal_gain": {
+            "original_mean": 0.992669939994812,
+            "generated_mean": 0.5692623257637024,
+            "mean_error": -0.4234076142311096,
+            "mean_abs_error": 0.4234076142311096,
+            "mean_error_percent": -42.65341350351785,
+            "mean_abs_error_percent": 42.65341350351785
+          },
+          "read_noise_index": {
+            "original_mean": 1.0036664009094238,
+            "generated_mean": 2.887638568878174,
+            "mean_error": 1.88397216796875,
+            "mean_abs_error": 1.88397216796875,
+            "mean_error_percent": 187.70900034729465,
+            "mean_abs_error_percent": 187.70900034729465
+          }
+        }
+      },
+      "metric_scale": "physical",
+      "correlation": 0.9878003607621925
+    },
+    "reconstruction_diagnostic": {
+      "mse_teacher_forced": 0.010785790160298347,
+      "mse_open_loop": 0.008187714032828808
+    },
+    "mse": {
+      "avg_mse": 2.037421214645669e+19,
+      "avg_mse_percent": 722064256.0
+    },
+    "diversity": {
+      "min_nearest_neighbor": 4828113705.221927,
+      "mean_nearest_neighbor": 6101831566.6275,
+      "max_nearest_neighbor": 7208892723.216255,
+      "diversity_ok": true
+    },
+    "feature_plots": {
+      "combined": {
+        "signal_comparison": "signal_comparison.png",
+        "frequency_comparison": "frequency_comparison.png",
+        "window_index": 0
+      }
+    },
+    "generated_vs_original_mean_bias": {
+      "overall": {
+        "original_mean": 4378920960.0,
+        "generated_mean": 4425762816.0,
+        "mean_error": 46841856.0,
+        "mean_abs_error": 46841856.0,
+        "mean_error_percent": 1.0697122973418547,
+        "mean_abs_error_percent": 1.0697122973418547
+      },
+      "per_feature": {
+        "avg_detectivity": {
+          "original_mean": 21894604800.0,
+          "generated_mean": 22128816128.0,
+          "mean_error": 234211328.0,
+          "mean_abs_error": 234211328.0,
+          "mean_error_percent": 1.0697216512444199,
+          "mean_abs_error_percent": 1.0697216512444199
+        },
+        "NETD_mK": {
+          "original_mean": 17.476520538330078,
+          "generated_mean": 17.244916915893555,
+          "mean_error": -0.23160362243652344,
+          "mean_abs_error": 0.23160362243652344,
+          "mean_error_percent": -1.3252273067088083,
+          "mean_abs_error_percent": 1.3252273067088083
+        },
+        "SiTF": {
+          "original_mean": 0.9041824340820312,
+          "generated_mean": 0.9133177995681763,
+          "mean_error": 0.00913536548614502,
+          "mean_abs_error": 0.00913536548614502,
+          "mean_error_percent": 1.0103453840506949,
+          "mean_abs_error_percent": 1.0103453840506949
+        },
+        "signal_gain": {
+          "original_mean": 0.9041824340820312,
+          "generated_mean": 0.9133631587028503,
+          "mean_error": 0.009180724620819092,
+          "mean_abs_error": 0.009180724620819092,
+          "mean_error_percent": 1.0153619750575886,
+          "mean_abs_error_percent": 1.0153619750575886
+        },
+        "read_noise_index": {
+          "original_mean": 1.1368136405944824,
+          "generated_mean": 1.115424394607544,
+          "mean_error": -0.021389245986938477,
+          "mean_abs_error": 0.021389245986938477,
+          "mean_error_percent": -1.8815085624547256,
+          "mean_abs_error_percent": 1.8815085624547256
+        }
+      }
+    },
+    "metric_scale": "physical",
+    "training_best": {
+      "best_epoch": 111,
+      "best_recon_loss": -2.171178604427137
+    }
+  },
+  "generated_samples.npy": {
+    "shape": [
+      1800,
+      96,
+      5
+    ],
+    "mean": -0.0968359187245369,
+    "std": 0.4376744031906128,
+    "min": -1.0640661716461182,
+    "max": 0.9791325330734253
+  },
+  "generated_samples_denorm.npy": {
+    "shape": [
+      1800,
+      96,
+      5
+    ],
+    "mean": 4425762816.0,
+    "std": 8995024896.0,
+    "min": 0.31137797236442566,
+    "max": 31519021056.0
+  },
+  "generated_labels.npy": {
+    "shape": [
+      1800
+    ],
+    "mean": 2.5,
+    "std": 1.707825127659933,
+    "min": 0.0,
+    "max": 5.0
+  },
+  "generated_normal_denorm.npy": {
+    "shape": [
+      300,
+      96,
+      5
+    ],
+    "feature_mean": [
+      24580259840.0,
+      14.890385627746582,
+      0.9880215525627136,
+      0.9878323674201965,
+      1.007536768913269
+    ],
+    "feature_std": [
+      1977516032.0,
+      0.9750291109085083,
+      0.020323941484093666,
+      0.020263347774744034,
+      0.008465016260743141
+    ]
+  },
+  "generated_sensitivity_degradation_denorm.npy": {
+    "shape": [
+      300,
+      96,
+      5
+    ],
+    "feature_mean": [
+      19762208768.0,
+      19.1778507232666,
+      0.8054771423339844,
+      0.8054020404815674,
+      1.2420419454574585
+    ],
+    "feature_std": [
+      3316804096.0,
+      3.6609699726104736,
+      0.10322579741477966,
+      0.10326413065195084,
+      0.15843302011489868
+    ]
+  },
+  "generated_mtf_degradation_denorm.npy": {
+    "shape": [
+      300,
+      96,
+      5
+    ],
+    "feature_mean": [
+      23603798016.0,
+      15.567193031311035,
+      0.9793099761009216,
+      0.9793066382408142,
+      1.023680567741394
+    ],
+    "feature_std": [
+      1895131520.0,
+      1.1390835046768188,
+      0.03114672191441059,
+      0.031186822801828384,
+      0.021426349878311157
+    ]
+  },
+  "generated_nonuniformity_degradation_denorm.npy": {
+    "shape": [
+      300,
+      96,
+      5
+    ],
+    "feature_mean": [
+      23073976320.0,
+      15.965043067932129,
+      0.9626481533050537,
+      0.9627977013587952,
+      1.0438305139541626
+    ],
+    "feature_std": [
+      2054410752.0,
+      1.6587806940078735,
+      0.041197050362825394,
+      0.041157662868499756,
+      0.03397610783576965
+    ]
+  },
+  "generated_bad_pixel_degradation_denorm.npy": {
+    "shape": [
+      300,
+      96,
+      5
+    ],
+    "feature_mean": [
+      23695212544.0,
+      16.29436683654785,
+      0.9657754302024841,
+      0.9657756686210632,
+      1.037177324295044
+    ],
+    "feature_std": [
+      2270500352.0,
+      1.9068819284439087,
+      0.039024852216243744,
+      0.03883400186896324,
+      0.034533556550741196
+    ]
+  },
+  "generated_coupled_severe_fault_denorm.npy": {
+    "shape": [
+      300,
+      96,
+      5
+    ],
+    "feature_mean": [
+      18057633792.0,
+      21.574628829956055,
+      0.7786733508110046,
+      0.7790681719779968,
+      1.3382753133773804
+    ],
+    "feature_std": [
+      3903924736.0,
+      5.6473612785339355,
+      0.11954475194215775,
+      0.11970926821231842,
+      0.23357507586479187
+    ]
+  }
+}

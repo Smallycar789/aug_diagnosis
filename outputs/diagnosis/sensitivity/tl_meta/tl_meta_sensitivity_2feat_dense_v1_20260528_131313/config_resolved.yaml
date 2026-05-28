@@ -1,0 +1,44 @@
+experiment:
+  name: tl_meta_sensitivity_2feat_dense_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/diagnosis
+dataset:
+  name: sensitivity
+  root: data/sensitivity
+  value_columns:
+  - avg_detectivity
+  - NETD_mK
+  class_files:
+    normal: normal.csv
+    sensitivity_degradation: sensitivity_degradation.csv
+    coupled_severe_fault: coupled_severe_fault.csv
+  unit_column: unit
+  cycle_column: cycle
+  sample_length: 96
+  stride: 4
+  merge_mode: flatten
+  pad_to_length: 2048
+  prenormalize: per_window
+model:
+  name: tl_meta
+  n_way: 3
+  n_support: 8
+  n_unlabeled: 8
+  n_query: 5
+  n_episodes: 5000
+  val_interval: 100
+  test_episodes: 800
+  embedding_dim: 256
+  refine_iterations: 3
+  samples_per_class: 1200
+  signal_length: 2048
+  overlap: 0.5
+  normalize: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  l_skip: 0.9
+  sgd_lr: 0.05
+  adam_lr: 0.0007
+output_dir: /home/ze.qian/workspace/aug_diagnosis/outputs/diagnosis/sensitivity/tl_meta/tl_meta_sensitivity_2feat_dense_v1_20260528_131313
