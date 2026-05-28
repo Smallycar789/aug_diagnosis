@@ -19,6 +19,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from data_aug.common import compare_signals, mean_bias_metrics, split_data
 from data_aug.data_load import AugDataBundle
 from data_aug.io_utils import get_device, save_checkpoint_best, save_json, save_loss_history
+from data_aug.shared import (
+    calibrate_feature_means,
+    compute_norm_stats,
+    denormalize_unit_interval_array,
+    load_norm_params,
+    normalize_unit_interval,
+    resolve_class_norm,
+)
 
 
 class Encoder(nn.Module):
@@ -175,91 +183,6 @@ class VAE_GAN(nn.Module):
         }
 
 
-def _compute_norm_stats(ts_data: np.ndarray):
-    if ts_data.ndim == 3:
-        ts_min = ts_data.min(axis=(0, 1), keepdims=True).astype(np.float32)
-        ts_max = ts_data.max(axis=(0, 1), keepdims=True).astype(np.float32)
-    else:
-        ts_min = np.array(np.min(ts_data), dtype=np.float32)
-        ts_max = np.array(np.max(ts_data), dtype=np.float32)
-    return ts_min, ts_max
-
-
-def _normalize_raw(ts_data: np.ndarray, ts_min, ts_max) -> np.ndarray:
-    denom = np.where((ts_max - ts_min) < 1e-8, 1.0, ts_max - ts_min)
-    return (ts_data - ts_min) / denom
-
-
-def _denormalize_segments(data, data_min, data_max):
-    data = np.asarray(data, dtype=np.float32)
-    data_min = np.squeeze(np.asarray(data_min, dtype=np.float32))
-    data_max = np.squeeze(np.asarray(data_max, dtype=np.float32))
-    if data_min.ndim == 0:
-        scale = float(data_max - data_min)
-        if abs(scale) < 1e-8:
-            scale = 1.0
-        return data * scale + float(data_min)
-    scale = data_max - data_min
-    scale = np.where(scale < 1e-8, 1.0, scale)
-    return data * scale + data_min
-
-
-def _norm_entry_to_arrays(entry: dict[str, Any]):
-    return np.asarray(entry["ts_min"], dtype=np.float32), np.asarray(entry["ts_max"], dtype=np.float32)
-
-
-def _load_norm_params(out_dir: Path) -> dict[str, Any]:
-    norm_path = out_dir / "norm_params.json"
-    if not norm_path.exists():
-        return {}
-    import json
-
-    with open(norm_path, encoding="utf-8") as f:
-        return json.load(f)
-
-
-def _calibrate_feature_means(
-    generated: np.ndarray,
-    reference: np.ndarray,
-    feature_columns: list[str],
-    calibrate_features: list[str] | None,
-) -> np.ndarray:
-    if not calibrate_features:
-        return generated
-    out = np.asarray(generated, dtype=np.float32).copy()
-    ref = np.asarray(reference, dtype=np.float32)
-    for name in calibrate_features:
-        if name not in feature_columns:
-            continue
-        idx = feature_columns.index(name)
-        ref_mean = float(ref[..., idx].mean())
-        gen_mean = float(out[..., idx].mean())
-        if abs(gen_mean) > 1e-8:
-            out[..., idx] = out[..., idx] * (ref_mean / gen_mean)
-        else:
-            out[..., idx] = out[..., idx] + (ref_mean - gen_mean)
-    return out
-
-
-def _resolve_class_norm(
-    label_name: str,
-    norm_params: dict[str, Any],
-    fallback_min=None,
-    fallback_max=None,
-):
-    per_class_norm = norm_params.get("per_class_norm", {})
-    if label_name in per_class_norm:
-        return _norm_entry_to_arrays(per_class_norm[label_name])
-    if fallback_min is not None and fallback_max is not None:
-        return np.asarray(fallback_min, dtype=np.float32), np.asarray(fallback_max, dtype=np.float32)
-    if "ts_min" in norm_params and "ts_max" in norm_params:
-        return (
-            np.asarray(norm_params["ts_min"], dtype=np.float32),
-            np.asarray(norm_params["ts_max"], dtype=np.float32),
-        )
-    return None, None
-
-
 def _to_model_tensor(segments):
     if segments.ndim == 3:
         return torch.FloatTensor(segments).permute(0, 2, 1)
@@ -288,8 +211,8 @@ def prepare_for_comparison(segments, model, device, ts_min=None, ts_max=None):
             recon_np = _from_model_array(recon.cpu().numpy())[0]
 
             if ts_min is not None and ts_max is not None:
-                orig_segment = _denormalize_segments(orig_segment, ts_min, ts_max)
-                recon_np = _denormalize_segments(recon_np, ts_min, ts_max)
+                orig_segment = denormalize_unit_interval_array(orig_segment, ts_min, ts_max)
+                recon_np = denormalize_unit_interval_array(recon_np, ts_min, ts_max)
 
             original_samples.append(orig_segment)
             reconstructed_samples.append(recon_np)
@@ -309,13 +232,13 @@ def _prepare_data(bundle: AugDataBundle, cfg: dict[str, Any], label_mask: np.nda
         norm_source = ts_data
 
     if ts_data.ndim == 3:
-        ts_min, ts_max = _compute_norm_stats(norm_source)
-        ts_normalized = _normalize_raw(ts_data, ts_min, ts_max)
+        ts_min, ts_max = compute_norm_stats(norm_source)
+        ts_normalized = normalize_unit_interval(ts_data, ts_min, ts_max)
         segments = ts_normalized.astype(np.float32)
     else:
-        ts_min, ts_max = _compute_norm_stats(norm_source)
+        ts_min, ts_max = compute_norm_stats(norm_source)
         if np.squeeze(ts_max - ts_min) > 0:
-            ts_normalized = _normalize_raw(ts_data, ts_min, ts_max)
+            ts_normalized = normalize_unit_interval(ts_data, ts_min, ts_max)
         else:
             ts_normalized = ts_data - ts_min
         segments = split_data(ts_normalized, seq_len, overlap_ratio).astype(np.float32)
@@ -533,8 +456,8 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
             class_raw = ts_data[class_mask]
             if len(class_raw) == 0:
                 continue
-            class_min, class_max = _compute_norm_stats(class_raw)
-            class_segments = _normalize_raw(class_raw, class_min, class_max).astype(np.float32)
+            class_min, class_max = compute_norm_stats(class_raw)
+            class_segments = normalize_unit_interval(class_raw, class_min, class_max).astype(np.float32)
             per_class_norm[label_name] = {
                 "ts_min": class_min.tolist() if hasattr(class_min, "tolist") else float(class_min),
                 "ts_max": class_max.tolist() if hasattr(class_max, "tolist") else float(class_max),
@@ -807,7 +730,7 @@ def generate(model: VAE_GAN, bundle: AugDataBundle, cfg: dict[str, Any], out_dir
     model_cfg = cfg["model"]
 
     _, ts_min, ts_max, _, segments, _, _ = _prepare_data(bundle, cfg)
-    norm_params = _load_norm_params(out_dir)
+    norm_params = load_norm_params(out_dir)
     calibrate_features = model_cfg.get("feature_mean_calibration", [])
     if isinstance(model, dict):
         per_class = int(model_cfg.get("num_generate_per_class", model_cfg.get("num_generate", 5)))
@@ -821,7 +744,7 @@ def generate(model: VAE_GAN, bundle: AugDataBundle, cfg: dict[str, Any], out_dir
                 class_model = class_model.to(device)
                 class_mask = bundle.labels == label_id
                 class_raw = bundle.raw_data[class_mask]
-                class_ts_min, class_ts_max = _resolve_class_norm(
+                class_ts_min, class_ts_max = resolve_class_norm(
                     label_name, norm_params, fallback_min=ts_min, fallback_max=ts_max
                 )
                 random_generated_samples = []
@@ -829,10 +752,10 @@ def generate(model: VAE_GAN, bundle: AugDataBundle, cfg: dict[str, Any], out_dir
                     random_z = torch.randn(1, class_model.latent_dim).to(device)
                     random_gen = class_model.generator(random_z)
                     random_gen_np = _from_model_array(random_gen.cpu().numpy())[0]
-                    random_gen_np = _denormalize_segments(random_gen_np, class_ts_min, class_ts_max)
+                    random_gen_np = denormalize_unit_interval_array(random_gen_np, class_ts_min, class_ts_max)
                     random_generated_samples.append(random_gen_np)
                 generated_class = np.stack(random_generated_samples, axis=0)
-                generated_class = _calibrate_feature_means(
+                generated_class = calibrate_feature_means(
                     generated_class,
                     class_raw,
                     bundle.feature_columns,
@@ -855,7 +778,7 @@ def generate(model: VAE_GAN, bundle: AugDataBundle, cfg: dict[str, Any], out_dir
             random_z = torch.randn(1, model.latent_dim).to(device)
             random_gen = model.generator(random_z)
             random_gen_np = _from_model_array(random_gen.cpu().numpy())[0]
-            random_gen_np = _denormalize_segments(random_gen_np, ts_min, ts_max)
+            random_gen_np = denormalize_unit_interval_array(random_gen_np, ts_min, ts_max)
             random_generated_samples.append(random_gen_np)
 
     generated = np.stack(random_generated_samples, axis=0)
@@ -878,7 +801,7 @@ def evaluate(
 
     if model is None:
         model = load_checkpoint(out_dir / "checkpoint_best.pth", cfg)
-    norm_params = _load_norm_params(out_dir)
+    norm_params = load_norm_params(out_dir)
     per_class_metrics = {}
     if isinstance(model, dict) and bundle.labels is not None:
         generated_labels_path = out_dir / "generated_labels.npy"
@@ -892,10 +815,10 @@ def evaluate(
             class_raw = bundle.raw_data[class_mask]
             if len(class_raw) == 0:
                 continue
-            class_ts_min, class_ts_max = _resolve_class_norm(
+            class_ts_min, class_ts_max = resolve_class_norm(
                 label_name, norm_params, fallback_min=ts_min, fallback_max=ts_max
             )
-            class_segments = _normalize_raw(class_raw, class_ts_min, class_ts_max).astype(np.float32)
+            class_segments = normalize_unit_interval(class_raw, class_ts_min, class_ts_max).astype(np.float32)
             original_denorm_class = class_raw
             item = {
                 "num_original_windows": int(len(class_raw)),
@@ -973,7 +896,7 @@ def evaluate(
         if original_parts:
             all_original = np.concatenate(original_parts, axis=0)
     elif all_original.size == 0:
-        all_original = _denormalize_segments(segments, ts_min, ts_max)
+        all_original = denormalize_unit_interval_array(segments, ts_min, ts_max)
 
     metrics = {
         "experiment": cfg.get("experiment", {}).get("name"),

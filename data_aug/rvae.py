@@ -19,9 +19,18 @@ from torch.utils.data import DataLoader, TensorDataset
 from data_aug.common import (
     compare_signals,
     create_sequences,
-    denormalize_from_minus1_1,
     mean_bias_metrics,
     normalize_to_minus1_1,
+)
+from data_aug.shared import (
+    build_per_class_norm_sequences,
+    compute_sample_diversity,
+    denormalize_by_label,
+    denormalize_minus1_1_array,
+    normalize_windows_minus1_1,
+    physical_statistics,
+    resolve_class_norm,
+    strip_plot_compare_stats,
 )
 from data_aug.data_load import AugDataBundle
 from data_aug.io_utils import get_device, save_checkpoint_best, save_json, save_loss_history
@@ -296,24 +305,6 @@ def reference_kld_scale(step, total_steps, mid_frac=0.45, width_frac=0.14):
     return (math.tanh((step - center) / width) + 1.0) / 2.0
 
 
-def _physical_statistics(original_phys, generated_phys, feature_names):
-    original_phys = np.asarray(original_phys, dtype=np.float32)
-    generated_phys = np.asarray(generated_phys, dtype=np.float32)
-    stats = {
-        "original_mean": float(np.mean(original_phys)),
-        "original_std": float(np.std(original_phys)),
-        "generated_mean": float(np.mean(generated_phys)),
-        "generated_std": float(np.std(generated_phys)),
-        "mean_bias": mean_bias_metrics(original_phys, generated_phys, feature_names=feature_names),
-        "metric_scale": "physical",
-    }
-    o_flat = original_phys.reshape(-1)
-    g_flat = generated_phys.reshape(-1)
-    if len(o_flat) > 1 and len(g_flat) > 1:
-        stats["correlation"] = float(np.corrcoef(o_flat, g_flat)[0, 1])
-    return stats
-
-
 def _reconstruction_diagnostic(
     model,
     sequences,
@@ -391,22 +382,6 @@ def validate_and_visualize(
     return gen_seq, {}, diagnostic
 
 
-def _normalize_class_windows(class_raw: np.ndarray):
-    dmin = class_raw.min(axis=(0, 1), keepdims=True).astype(np.float32)
-    dmax = class_raw.max(axis=(0, 1), keepdims=True).astype(np.float32)
-    denom = np.where((dmax - dmin) < 1e-8, 1.0, dmax - dmin)
-    segments = (2 * ((class_raw - dmin) / denom) - 1).astype(np.float32)
-    return segments, dmin, dmax
-
-
-def _resolve_class_norm(label_name, norm_params, data_min, data_max):
-    per_class_norm = norm_params.get("per_class_norm", {})
-    if label_name and label_name in per_class_norm:
-        entry = per_class_norm[label_name]
-        return np.asarray(entry["data_min"], dtype=np.float32), np.asarray(entry["data_max"], dtype=np.float32)
-    return data_min, data_max
-
-
 def _prepare_data(bundle: AugDataBundle, cfg: dict[str, Any]):
     model_cfg = cfg["model"]
     seq_len = model_cfg.get("seq_len", 128)
@@ -418,31 +393,15 @@ def _prepare_data(bundle: AugDataBundle, cfg: dict[str, Any]):
     labels = bundle.labels
     per_class_norm: dict[str, dict[str, Any]] = {}
     if raw_data.ndim == 3 and use_per_class_norm and labels is not None:
-        sequences_list = []
-        labels_list = []
-        for label_id, label_name in enumerate(bundle.label_names):
-            class_mask = labels == label_id
-            class_raw = raw_data[class_mask]
-            if len(class_raw) == 0:
-                continue
-            class_norm, class_min, class_max = _normalize_class_windows(class_raw)
-            sequences_list.append(class_norm)
-            labels_list.append(np.full(len(class_norm), label_id, dtype=np.int64))
-            per_class_norm[label_name] = {
-                "data_min": np.asarray(class_min).tolist(),
-                "data_max": np.asarray(class_max).tolist(),
-            }
-        sequences = np.concatenate(sequences_list, axis=0).astype(np.float32)
-        labels = np.concatenate(labels_list, axis=0)
+        sequences, labels, per_class_norm = build_per_class_norm_sequences(
+            raw_data, labels, bundle.label_names
+        )
         data_min = raw_data.min(axis=(0, 1), keepdims=True)
         data_max = raw_data.max(axis=(0, 1), keepdims=True)
         data_norm = sequences
     elif raw_data.ndim == 3:
-        data_min = raw_data.min(axis=(0, 1), keepdims=True)
-        data_max = raw_data.max(axis=(0, 1), keepdims=True)
-        denom = np.where((data_max - data_min) < 1e-8, 1.0, data_max - data_min)
-        data_norm = 2 * ((raw_data - data_min) / denom) - 1
-        sequences = data_norm.astype(np.float32)
+        data_norm, data_min, data_max = normalize_windows_minus1_1(raw_data)
+        sequences = data_norm
     elif raw_data.ndim == 2:
         data_min = raw_data.min(axis=0, keepdims=True)
         data_max = raw_data.max(axis=0, keepdims=True)
@@ -807,8 +766,8 @@ def generate(model: RVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: P
                 label_id=label_id,
                 save_plots=False,
             )
-            class_dmin, class_dmax = _resolve_class_norm(label_name, norm_params, data_min, data_max)
-            gen_denorm = denormalize_from_minus1_1(gen_class, class_dmin, class_dmax)
+            class_dmin, class_dmax = resolve_class_norm(label_name, norm_params, data_min, data_max)
+            gen_denorm = denormalize_minus1_1_array(gen_class, class_dmin, class_dmax)
             generated_by_class.append(gen_class)
             generated_denorm.append(gen_denorm)
             generated_labels.extend([label_id] * len(gen_class))
@@ -834,7 +793,7 @@ def generate(model: RVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: P
 
     np.save(out_dir / "generated_samples.npy", gen_norm)
     if labels is None or not model.conditional:
-        gen_raw = denormalize_from_minus1_1(gen_norm, data_min, data_max)
+        gen_raw = denormalize_minus1_1_array(gen_norm, data_min, data_max)
         np.save(out_dir / "generated_samples_denorm.npy", gen_raw)
     else:
         np.save(out_dir / "generated_samples_denorm.npy", gen_raw)
@@ -849,7 +808,6 @@ def evaluate(
     model: RVAE | None = None,
     meta: dict | None = None,
 ) -> dict[str, Any]:
-    from scipy.spatial.distance import cdist
     from sklearn.metrics import mean_squared_error
 
     device = get_device(cfg)
@@ -897,21 +855,14 @@ def evaluate(
 
     def _denorm_generated(samples: np.ndarray, label_indices: np.ndarray | None) -> np.ndarray:
         if label_indices is None or bundle.label_names is None:
-            return denormalize_from_minus1_1(samples, data_min, data_max)
-        return np.stack(
-            [
-                denormalize_from_minus1_1(
-                    samples[i : i + 1],
-                    *_resolve_class_norm(
-                        bundle.label_names[int(label_indices[i])],
-                        norm_params,
-                        data_min,
-                        data_max,
-                    ),
-                )[0]
-                for i in range(len(samples))
-            ],
-            axis=0,
+            return denormalize_minus1_1_array(samples, data_min, data_max)
+        return denormalize_by_label(
+            samples,
+            label_indices,
+            bundle.label_names,
+            norm_params,
+            data_min,
+            data_max,
         )
 
     per_class_metrics = {}
@@ -940,21 +891,9 @@ def evaluate(
                 use_physical_plot_scale=True,
                 num_compare=n_class_compare,
             )
-            class_stats = {
-                k: v
-                for k, v in plot_stats.items()
-                if k
-                not in (
-                    "original_mean",
-                    "original_std",
-                    "generated_mean",
-                    "generated_std",
-                    "mean_bias",
-                    "correlation",
-                )
-            }
+            class_stats = strip_plot_compare_stats(plot_stats)
             class_stats.update(
-                _physical_statistics(original_for_class, generated_for_class, feature_names)
+                physical_statistics(original_for_class, generated_for_class, feature_names)
             )
 
             class_mse = [
@@ -964,12 +903,6 @@ def evaluate(
                 )
                 for i in range(n_class_compare)
             ]
-            n_check_class = min(10, len(generated_class))
-            selected_class = generated_class[:n_check_class].reshape(n_check_class, -1)
-            class_distances = cdist(selected_class, selected_class, metric="euclidean")
-            np.fill_diagonal(class_distances, np.inf)
-            class_min_distances = class_distances.min(axis=1)
-
             class_sequences = sequences[class_mask]
             per_class_metrics[label_name] = {
                 "statistics": class_stats,
@@ -981,12 +914,7 @@ def evaluate(
                     label_id=label_id,
                 ),
                 "mse": {"avg_mse": float(np.mean(class_mse))},
-                "diversity": {
-                    "min_nearest_neighbor": float(class_min_distances.min()),
-                    "mean_nearest_neighbor": float(class_min_distances.mean()),
-                    "max_nearest_neighbor": float(class_min_distances.max()),
-                    "diversity_ok": bool(class_min_distances.mean() >= 0.1),
-                },
+                "diversity": compute_sample_diversity(generated_class),
                 "num_original_windows": int(len(original_class)),
                 "num_generated_windows": int(len(generated_class)),
                 "generated_file": f"generated_{label_name}.npy",
@@ -1015,21 +943,9 @@ def evaluate(
         use_physical_plot_scale=True,
         num_compare=n_compare,
     )
-    spectrum_stats = {
-        k: v
-        for k, v in plot_stats.items()
-        if k
-        not in (
-            "original_mean",
-            "original_std",
-            "generated_mean",
-            "generated_std",
-            "mean_bias",
-            "correlation",
-        )
-    }
+    spectrum_stats = strip_plot_compare_stats(plot_stats)
     spectrum_stats.update(
-        _physical_statistics(original_for_comparison, generated_for_comparison, feature_names)
+        physical_statistics(original_for_comparison, generated_for_comparison, feature_names)
     )
 
     mse_list = []
@@ -1044,11 +960,6 @@ def evaluate(
         mse_per_list.append(mse / denom if denom != 0 else 0.0)
 
     generated_phys_all = _denorm_generated(generated_samples, generated_labels)
-    n_check = min(10, len(generated_phys_all))
-    selected_generated = generated_phys_all[:n_check].reshape(n_check, -1)
-    distances = cdist(selected_generated, selected_generated, metric="euclidean")
-    np.fill_diagonal(distances, np.inf)
-    min_distances = distances.min(axis=1)
 
     metrics = {
         "experiment": cfg.get("experiment", {}).get("name"),
@@ -1066,12 +977,7 @@ def evaluate(
             "avg_mse": float(np.mean(mse_list)) if mse_list else None,
             "avg_mse_percent": float(np.mean(mse_per_list)) if mse_per_list else None,
         },
-        "diversity": {
-            "min_nearest_neighbor": float(min_distances.min()),
-            "mean_nearest_neighbor": float(min_distances.mean()),
-            "max_nearest_neighbor": float(min_distances.max()),
-            "diversity_ok": bool(min_distances.mean() >= 0.1),
-        },
+        "diversity": compute_sample_diversity(generated_phys_all),
         "feature_plots": plot_stats.get("feature_plots", {}),
         "generated_vs_original_mean_bias": mean_bias_metrics(
             original_phys,
