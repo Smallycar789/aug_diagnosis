@@ -1,5 +1,5 @@
 experiment:
-  name: resnet_sensitivity_tuned_v1
+  name: resnet_sensitivity_2feat_stable_split_v1
   seed: 42
   device: auto
 
@@ -16,12 +16,11 @@ dataset:
     normal: normal.csv
     sensitivity_degradation: sensitivity_degradation.csv
     coupled_severe_fault: coupled_severe_fault.csv
-  # Keep unit-level split to avoid window leakage across train/val/test.
+  # Note: resnet.py currently rebuilds splits with torch.random_split.
   split_mode: unit
   split_file: unit_split.csv
-  # Use longer windows with lower overlap to reduce near-duplicate samples.
   sample_length: 96
-  stride: 32
+  stride: 4
   stft_input: channel
   normalize: per_window
 
@@ -33,10 +32,10 @@ model:
   nfft: 224
   target_size: 224
   batch_size: 16
-  epochs: 50
-  lr: 0.0003
+  epochs: 40
+  lr: 0.001
   weight_decay: 0.001  # L2 regularization
   num_classes: 3
-  train_ratio: 0.6
-  val_ratio: 0.2
+  train_ratio: 0.7
+  val_ratio: 0.15
   freeze_layers: true

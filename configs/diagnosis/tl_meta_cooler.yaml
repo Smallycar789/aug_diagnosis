@@ -9,8 +9,7 @@ output:
 dataset:
   name: cooler
   root: data/cooler
-  head_csv: cooler_simulation_results/all_head_30.csv
-  tail_csv: cooler_simulation_results/all_tail_30.csv
+  simulation_csv: cooler_simulation_results/all_simulation.csv
   value_columns:
     - T_stable_K
     - t_cool_hours
