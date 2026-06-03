@@ -4,7 +4,7 @@ import math
 import random
 from pathlib import Path
 from typing import Any
-
+import json
 import matplotlib
 
 matplotlib.use("Agg")
@@ -34,6 +34,8 @@ from data_aug.shared import (
 )
 from data_aug.data_load import AugDataBundle
 from data_aug.io_utils import get_device, save_checkpoint_best, save_json, save_loss_history
+
+from shared import compute_distribution_metrics
 
 
 def _sinusoidal_position_encoding(seq_len: int, dim: int) -> torch.Tensor:
@@ -285,12 +287,6 @@ class TVAE(nn.Module):
         return self.decode(z, target_seq=None, first_inputs=first_inputs, labels=labels)
 
 
-def loss_function(recon_x, x, mu, logvar):
-    recon_loss = F.mse_loss(recon_x, x, reduction="mean")
-    kl_loss = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp())).sum(dim=1).mean()
-    return recon_loss + kl_loss, recon_loss, kl_loss
-
-
 def reconstruction_loss(model, recon_x, x):
     if getattr(model, "structured_decoder", False) and model.decoder_mean is not None:
         dec_logvar = model.decoder_logvar
@@ -330,7 +326,71 @@ def _reconstruction_diagnostic(
         mse_ol = F.mse_loss(recon_ol, x_t).item()
     return {"mse_teacher_forced": float(mse_tf), "mse_open_loop": float(mse_ol)}
 
+def estimate_class_latent_stats(
+    model,
+    sequences,
+    labels,
+    device,
+):
+    model.eval()
 
+    latent_stats = {}
+
+    with torch.no_grad():
+
+        x = torch.tensor(
+            sequences,
+            dtype=torch.float32,
+            device=device,
+        )
+
+        y = torch.tensor(
+            labels,
+            dtype=torch.long,
+            device=device,
+        )
+
+        mu, logvar = model.encode(x, y)
+
+        z = model.reparameterize(mu, logvar)
+
+        z = z.cpu().numpy()
+
+    for cls in np.unique(labels):
+
+        z_cls = z[labels == cls]
+
+        latent_stats[str(int(cls))] = {
+            "mean": z_cls.mean(axis=0).tolist(),
+            "std": z_cls.std(axis=0).tolist(),
+        }
+
+    return latent_stats
+
+def sample_class_latent(
+    latent_stats,
+    class_id,
+    num_samples,
+    latent_dim,
+    device,
+    scale=0.8,
+):
+    stats = latent_stats[str(int(class_id))]
+
+    mu = np.asarray(stats["mean"], dtype=np.float32)
+    std = np.asarray(stats["std"], dtype=np.float32)
+
+    z = (
+        np.random.randn(num_samples, latent_dim)
+        * std[None, :] * scale
+        + mu[None, :]
+    )
+
+    return torch.tensor(
+        z,
+        dtype=torch.float32,
+        device=device,
+    )
 def validate_and_visualize(
     model,
     original_sequences,
@@ -344,6 +404,7 @@ def validate_and_visualize(
     label_id=None,
     filename_prefix="",
     save_plots=False,
+    latent_stats=None,
 ):
     model.eval()
     if (
@@ -355,7 +416,28 @@ def validate_and_visualize(
     label_tensor = None
 
     with torch.no_grad():
-        z = torch.randn(num_gen, latent_dim, device=device)
+        if (
+            latent_stats is not None
+            and label_id is not None
+            and str(int(label_id)) in latent_stats
+        ):
+
+            z = sample_class_latent(
+                latent_stats,
+                label_id,
+                num_gen,
+                latent_dim,
+                device,
+                scale=1.0,
+            )
+
+        else:
+
+            z = torch.randn(
+                num_gen,
+                latent_dim,
+                device=device,
+            )
         if use_data_start:
             idx = np.random.randint(0, len(original_sequences), size=num_gen)
             fi = torch.from_numpy(original_sequences[idx, 0:1, :].astype(np.float32)).to(device)
@@ -385,6 +467,7 @@ def validate_and_visualize(
 def _prepare_data(bundle: AugDataBundle, cfg: dict[str, Any]):
     model_cfg = cfg["model"]
     seq_len = model_cfg.get("seq_len", 128)
+    latent_sampling_scale = model_cfg.get("latent_sampling_scale", 1.0)
     stride = model_cfg.get("stride", 32)
     batch_size = model_cfg.get("batch_size", 256)
     use_per_class_norm = bool(model_cfg.get("per_class_norm", False))
@@ -559,9 +642,10 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
 
             recon_x, mu, logvar = model(x, labels=y, teacher_force_ratio=teacher_force_ratio)
             recon_loss = reconstruction_loss(model, recon_x, x)
-            kl_loss = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp())).sum(dim=1).mean()
+            kl_per_dim = -0.5 * (1 + logvar - mu.pow(2) - logvar.exp())  # (B, D)
             if FREE_BITS > 0:
-                kl_loss = torch.clamp(kl_loss, min=FREE_BITS)
+                kl_per_dim = torch.clamp(kl_per_dim, min=FREE_BITS)
+            kl_loss = kl_per_dim.sum(dim=1).mean()
 
             ol_w = OPENLOOP_AUX_WEIGHT if epoch > PHASE1_TF_EPOCHS else 0.0
             if ol_w > 0 and not model.structured_decoder:
@@ -662,6 +746,21 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
     if per_class_norm:
         norm_payload["per_class_norm"] = per_class_norm
     save_json(norm_payload, out_dir / "norm_params.json")
+
+    latent_stats = {}
+
+    if labels is not None:
+        latent_stats = estimate_class_latent_stats(
+            model,
+            sequences,
+            labels,
+            device,
+        )
+
+    save_json(
+        latent_stats,
+        out_dir / "latent_stats.json"
+    )
     return model, meta
 
 
@@ -742,6 +841,13 @@ def generate(model: TVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: P
     data_min = np.asarray(meta["data_min"], dtype=np.float32)
     data_max = np.asarray(meta["data_max"], dtype=np.float32)
     norm_params = {"per_class_norm": meta.get("per_class_norm", {})}
+    latent_stats = None
+
+    latent_stats_path = out_dir / "latent_stats.json"
+
+    if latent_stats_path.exists():
+        with open(latent_stats_path, "r") as f:
+            latent_stats = json.load(f)
 
     if labels is not None and model.conditional:
         generated_by_class = []
@@ -764,6 +870,7 @@ def generate(model: TVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: P
                 use_data_start=model_cfg.get("use_data_start", True),
                 labels=np.full(len(class_sequences), label_id, dtype=np.int64),
                 label_id=label_id,
+                latent_stats=latent_stats,
                 save_plots=False,
             )
             class_dmin, class_dmax = resolve_class_norm(label_name, norm_params, data_min, data_max)
@@ -904,6 +1011,10 @@ def evaluate(
                 for i in range(n_class_compare)
             ]
             class_sequences = sequences[class_mask]
+            dist_metrics = compute_distribution_metrics(
+                original_class,
+                generated_class,
+            )
             per_class_metrics[label_name] = {
                 "statistics": class_stats,
                 "reconstruction_diagnostic": _reconstruction_diagnostic(
@@ -914,6 +1025,7 @@ def evaluate(
                     label_id=label_id,
                 ),
                 "mse": {"avg_mse": float(np.mean(class_mse))},
+                "distribution_similarity": dist_metrics,
                 "diversity": compute_sample_diversity(generated_class),
                 "num_original_windows": int(len(original_class)),
                 "num_generated_windows": int(len(generated_class)),
@@ -926,6 +1038,7 @@ def evaluate(
                     generated_class,
                     feature_names=feature_names,
                 ),
+                
             }
 
     n_compare = min(num_compare, len(original_phys), len(generated_samples))
@@ -960,7 +1073,10 @@ def evaluate(
         mse_per_list.append(mse / denom if denom != 0 else 0.0)
 
     generated_phys_all = _denorm_generated(generated_samples, generated_labels)
-
+    overall_distribution_metrics = compute_distribution_metrics(
+        original_phys,
+        generated_phys_all,
+    )
     metrics = {
         "experiment": cfg.get("experiment", {}).get("name"),
         "dataset": cfg["dataset"]["name"],
@@ -977,6 +1093,7 @@ def evaluate(
             "avg_mse": float(np.mean(mse_list)) if mse_list else None,
             "avg_mse_percent": float(np.mean(mse_per_list)) if mse_per_list else None,
         },
+        "distribution_similarity": overall_distribution_metrics,
         "diversity": compute_sample_diversity(generated_phys_all),
         "feature_plots": plot_stats.get("feature_plots", {}),
         "generated_vs_original_mean_bias": mean_bias_metrics(

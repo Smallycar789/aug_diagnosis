@@ -10,6 +10,10 @@ import numpy as np
 
 from data_aug.common import denormalize_from_minus1_1, mean_bias_metrics
 
+from sklearn.metrics.pairwise import rbf_kernel
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
 def load_norm_params(out_dir: Path) -> dict[str, Any]:
     norm_path = out_dir / "norm_params.json"
@@ -252,3 +256,90 @@ def denormalize_by_label(
         ],
         axis=0,
     )
+
+def compute_c2st(real_samples, fake_samples, random_state=42):
+    """
+    real_samples : (N,T,D)
+    fake_samples : (M,T,D)
+
+    返回：
+        accuracy
+    """
+
+    n = min(len(real_samples), len(fake_samples))
+
+    real = real_samples[:n].reshape(n, -1)
+    fake = fake_samples[:n].reshape(n, -1)
+
+    X = np.vstack([real, fake])
+
+    y = np.concatenate([
+        np.zeros(n, dtype=int),
+        np.ones(n, dtype=int)
+    ])
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.3,
+        random_state=random_state,
+        stratify=y
+    )
+
+    clf = LogisticRegression(
+    max_iter=5000,
+    random_state=random_state
+    )
+
+    clf.fit(X_train, y_train)
+
+    pred = clf.predict(X_test)
+
+    return float(accuracy_score(y_test, pred))
+
+def compute_mmd(
+    real_samples: np.ndarray,
+    generated_samples: np.ndarray,
+    gamma: float | None = None,
+) -> float:
+
+    X = real_samples.reshape(len(real_samples), -1)
+    Y = generated_samples.reshape(len(generated_samples), -1)
+
+    if gamma is None:
+        gamma = 1.0 / X.shape[1]
+
+    Kxx = rbf_kernel(X, X, gamma=gamma)
+    Kyy = rbf_kernel(Y, Y, gamma=gamma)
+    Kxy = rbf_kernel(X, Y, gamma=gamma)
+
+    mmd = (
+        Kxx.mean()
+        + Kyy.mean()
+        - 2.0 * Kxy.mean()
+    )
+
+    return float(mmd)
+
+def compute_distribution_metrics(
+    real_samples: np.ndarray,
+    generated_samples: np.ndarray,
+):
+    """
+    Match sample counts before computing.
+    """
+
+    n = min(len(real_samples), len(generated_samples))
+
+    if len(real_samples) > n:
+        idx = np.random.choice(len(real_samples), n, replace=False)
+        real_samples = real_samples[idx]
+
+    if len(generated_samples) > n:
+        idx = np.random.choice(len(generated_samples), n, replace=False)
+        generated_samples = generated_samples[idx]
+
+    return {
+        "mmd": compute_mmd(real_samples, generated_samples),
+        "c2st_acc": compute_c2st(real_samples, generated_samples),
+    }

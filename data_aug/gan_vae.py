@@ -15,6 +15,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
+from shared import compute_distribution_metrics
 
 from data_aug.common import compare_signals, mean_bias_metrics, split_data
 from data_aug.data_load import AugDataBundle
@@ -830,6 +831,10 @@ def evaluate(
                 generated_class = generated_samples[generated_labels == label_id]
                 if len(generated_class):
                     n_compare = min(5, len(original_denorm_class), len(generated_class))
+                    dist_metrics = compute_distribution_metrics(
+                        original_denorm_class,
+                        generated_class,
+                    )
                     class_stats = compare_signals(
                         original_denorm_class[:n_compare],
                         generated_class[:n_compare],
@@ -851,6 +856,8 @@ def evaluate(
                         generated_class,
                         feature_names=bundle.feature_columns,
                     )
+                    item["distribution_similarity"] = dist_metrics
+                    
             original_class, recon_class = prepare_for_comparison(
                 class_segments, class_model, device, class_ts_min, class_ts_max
             )
@@ -898,6 +905,10 @@ def evaluate(
     elif all_original.size == 0:
         all_original = denormalize_unit_interval_array(segments, ts_min, ts_max)
 
+    overall_distribution_metrics = compute_distribution_metrics(
+        all_original,
+        all_random,
+    )
     metrics = {
         "experiment": cfg.get("experiment", {}).get("name"),
         "dataset": cfg["dataset"]["name"],
@@ -926,6 +937,7 @@ def evaluate(
                 feature_names=bundle.feature_columns,
             ),
         },
+        "distribution_similarity": overall_distribution_metrics,
     }
 
     if meta:

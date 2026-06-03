@@ -29,7 +29,7 @@ from data_aug.shared import (
     resolve_class_norm,
     strip_plot_compare_stats,
 )
-
+from shared import compute_distribution_metrics
 
 class Encoder(nn.Module):
     def __init__(self, input_dim, z_dim, label_dim):
@@ -629,9 +629,14 @@ def evaluate(
                 )
                 for i in range(n_class_compare)
             ]
+            dist_metrics = compute_distribution_metrics(
+                original_class,
+                generated_class,
+            )
             per_class_metrics[label_name] = {
                 "statistics": class_stats,
                 "mse": {"avg_mse": float(np.mean(class_mse))},
+                "distribution_similarity": dist_metrics,
                 "diversity": compute_sample_diversity(generated_class),
                 "num_original_windows": int(len(original_class)),
                 "num_generated_windows": int(len(generated_class)),
@@ -693,7 +698,10 @@ def evaluate(
         denom = np.max(original_phys_compare[i]) - np.min(original_phys_compare[i])
         mse_per = mse / denom if denom != 0 else 0.0
         mse_per_list.append(mse_per)
-
+    overall_distribution_metrics =compute_distribution_metrics(
+        original_phys_compare,
+        generated_phys_compare,
+    )
     metrics = {
         "experiment": cfg.get("experiment", {}).get("name"),
         "dataset": cfg["dataset"]["name"],
@@ -708,6 +716,7 @@ def evaluate(
             "avg_mse_percent": float(np.mean(mse_per_list)),
         },
         "diversity": compute_sample_diversity(generated_samples),
+        "distribution_similarity": overall_distribution_metrics,
         "feature_plots": plot_stats.get("feature_plots", {}),
         "generated_vs_original_mean_bias": mean_bias_metrics(
             bundle.raw_data,
