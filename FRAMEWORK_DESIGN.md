@@ -156,7 +156,6 @@ python diagnosis/test.py --config configs/diagnosis/cnn_bigru_degradation.yaml
 
 ```python
 MODELS = {
-    "vae":     "data_aug.vae",
     "gan":     "data_aug.gan",
     "gan_vae": "data_aug.gan_vae",
     "tvae":    "data_aug.tvae",
