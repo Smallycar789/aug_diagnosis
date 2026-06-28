@@ -1,0 +1,73 @@
+{
+  "ts_min": [
+    [
+      [
+        0.013318000361323357
+      ]
+    ]
+  ],
+  "ts_max": [
+    [
+      [
+        0.2779189944267273
+      ]
+    ]
+  ],
+  "per_class_norm": {
+    "normal": {
+      "ts_min": [
+        [
+          [
+            0.013318000361323357
+          ]
+        ]
+      ],
+      "ts_max": [
+        [
+          [
+            0.07008899748325348
+          ]
+        ]
+      ]
+    },
+    "tracking_fault": {
+      "ts_min": [
+        [
+          [
+            0.15644599497318268
+          ]
+        ]
+      ],
+      "ts_max": [
+        [
+          [
+            0.2779189944267273
+          ]
+        ]
+      ]
+    }
+  },
+  "normalization": "per_class_minmax",
+  "seq_len": 64,
+  "latent_dim": 64,
+  "input_channels": 1,
+  "feature_columns": [
+    "servo_accuracy"
+  ],
+  "label_names": [
+    "normal",
+    "tracking_fault"
+  ],
+  "per_class": {
+    "normal": {
+      "best_epoch": 46,
+      "best_recon_loss": 0.027050569653511047,
+      "num_windows": 36
+    },
+    "tracking_fault": {
+      "best_epoch": 47,
+      "best_recon_loss": 0.027369853109121323,
+      "num_windows": 36
+    }
+  }
+}

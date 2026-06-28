@@ -1,0 +1,52 @@
+{
+  "experiment": "resnet_cooler_v1",
+  "dataset": "cooler",
+  "model": "resnet",
+  "split": "test",
+  "accuracy": 1.0,
+  "loss": 0.001186889470166837,
+  "precision_macro": 1.0,
+  "recall_macro": 1.0,
+  "f1_macro": 1.0,
+  "classification_report": {
+    "0": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 26.0
+    },
+    "1": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 22.0
+    },
+    "accuracy": 1.0,
+    "macro avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 48.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 48.0
+    }
+  },
+  "label_names": [
+    "normal",
+    "temperature_control_fault"
+  ],
+  "confusion_matrix": [
+    [
+      26,
+      0
+    ],
+    [
+      0,
+      22
+    ]
+  ]
+}

@@ -236,7 +236,7 @@ class TVAE(nn.Module):
         self.decoder_logvar = logvar
 
         if sample is None:
-            sample = self.training or self.sample_decoder_output
+            sample = self.training and self.sample_decoder_output
         if sample:
             noise = torch.randn_like(mean) * torch.exp(0.5 * logvar) * self.decoder_sample_scale
             return torch.clamp(mean + noise, -1.2, 1.2)
@@ -1010,7 +1010,8 @@ def evaluate(
             if len(original_class) == 0 or len(generated_class_norm) == 0:
                 continue
 
-            generated_class = _denorm_generated(generated_class_norm, None)
+            class_gen_labels = generated_labels[generated_labels == label_id]
+            generated_class = _denorm_generated(generated_class_norm, class_gen_labels)
             n_class_compare = min(num_compare, len(original_class), len(generated_class))
             original_for_class = original_class[:n_class_compare]
             generated_for_class = generated_class[:n_class_compare]
@@ -1072,7 +1073,12 @@ def evaluate(
 
     n_compare = min(num_compare, len(original_phys), len(generated_samples))
     original_for_comparison = original_phys[:n_compare]
-    generated_for_comparison = _denorm_generated(generated_samples[:n_compare], None)
+    compare_gen_labels = (
+        generated_labels[:n_compare] if generated_labels is not None else None
+    )
+    generated_for_comparison = _denorm_generated(
+        generated_samples[:n_compare], compare_gen_labels
+    )
 
     plot_stats = compare_signals(
         original_for_comparison,

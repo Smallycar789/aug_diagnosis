@@ -1,0 +1,63 @@
+experiment:
+  name: tvae_sifuqi_matvae_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/data_aug
+dataset:
+  name: sifuqi
+  root: data/sifuqi
+  csv: servo_accuracy.csv
+  time_column: hours
+  value_columns:
+  - servo_accuracy
+  normal_time_max: 1000
+  fault_time_min: 6000
+  label_names:
+  - normal
+  - tracking_fault
+  sample_length: 64
+  stride: 8
+  sample_rate: 1.0
+model:
+  name: tvae
+  conditional: true
+  label_embed_dim: 8
+  per_class_norm: true
+  seq_len: 64
+  stride: 8
+  input_dim: 1
+  latent_dim: 32
+  hidden_dim: 128
+  num_layers: 1
+  epochs: 150
+  batch_size: 16
+  lr: 0.001
+  use_attention_encoder: true
+  attention_heads: 4
+  attention_layers: 1
+  structured_decoder: true
+  trend_degree: 2
+  seasonal_periods:
+  - 4
+  - 8
+  - 16
+  - 32
+  sample_decoder_output: true
+  decoder_sample_scale: 0.35
+  min_decoder_logvar: -9.0
+  max_decoder_logvar: -5.0
+  phase1_tf_epochs: 0
+  ramp_tfr_epochs: 1
+  use_reference_kl_schedule: true
+  beta_delay_frac: 0.42
+  beta_end: 0.04
+  tfr_min: 0.0
+  openloop_aux_weight: 0.0
+  dec_dropout: 0.05
+  weight_decay: 1.0e-05
+  lr_patience: 10
+  use_data_start: false
+  paired_generation: true
+  num_generate_per_class: 300
+output_dir: /home/ze.qian/workspace/aug_diagnosis/outputs/data_aug/sifuqi/tvae/tvae_sifuqi_matvae_v1_20260628_191820

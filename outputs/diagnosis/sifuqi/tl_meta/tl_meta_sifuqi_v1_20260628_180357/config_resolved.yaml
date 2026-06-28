@@ -1,0 +1,45 @@
+experiment:
+  name: tl_meta_sifuqi_v1
+  seed: 42
+  device: auto
+output:
+  root: outputs/diagnosis
+dataset:
+  name: sifuqi
+  root: data/sifuqi
+  csv: servo_accuracy.csv
+  time_column: hours
+  value_columns:
+  - servo_accuracy
+  normal_time_max: 1000
+  fault_time_min: 6000
+  label_names:
+  - normal
+  - tracking_fault
+  sample_length: 64
+  stride: 16
+  merge_mode: flatten
+  pad_to_length: 2048
+  prenormalize: per_window
+model:
+  name: tl_meta
+  n_way: 2
+  n_support: 5
+  n_unlabeled: 5
+  n_query: 5
+  n_episodes: 2000
+  val_interval: 200
+  test_episodes: 300
+  embedding_dim: 128
+  refine_iterations: 2
+  samples_per_class: 120
+  signal_length: 2048
+  allow_episode_replace: true
+  overlap: 0.5
+  normalize: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  l_skip: 0.2
+  sgd_lr: 0.1
+  adam_lr: 0.001
+output_dir: /home/ze.qian/workspace/aug_diagnosis/outputs/diagnosis/sifuqi/tl_meta/tl_meta_sifuqi_v1_20260628_180357

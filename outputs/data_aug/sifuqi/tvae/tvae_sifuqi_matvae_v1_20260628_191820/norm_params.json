@@ -1,0 +1,59 @@
+{
+  "data_min": [
+    [
+      [
+        0.013318000361323357
+      ]
+    ]
+  ],
+  "data_max": [
+    [
+      [
+        0.2779189944267273
+      ]
+    ]
+  ],
+  "label_names": [
+    "normal",
+    "tracking_fault"
+  ],
+  "feature_columns": [
+    "servo_accuracy"
+  ],
+  "input_dim": 1,
+  "num_classes": 2,
+  "per_class_norm": {
+    "normal": {
+      "data_min": [
+        [
+          [
+            0.013318000361323357
+          ]
+        ]
+      ],
+      "data_max": [
+        [
+          [
+            0.07008899748325348
+          ]
+        ]
+      ]
+    },
+    "tracking_fault": {
+      "data_min": [
+        [
+          [
+            0.15644599497318268
+          ]
+        ]
+      ],
+      "data_max": [
+        [
+          [
+            0.2779189944267273
+          ]
+        ]
+      ]
+    }
+  }
+}

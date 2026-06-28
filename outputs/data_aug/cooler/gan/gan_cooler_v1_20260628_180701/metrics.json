@@ -1,0 +1,416 @@
+{
+  "experiment": "gan_cooler_v1",
+  "dataset": "cooler",
+  "model": "gan",
+  "feature_columns": [
+    "T_stable_K",
+    "t_cool_s",
+    "sigma_T_K"
+  ],
+  "label_names": [
+    "normal",
+    "temperature_control_fault"
+  ],
+  "input_shape": [
+    50,
+    3
+  ],
+  "per_class": {
+    "normal": {
+      "statistics": {
+        "plot_mode": "per_feature_physical_split",
+        "feature_plots": {
+          "T_stable_K": {
+            "signal_comparison": "normal_T_stable_K_signal_comparison.png",
+            "frequency_comparison": "normal_T_stable_K_frequency_comparison.png",
+            "correlation": 0.4687298737298427
+          },
+          "t_cool_s": {
+            "signal_comparison": "normal_t_cool_s_signal_comparison.png",
+            "frequency_comparison": "normal_t_cool_s_frequency_comparison.png",
+            "correlation": 0.16604426243432727
+          },
+          "sigma_T_K": {
+            "signal_comparison": "normal_sigma_T_K_signal_comparison.png",
+            "frequency_comparison": "normal_sigma_T_K_frequency_comparison.png",
+            "correlation": 0.40845071249502
+          }
+        },
+        "original_mean": 124.68753814697266,
+        "original_std": 124.0525131225586,
+        "generated_mean": 130.35848999023438,
+        "generated_std": 130.40806579589844,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 124.68753814697266,
+            "generated_mean": 130.35848999023438,
+            "mean_error": 5.670951843261719,
+            "mean_abs_error": 5.670951843261719,
+            "mean_error_percent": 4.548130412661777,
+            "mean_abs_error_percent": 4.548130412661777
+          },
+          "per_feature": {
+            "T_stable_K": {
+              "original_mean": 79.45606231689453,
+              "generated_mean": 81.78453826904297,
+              "mean_error": 2.3284759521484375,
+              "mean_abs_error": 2.3284759521484375,
+              "mean_error_percent": 2.930520194748362,
+              "mean_abs_error_percent": 2.930520194748362
+            },
+            "t_cool_s": {
+              "original_mean": 294.0973205566406,
+              "generated_mean": 308.6695251464844,
+              "mean_error": 14.57220458984375,
+              "mean_abs_error": 14.57220458984375,
+              "mean_error_percent": 4.954891993664821,
+              "mean_abs_error_percent": 4.954891993664821
+            },
+            "sigma_T_K": {
+              "original_mean": 0.5092461109161377,
+              "generated_mean": 0.6214077472686768,
+              "mean_error": 0.11216163635253906,
+              "mean_abs_error": 0.11216163635253906,
+              "mean_error_percent": 22.025035429482102,
+              "mean_abs_error_percent": 22.025035429482102
+            }
+          }
+        },
+        "metric_scale": "physical",
+        "correlation": 0.9996658616811849
+      },
+      "mse": {
+        "avg_mse": 83.36366271972656
+      },
+      "distribution_similarity": {
+        "mmd": 0.4848363399505615,
+        "c2st_acc": 0.9833333333333333
+      },
+      "diversity": {
+        "min_nearest_neighbor": 0.27183965572112057,
+        "mean_nearest_neighbor": 1.9267790393758957,
+        "max_nearest_neighbor": 5.7568727702446845,
+        "diversity_ok": true
+      },
+      "num_original_windows": 160,
+      "num_generated_windows": 100,
+      "generated_file": "generated_normal.npy",
+      "feature_plots": {
+        "T_stable_K": {
+          "signal_comparison": "normal_T_stable_K_signal_comparison.png",
+          "frequency_comparison": "normal_T_stable_K_frequency_comparison.png",
+          "correlation": 0.4687298737298427
+        },
+        "t_cool_s": {
+          "signal_comparison": "normal_t_cool_s_signal_comparison.png",
+          "frequency_comparison": "normal_t_cool_s_frequency_comparison.png",
+          "correlation": 0.16604426243432727
+        },
+        "sigma_T_K": {
+          "signal_comparison": "normal_sigma_T_K_signal_comparison.png",
+          "frequency_comparison": "normal_sigma_T_K_frequency_comparison.png",
+          "correlation": 0.40845071249502
+        }
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 129.13902282714844,
+          "generated_mean": 129.32205200195312,
+          "mean_error": 0.1830291748046875,
+          "mean_abs_error": 0.1830291748046875,
+          "mean_error_percent": 0.14173033897714296,
+          "mean_abs_error_percent": 0.14173033897714296
+        },
+        "per_feature": {
+          "T_stable_K": {
+            "original_mean": 81.40392303466797,
+            "generated_mean": 81.22039794921875,
+            "mean_error": -0.18352508544921875,
+            "mean_abs_error": 0.18352508544921875,
+            "mean_error_percent": -0.22544992748206966,
+            "mean_abs_error_percent": 0.22544992748206966
+          },
+          "t_cool_s": {
+            "original_mean": 305.4268798828125,
+            "generated_mean": 306.1517028808594,
+            "mean_error": 0.724822998046875,
+            "mean_abs_error": 0.724822998046875,
+            "mean_error_percent": 0.23731473743403927,
+            "mean_abs_error_percent": 0.23731473743403927
+          },
+          "sigma_T_K": {
+            "original_mean": 0.5862305760383606,
+            "generated_mean": 0.5940207242965698,
+            "mean_error": 0.0077901482582092285,
+            "mean_abs_error": 0.0077901482582092285,
+            "mean_error_percent": 1.3288539657643978,
+            "mean_abs_error_percent": 1.3288539657643978
+          }
+        }
+      }
+    },
+    "temperature_control_fault": {
+      "statistics": {
+        "plot_mode": "per_feature_physical_split",
+        "feature_plots": {
+          "T_stable_K": {
+            "signal_comparison": "temperature_control_fault_T_stable_K_signal_comparison.png",
+            "frequency_comparison": "temperature_control_fault_T_stable_K_frequency_comparison.png",
+            "correlation": -0.19487779362466023
+          },
+          "t_cool_s": {
+            "signal_comparison": "temperature_control_fault_t_cool_s_signal_comparison.png",
+            "frequency_comparison": "temperature_control_fault_t_cool_s_frequency_comparison.png",
+            "correlation": -0.008614704373478778
+          },
+          "sigma_T_K": {
+            "signal_comparison": "temperature_control_fault_sigma_T_K_signal_comparison.png",
+            "frequency_comparison": "temperature_control_fault_sigma_T_K_frequency_comparison.png",
+            "correlation": 0.5059902923113865
+          }
+        },
+        "original_mean": 143.24072265625,
+        "original_std": 146.19615173339844,
+        "generated_mean": 156.2987823486328,
+        "generated_std": 164.52679443359375,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 143.24072265625,
+            "generated_mean": 156.2987823486328,
+            "mean_error": 13.058059692382812,
+            "mean_abs_error": 13.058059692382812,
+            "mean_error_percent": 9.116164349240005,
+            "mean_abs_error_percent": 9.116164349240005
+          },
+          "per_feature": {
+            "T_stable_K": {
+              "original_mean": 82.19957733154297,
+              "generated_mean": 82.74406433105469,
+              "mean_error": 0.5444869995117188,
+              "mean_abs_error": 0.5444869995117188,
+              "mean_error_percent": 0.6623963494551685,
+              "mean_abs_error_percent": 0.6623963494551685
+            },
+            "t_cool_s": {
+              "original_mean": 344.8117980957031,
+              "generated_mean": 383.6656799316406,
+              "mean_error": 38.8538818359375,
+              "mean_abs_error": 38.8538818359375,
+              "mean_error_percent": 11.268141650174492,
+              "mean_abs_error_percent": 11.268141650174492
+            },
+            "sigma_T_K": {
+              "original_mean": 2.710784435272217,
+              "generated_mean": 2.486576795578003,
+              "mean_error": -0.22420763969421387,
+              "mean_abs_error": 0.22420763969421387,
+              "mean_error_percent": -8.270950532874037,
+              "mean_abs_error_percent": 8.270950532874037
+            }
+          }
+        },
+        "metric_scale": "physical",
+        "correlation": 0.9968881058774745
+      },
+      "mse": {
+        "avg_mse": 656.2274780273438
+      },
+      "distribution_similarity": {
+        "mmd": 0.3640711307525635,
+        "c2st_acc": 1.0
+      },
+      "diversity": {
+        "min_nearest_neighbor": 0.16430608097881103,
+        "mean_nearest_neighbor": 1.3174457537757494,
+        "max_nearest_neighbor": 5.975527606507808,
+        "diversity_ok": true
+      },
+      "num_original_windows": 160,
+      "num_generated_windows": 100,
+      "generated_file": "generated_temperature_control_fault.npy",
+      "feature_plots": {
+        "T_stable_K": {
+          "signal_comparison": "temperature_control_fault_T_stable_K_signal_comparison.png",
+          "frequency_comparison": "temperature_control_fault_T_stable_K_frequency_comparison.png",
+          "correlation": -0.19487779362466023
+        },
+        "t_cool_s": {
+          "signal_comparison": "temperature_control_fault_t_cool_s_signal_comparison.png",
+          "frequency_comparison": "temperature_control_fault_t_cool_s_frequency_comparison.png",
+          "correlation": -0.008614704373478778
+        },
+        "sigma_T_K": {
+          "signal_comparison": "temperature_control_fault_sigma_T_K_signal_comparison.png",
+          "frequency_comparison": "temperature_control_fault_sigma_T_K_frequency_comparison.png",
+          "correlation": 0.5059902923113865
+        }
+      },
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 162.84950256347656,
+          "generated_mean": 161.02993774414062,
+          "mean_error": -1.8195648193359375,
+          "mean_abs_error": 1.8195648193359375,
+          "mean_error_percent": -1.117329061921264,
+          "mean_abs_error_percent": 1.117329061921264
+        },
+        "per_feature": {
+          "T_stable_K": {
+            "original_mean": 82.82433319091797,
+            "generated_mean": 82.7723388671875,
+            "mean_error": -0.05199432373046875,
+            "mean_abs_error": 0.05199432373046875,
+            "mean_error_percent": -0.06277662822906993,
+            "mean_abs_error_percent": 0.06277662822906993
+          },
+          "t_cool_s": {
+            "original_mean": 403.3858642578125,
+            "generated_mean": 397.94378662109375,
+            "mean_error": -5.44207763671875,
+            "mean_abs_error": 5.44207763671875,
+            "mean_error_percent": -1.3490997377242258,
+            "mean_abs_error_percent": 1.3490997377242258
+          },
+          "sigma_T_K": {
+            "original_mean": 2.3382742404937744,
+            "generated_mean": 2.3736515045166016,
+            "mean_error": 0.03537726402282715,
+            "mean_abs_error": 0.03537726402282715,
+            "mean_error_percent": 1.5129647074825798,
+            "mean_abs_error_percent": 1.5129647074825798
+          }
+        }
+      }
+    }
+  },
+  "statistics": {
+    "plot_mode": "per_feature_physical_split",
+    "feature_plots": {
+      "T_stable_K": {
+        "signal_comparison": "T_stable_K_signal_comparison.png",
+        "frequency_comparison": "T_stable_K_frequency_comparison.png",
+        "correlation": 0.4687298737298427
+      },
+      "t_cool_s": {
+        "signal_comparison": "t_cool_s_signal_comparison.png",
+        "frequency_comparison": "t_cool_s_frequency_comparison.png",
+        "correlation": 0.16604426243432727
+      },
+      "sigma_T_K": {
+        "signal_comparison": "sigma_T_K_signal_comparison.png",
+        "frequency_comparison": "sigma_T_K_frequency_comparison.png",
+        "correlation": 0.40845071249502
+      }
+    },
+    "original_mean": 124.68753814697266,
+    "original_std": 124.0525131225586,
+    "generated_mean": 130.35848999023438,
+    "generated_std": 130.40806579589844,
+    "mean_bias": {
+      "overall": {
+        "original_mean": 124.68753814697266,
+        "generated_mean": 130.35848999023438,
+        "mean_error": 5.670951843261719,
+        "mean_abs_error": 5.670951843261719,
+        "mean_error_percent": 4.548130412661777,
+        "mean_abs_error_percent": 4.548130412661777
+      },
+      "per_feature": {
+        "T_stable_K": {
+          "original_mean": 79.45606231689453,
+          "generated_mean": 81.78453826904297,
+          "mean_error": 2.3284759521484375,
+          "mean_abs_error": 2.3284759521484375,
+          "mean_error_percent": 2.930520194748362,
+          "mean_abs_error_percent": 2.930520194748362
+        },
+        "t_cool_s": {
+          "original_mean": 294.0973205566406,
+          "generated_mean": 308.6695251464844,
+          "mean_error": 14.57220458984375,
+          "mean_abs_error": 14.57220458984375,
+          "mean_error_percent": 4.954891993664821,
+          "mean_abs_error_percent": 4.954891993664821
+        },
+        "sigma_T_K": {
+          "original_mean": 0.5092461109161377,
+          "generated_mean": 0.6214077472686768,
+          "mean_error": 0.11216163635253906,
+          "mean_abs_error": 0.11216163635253906,
+          "mean_error_percent": 22.025035429482102,
+          "mean_abs_error_percent": 22.025035429482102
+        }
+      }
+    },
+    "metric_scale": "physical",
+    "correlation": 0.9996658616811849
+  },
+  "mse": {
+    "avg_mse": 83.36366271972656,
+    "avg_mse_percent": 0.2831041216850281
+  },
+  "diversity": {
+    "min_nearest_neighbor": 0.27183965572112057,
+    "mean_nearest_neighbor": 1.9267790393758957,
+    "max_nearest_neighbor": 5.7568727702446845,
+    "diversity_ok": true
+  },
+  "distribution_similarity": {
+    "mmd": 0.9638294577598572,
+    "c2st_acc": 1.0
+  },
+  "feature_plots": {
+    "T_stable_K": {
+      "signal_comparison": "T_stable_K_signal_comparison.png",
+      "frequency_comparison": "T_stable_K_frequency_comparison.png",
+      "correlation": 0.4687298737298427
+    },
+    "t_cool_s": {
+      "signal_comparison": "t_cool_s_signal_comparison.png",
+      "frequency_comparison": "t_cool_s_frequency_comparison.png",
+      "correlation": 0.16604426243432727
+    },
+    "sigma_T_K": {
+      "signal_comparison": "sigma_T_K_signal_comparison.png",
+      "frequency_comparison": "sigma_T_K_frequency_comparison.png",
+      "correlation": 0.40845071249502
+    }
+  },
+  "generated_vs_original_mean_bias": {
+    "overall": {
+      "original_mean": 145.9942626953125,
+      "generated_mean": 145.17599487304688,
+      "mean_error": -0.818267822265625,
+      "mean_abs_error": 0.818267822265625,
+      "mean_error_percent": -0.5604794374511386,
+      "mean_abs_error_percent": 0.5604794374511386
+    },
+    "per_feature": {
+      "T_stable_K": {
+        "original_mean": 82.11412811279297,
+        "generated_mean": 81.99636840820312,
+        "mean_error": -0.11775970458984375,
+        "mean_abs_error": 0.11775970458984375,
+        "mean_error_percent": -0.14340979718872202,
+        "mean_abs_error_percent": 0.14340979718872202
+      },
+      "t_cool_s": {
+        "original_mean": 354.4063720703125,
+        "generated_mean": 352.0477600097656,
+        "mean_error": -2.358612060546875,
+        "mean_abs_error": 2.358612060546875,
+        "mean_error_percent": -0.6655106246450156,
+        "mean_abs_error_percent": 0.6655106246450156
+      },
+      "sigma_T_K": {
+        "original_mean": 1.4622524976730347,
+        "generated_mean": 1.48383629322052,
+        "mean_error": 0.02158379554748535,
+        "mean_abs_error": 0.02158379554748535,
+        "mean_error_percent": 1.4760648781132444,
+        "mean_abs_error_percent": 1.4760648781132444
+      }
+    }
+  },
+  "metric_scale": "physical"
+}

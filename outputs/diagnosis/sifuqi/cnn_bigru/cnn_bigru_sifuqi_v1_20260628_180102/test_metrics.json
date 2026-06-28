@@ -1,0 +1,52 @@
+{
+  "experiment": "cnn_bigru_sifuqi_v1",
+  "dataset": "sifuqi",
+  "model": "cnn_bigru",
+  "split": "test",
+  "accuracy": 1.0,
+  "precision_macro": 1.0,
+  "recall_macro": 1.0,
+  "f1_macro": 1.0,
+  "cohen_kappa": 1.0,
+  "classification_report": {
+    "normal": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "tracking_fault": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 6.0
+    },
+    "accuracy": 1.0,
+    "macro avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 11.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 11.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      5,
+      0
+    ],
+    [
+      0,
+      6
+    ]
+  ],
+  "label_names": [
+    "normal",
+    "tracking_fault"
+  ]
+}

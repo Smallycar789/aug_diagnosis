@@ -1,0 +1,238 @@
+{
+  "experiment": "tvae_sifuqi_matvae_v1",
+  "dataset": "sifuqi",
+  "model": "tvae",
+  "feature_columns": [
+    "servo_accuracy"
+  ],
+  "label_names": [
+    "normal",
+    "tracking_fault"
+  ],
+  "input_shape": [
+    64,
+    1
+  ],
+  "per_class": {
+    "normal": {
+      "statistics": {
+        "plot_mode": "single_feature",
+        "feature_plots": {},
+        "original_mean": 0.04534594342112541,
+        "original_std": 0.00733307795599103,
+        "generated_mean": 0.04449648782610893,
+        "generated_std": 0.006859988439828157,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 0.04534594342112541,
+            "generated_mean": 0.04449648782610893,
+            "mean_error": -0.0008494555950164795,
+            "mean_abs_error": 0.0008494555950164795,
+            "mean_error_percent": -1.8732780287039785,
+            "mean_abs_error_percent": 1.8732780287039785
+          },
+          "per_feature": {
+            "servo_accuracy": {
+              "original_mean": 0.04534594342112541,
+              "generated_mean": 0.04449648782610893,
+              "mean_error": -0.0008494555950164795,
+              "mean_abs_error": 0.0008494555950164795,
+              "mean_error_percent": -1.8732780287039785,
+              "mean_abs_error_percent": 1.8732780287039785
+            }
+          }
+        },
+        "metric_scale": "physical",
+        "correlation": 0.7417644005629596
+      },
+      "reconstruction_diagnostic": {
+        "mse_teacher_forced": 0.040494389832019806,
+        "mse_open_loop": 0.03161288797855377
+      },
+      "mse": {
+        "avg_mse": 2.6926378268399276e-05
+      },
+      "distribution_similarity": {
+        "mmd": 1.823902130126953e-05,
+        "c2st_acc": 0.8055555555555556
+      },
+      "diversity": {
+        "min_nearest_neighbor": 0.01859394009731625,
+        "mean_nearest_neighbor": 0.02397014098415221,
+        "max_nearest_neighbor": 0.030178243374133506,
+        "diversity_ok": false
+      },
+      "num_original_windows": 60,
+      "num_generated_windows": 60,
+      "generated_file": "generated_normal.npy",
+      "signal_comparison": "normal_signal_comparison.png",
+      "frequency_comparison": "normal_frequency_comparison.png",
+      "feature_plots": {},
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 0.039017174392938614,
+          "generated_mean": 0.03832488879561424,
+          "mean_error": -0.0006922855973243713,
+          "mean_abs_error": 0.0006922855973243713,
+          "mean_error_percent": -1.7743099240155695,
+          "mean_abs_error_percent": 1.7743099240155695
+        },
+        "per_feature": {
+          "servo_accuracy": {
+            "original_mean": 0.039017174392938614,
+            "generated_mean": 0.03832488879561424,
+            "mean_error": -0.0006922855973243713,
+            "mean_abs_error": 0.0006922855973243713,
+            "mean_error_percent": -1.7743099240155695,
+            "mean_abs_error_percent": 1.7743099240155695
+          }
+        }
+      }
+    },
+    "tracking_fault": {
+      "statistics": {
+        "plot_mode": "single_feature",
+        "feature_plots": {},
+        "original_mean": 0.19004198908805847,
+        "original_std": 0.010597526095807552,
+        "generated_mean": 0.18952664732933044,
+        "generated_std": 0.01130163948982954,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 0.19004198908805847,
+            "generated_mean": 0.18952664732933044,
+            "mean_error": -0.0005153417587280273,
+            "mean_abs_error": 0.0005153417587280273,
+            "mean_error_percent": -0.2711725767557805,
+            "mean_abs_error_percent": 0.2711725767557805
+          },
+          "per_feature": {
+            "servo_accuracy": {
+              "original_mean": 0.19004198908805847,
+              "generated_mean": 0.18952664732933044,
+              "mean_error": -0.0005153417587280273,
+              "mean_abs_error": 0.0005153417587280273,
+              "mean_error_percent": -0.2711725767557805,
+              "mean_abs_error_percent": 0.2711725767557805
+            }
+          }
+        },
+        "metric_scale": "physical",
+        "correlation": 0.448752962552701
+      },
+      "reconstruction_diagnostic": {
+        "mse_teacher_forced": 0.053913652896881104,
+        "mse_open_loop": 0.04393870756030083
+      },
+      "mse": {
+        "avg_mse": 0.00013280645362101495
+      },
+      "distribution_similarity": {
+        "mmd": 0.00011265277862548828,
+        "c2st_acc": 0.9722222222222222
+      },
+      "diversity": {
+        "min_nearest_neighbor": 0.020311392985521193,
+        "mean_nearest_neighbor": 0.029803554279397244,
+        "max_nearest_neighbor": 0.03506082027560022,
+        "diversity_ok": false
+      },
+      "num_original_windows": 60,
+      "num_generated_windows": 60,
+      "generated_file": "generated_tracking_fault.npy",
+      "signal_comparison": "tracking_fault_signal_comparison.png",
+      "frequency_comparison": "tracking_fault_frequency_comparison.png",
+      "feature_plots": {},
+      "generated_vs_original_mean_bias": {
+        "overall": {
+          "original_mean": 0.20586086809635162,
+          "generated_mean": 0.2042035162448883,
+          "mean_error": -0.0016573518514633179,
+          "mean_abs_error": 0.0016573518514633179,
+          "mean_error_percent": -0.8050834851661107,
+          "mean_abs_error_percent": 0.8050834851661107
+        },
+        "per_feature": {
+          "servo_accuracy": {
+            "original_mean": 0.20586086809635162,
+            "generated_mean": 0.2042035162448883,
+            "mean_error": -0.0016573518514633179,
+            "mean_abs_error": 0.0016573518514633179,
+            "mean_error_percent": -0.8050834851661107,
+            "mean_abs_error_percent": 0.8050834851661107
+          }
+        }
+      }
+    }
+  },
+  "statistics": {
+    "plot_mode": "single_feature",
+    "feature_plots": {},
+    "original_mean": 0.04534594342112541,
+    "original_std": 0.00733307795599103,
+    "generated_mean": 0.04449648782610893,
+    "generated_std": 0.006859988439828157,
+    "mean_bias": {
+      "overall": {
+        "original_mean": 0.04534594342112541,
+        "generated_mean": 0.04449648782610893,
+        "mean_error": -0.0008494555950164795,
+        "mean_abs_error": 0.0008494555950164795,
+        "mean_error_percent": -1.8732780287039785,
+        "mean_abs_error_percent": 1.8732780287039785
+      },
+      "per_feature": {
+        "servo_accuracy": {
+          "original_mean": 0.04534594342112541,
+          "generated_mean": 0.04449648782610893,
+          "mean_error": -0.0008494555950164795,
+          "mean_abs_error": 0.0008494555950164795,
+          "mean_error_percent": -1.8732780287039785,
+          "mean_abs_error_percent": 1.8732780287039785
+        }
+      }
+    },
+    "metric_scale": "physical",
+    "correlation": 0.7417644005629596
+  },
+  "reconstruction_diagnostic": {
+    "mse_teacher_forced": 0.04683496057987213,
+    "mse_open_loop": 0.03683186694979668
+  },
+  "mse": {
+    "avg_mse": 2.6926378268399276e-05,
+    "avg_mse_percent": 0.0007932844455353916
+  },
+  "distribution_similarity": {
+    "mmd": 5.3048133850097656e-05,
+    "c2st_acc": 0.8055555555555556
+  },
+  "diversity": {
+    "min_nearest_neighbor": 0.01859394009731625,
+    "mean_nearest_neighbor": 0.02397014098415221,
+    "max_nearest_neighbor": 0.030178243374133506,
+    "diversity_ok": false
+  },
+  "feature_plots": {},
+  "generated_vs_original_mean_bias": {
+    "overall": {
+      "original_mean": 0.12243901938199997,
+      "generated_mean": 0.12126420438289642,
+      "mean_error": -0.0011748149991035461,
+      "mean_abs_error": 0.0011748149991035461,
+      "mean_error_percent": -0.959510297479774,
+      "mean_abs_error_percent": 0.959510297479774
+    },
+    "per_feature": {
+      "servo_accuracy": {
+        "original_mean": 0.12243901938199997,
+        "generated_mean": 0.12126420438289642,
+        "mean_error": -0.0011748149991035461,
+        "mean_abs_error": 0.0011748149991035461,
+        "mean_error_percent": -0.959510297479774,
+        "mean_abs_error_percent": 0.959510297479774
+      }
+    }
+  },
+  "metric_scale": "physical"
+}

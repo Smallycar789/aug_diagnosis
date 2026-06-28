@@ -1,0 +1,164 @@
+{
+  "experiment": "gan_vae_sifuqi_v1",
+  "dataset": "sifuqi",
+  "model": "gan_vae",
+  "feature_columns": [
+    "servo_accuracy"
+  ],
+  "label_names": [
+    "normal",
+    "tracking_fault"
+  ],
+  "input_shape": [
+    64,
+    1
+  ],
+  "per_class": {
+    "normal": {
+      "num_original_windows": 36,
+      "generated_file": "generated_normal.npy",
+      "signal_comparison": "normal_signal_comparison.png",
+      "frequency_comparison": "normal_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 0.04563521593809128,
+        "original_std": 0.0070248860865831375,
+        "generated_mean": 0.0429210364818573,
+        "generated_std": 0.0022520648781210184,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 0.04563521593809128,
+            "generated_mean": 0.0429210364818573,
+            "mean_error": -0.0027141794562339783,
+            "mean_abs_error": 0.0027141794562339783,
+            "mean_error_percent": -5.947554756651165,
+            "mean_abs_error_percent": 5.947554756651165
+          },
+          "per_feature": {
+            "servo_accuracy": {
+              "original_mean": 0.04563521593809128,
+              "generated_mean": 0.0429210364818573,
+              "mean_error": -0.0027141794562339783,
+              "mean_abs_error": 0.0027141794562339783,
+              "mean_error_percent": -5.947554756651165,
+              "mean_abs_error_percent": 5.947554756651165
+            }
+          }
+        },
+        "plot_mode": "single_feature",
+        "feature_plots": {},
+        "correlation": -0.027099146309839145
+      },
+      "num_generated_windows": 100,
+      "random_generated": {
+        "mean": 0.042947083711624146,
+        "std": 0.0021920206490904093,
+        "min": 0.03460346907377243,
+        "max": 0.049514040350914
+      },
+      "generated_vs_original_mean_bias": {},
+      "distribution_similarity": {
+        "mmd": 5.2809715270996094e-05,
+        "c2st_acc": 0.9545454545454546
+      },
+      "reconstruction_mean_bias": {}
+    },
+    "tracking_fault": {
+      "num_original_windows": 36,
+      "generated_file": "generated_tracking_fault.npy",
+      "signal_comparison": "tracking_fault_signal_comparison.png",
+      "frequency_comparison": "tracking_fault_frequency_comparison.png",
+      "statistics": {
+        "original_mean": 0.19906151294708252,
+        "original_std": 0.016086317598819733,
+        "generated_mean": 0.2110137641429901,
+        "generated_std": 0.005267799831926823,
+        "mean_bias": {
+          "overall": {
+            "original_mean": 0.19906151294708252,
+            "generated_mean": 0.2110137641429901,
+            "mean_error": 0.011952251195907593,
+            "mean_abs_error": 0.011952251195907593,
+            "mean_error_percent": 6.004300388837554,
+            "mean_abs_error_percent": 6.004300388837554
+          },
+          "per_feature": {
+            "servo_accuracy": {
+              "original_mean": 0.19906151294708252,
+              "generated_mean": 0.2110137641429901,
+              "mean_error": 0.011952251195907593,
+              "mean_abs_error": 0.011952251195907593,
+              "mean_error_percent": 6.004300388837554,
+              "mean_abs_error_percent": 6.004300388837554
+            }
+          }
+        },
+        "plot_mode": "single_feature",
+        "feature_plots": {},
+        "correlation": 0.06750427755767525
+      },
+      "num_generated_windows": 100,
+      "random_generated": {
+        "mean": 0.21108831465244293,
+        "std": 0.005191955715417862,
+        "min": 0.19228535890579224,
+        "max": 0.23079434037208557
+      },
+      "generated_vs_original_mean_bias": {},
+      "distribution_similarity": {
+        "mmd": 0.00021219253540039062,
+        "c2st_acc": 0.8636363636363636
+      },
+      "reconstruction_mean_bias": {}
+    }
+  },
+  "statistics": {
+    "original_mean": 0.04563521593809128,
+    "original_std": 0.0070248860865831375,
+    "generated_mean": 0.0429210364818573,
+    "generated_std": 0.0022520648781210184,
+    "mean_bias": {
+      "overall": {
+        "original_mean": 0.04563521593809128,
+        "generated_mean": 0.0429210364818573,
+        "mean_error": -0.0027141794562339783,
+        "mean_abs_error": 0.0027141794562339783,
+        "mean_error_percent": -5.947554756651165,
+        "mean_abs_error_percent": 5.947554756651165
+      },
+      "per_feature": {
+        "servo_accuracy": {
+          "original_mean": 0.04563521593809128,
+          "generated_mean": 0.0429210364818573,
+          "mean_error": -0.0027141794562339783,
+          "mean_abs_error": 0.0027141794562339783,
+          "mean_error_percent": -5.947554756651165,
+          "mean_abs_error_percent": 5.947554756651165
+        }
+      }
+    },
+    "plot_mode": "single_feature",
+    "feature_plots": {},
+    "correlation": -0.027099146309839145,
+    "random_generated": {
+      "mean": 0.12701770663261414,
+      "std": 0.08416502177715302,
+      "min": 0.03460346907377243,
+      "max": 0.23079434037208557
+    },
+    "original": {
+      "mean": 0.12242986261844635,
+      "std": 0.08486438542604446,
+      "min": 0.013318000361323357,
+      "max": 0.2779189944267273
+    },
+    "generated_vs_original_mean_bias": {}
+  },
+  "distribution_similarity": {
+    "mmd": 0.00015795230865478516,
+    "c2st_acc": 0.8409090909090909
+  },
+  "training_best": {
+    "best_epoch": null,
+    "best_recon_loss": 0.027210211381316185
+  }
+}

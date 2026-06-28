@@ -1,4 +1,3 @@
-outputs/
 __pycache__/
 configs/
 data/sensitivity/
@@ -6,3 +5,5 @@ data/Degradation/
 references/
 scripts
 diagnosis/__pycache__/
+outputs/
+archive/
