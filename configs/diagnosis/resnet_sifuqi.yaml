@@ -1,6 +1,7 @@
+
 experiment:
-  name: resnet_sifuqi_v1
-  seed: 42
+  name: resnet_sifuqi
+  seed: 0
   device: auto
 
 output:
@@ -9,30 +10,32 @@ output:
 dataset:
   name: sifuqi
   root: data/sifuqi
+  csv: servo_accuracy.csv
+  time_column: hours
   value_columns:
-    - azimuth_error
-    - pitch_error
-  sample_length: 512
-  stride: 64
-  whole_file_as_series: true
+    - servo_accuracy
+  normal_time_max: 1000
+  fault_time_min: 6000
+  label_names:
+    - normal
+    - tracking_fault
+  sample_length: 64
+  stride: 8
   normalize: per_window
-  levels:
-    normal: servo_normal.csv
-    mild: servo_mild.csv
-    moderate: servo_moderate.csv
-    severe: servo_severe.csv
+  stft_input: channel
 
 model:
   name: resnet
-  sample_len: 1024
-  nperseg: 64
-  noverlap: 32
-  nfft: 224
+  sample_len: 64
+  nperseg: 32
+  noverlap: 16
+  nfft: 256
   target_size: 224
-  batch_size: 32
-  epochs: 30
-  lr: 0.001
-  num_classes: 4
-  train_ratio: 0.6
-  val_ratio: 0.2
+  batch_size: 8
+  epochs: 60
+  lr: 0.0003
+  weight_decay: 0.005
+  num_classes: 2
+  train_ratio: 0.7
+  val_ratio: 0.15
   freeze_layers: true

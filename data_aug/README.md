@@ -60,8 +60,8 @@ outputs/data_aug/{dataset}/{model}/{experiment}_{timestamp}/
 
 `dataset.name` 支持以下数据：
 
-- `cooler` — `data/cooler/cooler_simulation_results/`
-- `sifuqi` — `data/sifuqi/servo_*.csv`
+- `cooler` — `data/cooler/all_simulation.csv`（10 组，`time_hours` + `T_stable_K` / `t_cool_s` / `sigma_T_K`；正常 &lt;2000h、故障 &gt;6000h 分段滑窗，按类生成）
+- `sifuqi` — `data/sifuqi/servo_accuracy.csv`（12 组宽表 `group_01`~`group_12`；正常 &lt;1000h、跟踪故障 &gt;6000h 分段滑窗，按类生成）
 - `cwru` — CWRU CSV
 - `sensitivity` / 其他 `class_files` 数据 — 多类别 CSV 滑窗，支持 TVAE 条件生成
 - `degradation` / `Degradation` — 红外退化仿真系统的统一生成视角，可合并灵敏度与成像质量相关指标和故障类型
@@ -73,7 +73,7 @@ outputs/data_aug/{dataset}/{model}/{experiment}_{timestamp}/
 | 温控性能退化 | `cooler` | 冷端温度、制冷时间、温度波动水平 |
 | 灵敏度下降 | `sensitivity` | 平均探测率、噪声等效温差 |
 | 图像质量下降 | `image_quality` | MTF 指标、图像均一性、坏点率 |
-| 伺服跟踪精度下降 | `sifuqi` | 方位角跟踪误差、俯仰角跟踪误差 |
+| 伺服跟踪精度下降 | `sifuqi` | 伺服运动精度（deg） |
 
 ### Degradation 仿真系统
 

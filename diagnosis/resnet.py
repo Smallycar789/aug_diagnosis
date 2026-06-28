@@ -35,6 +35,7 @@ from diagnosis.common import (
 )
 from diagnosis.data_preprocess import DiagnosisDataBundle
 from diagnosis.io_utils import get_device, resolve_path, save_checkpoint_best, save_json, save_loss_history
+from diagnosis.simulation_load import load_cooler_time_windows, load_sifuqi_time_windows
 
 
 def _stft_magnitude_norm(signal, nperseg, noverlap, nfft):
@@ -261,67 +262,25 @@ def _load_sensitivity_images(ds_cfg, model_cfg, stft_kwargs):
     return images, labels, label_names
 
 
+def _load_time_threshold_segments(ds_cfg: dict[str, Any], loader) -> tuple[list[np.ndarray], list[int], list[str]]:
+    sample_length = resolve_sample_length(ds_cfg, default=30)
+    cfg = {
+        **ds_cfg,
+        "sample_length": sample_length,
+        "stride": resolve_stride(ds_cfg, max(1, sample_length // 2)),
+    }
+    windows, labels, _, label_names, _ = loader(cfg, layout="channels_first")
+    return windows, labels, label_names
+
+
 def _load_cooler_images(ds_cfg, model_cfg, stft_kwargs):
-    root = resolve_path(ds_cfg.get("root", "data/cooler"))
-    head_csv = root / ds_cfg.get("head_csv", "cooler_simulation_results/all_head_30.csv")
-    tail_csv = root / ds_cfg.get("tail_csv", "cooler_simulation_results/all_tail_30.csv")
-    value_columns = resolve_value_columns(
-        {
-            **ds_cfg,
-            "value_columns": ds_cfg.get(
-                "value_columns",
-                ["T_stable_K", "t_cool_hours", "sigma_T_K"],
-            ),
-        }
-    )
-    sample_len = int(model_cfg.get("sample_len", ds_cfg.get("sample_length", 30)))
-    group_window_len = int(ds_cfg.get("sample_length", 30))
-    group_col = ds_cfg.get("group_column", "group_id")
-    cycle_col = ds_cfg.get("cycle_column", "work_cycle")
-    label_names = list(ds_cfg.get("label_names", ["normal", "degraded"]))
-
-    segments, labels = [], []
-    for label_id, csv_path in enumerate([head_csv, tail_csv]):
-        df = pd.read_csv(csv_path)
-        for _, group in df.groupby(group_col):
-            group = group.sort_values(cycle_col)
-            if len(group) != group_window_len:
-                continue
-            window = np.stack([group[column].values.astype(np.float32) for column in value_columns], axis=0)
-            segments.append(window)
-            labels.append(label_id)
-
-    if sample_len != group_window_len * len(value_columns):
-        raise ValueError(
-            f"model.sample_len={sample_len} should equal "
-            f"sample_length({group_window_len}) * channels({len(value_columns)}) "
-            f"for cooler multivariate STFT input."
-        )
-
+    segments, labels, label_names = _load_time_threshold_segments(ds_cfg, load_cooler_time_windows)
     images, labels = _segments_to_stft_images(segments, labels, **_stft_preprocess_kwargs(ds_cfg), **stft_kwargs)
     return images, labels, label_names
 
 
 def _load_sifuqi_images(ds_cfg, model_cfg, stft_kwargs):
-    ds_cfg = {
-        **ds_cfg,
-        "root": ds_cfg.get("root", "data/sifuqi"),
-        "value_columns": ds_cfg.get("value_columns", ["azimuth_error", "pitch_error"]),
-        "levels": ds_cfg.get(
-            "levels",
-            {
-                "normal": "servo_normal.csv",
-                "mild": "servo_mild.csv",
-                "moderate": "servo_moderate.csv",
-                "severe": "servo_severe.csv",
-            },
-        ),
-        "whole_file_as_series": True,
-    }
-    segments, labels, label_names = _load_multivariate_class_segments(
-        {**ds_cfg, "class_files": ds_cfg["levels"]},
-        model_cfg,
-    )
+    segments, labels, label_names = _load_time_threshold_segments(ds_cfg, load_sifuqi_time_windows)
     images, labels = _segments_to_stft_images(segments, labels, **_stft_preprocess_kwargs(ds_cfg), **stft_kwargs)
     return images, labels, label_names
 

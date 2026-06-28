@@ -9,8 +9,20 @@ output:
 dataset:
   name: cooler
   root: data/cooler
-  csv: cooler_simulation_results/all_simulation.csv
-  value_column: T_stable_K
+  csv: all_simulation.csv
+  time_column: time_hours
+  group_column: group_id
+  value_columns:
+    - T_stable_K
+    - t_cool_s
+    - sigma_T_K
+  normal_time_max: 2000
+  fault_time_min: 6000
+  label_names:
+    - normal
+    - temperature_control_fault
+  sample_length: 50
+  stride: 10
   sample_rate: 1.0
 
 model:
@@ -18,9 +30,11 @@ model:
   z_dim: 100
   window_size: 50
   overlap_ratio: 0.2
+  per_class: true
+  per_class_norm: true
   epochs: 50
   batch_size: 64
   g_lr: 0.002
   d_lr: 0.0001
   enc_lr: 0.001
-  num_generate: 100
+  num_generate_per_class: 100

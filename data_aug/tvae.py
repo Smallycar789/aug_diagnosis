@@ -405,6 +405,7 @@ def validate_and_visualize(
     filename_prefix="",
     save_plots=False,
     latent_stats=None,
+    paired_generation=False,
 ):
     model.eval()
     if (
@@ -413,15 +414,33 @@ def validate_and_visualize(
         and not getattr(model, "structured_decoder", False)
     ):
         num_gen = min(num_gen, len(original_sequences))
+    if paired_generation and len(original_sequences) > 0:
+        num_gen = min(num_gen, len(original_sequences))
     label_tensor = None
 
     with torch.no_grad():
-        if (
+        if paired_generation and len(original_sequences) > 0:
+            idx = np.arange(num_gen) % len(original_sequences)
+            x_sel = torch.from_numpy(original_sequences[idx].astype(np.float32)).to(device)
+            if labels is not None:
+                picked_labels = labels[idx]
+                if label_id is not None:
+                    picked_labels = np.full(num_gen, label_id, dtype=np.int64)
+                label_tensor = torch.from_numpy(picked_labels.astype(np.int64)).to(device)
+            else:
+                label_tensor = None
+            mu, _ = model.encode(x_sel, label_tensor)
+            z = mu
+            if use_data_start and not getattr(model, "structured_decoder", False):
+                fi = x_sel[:, 0:1, :]
+                gen_seq = model.decode(z, target_seq=None, first_inputs=fi, labels=label_tensor)
+            else:
+                gen_seq = model.decode(z, target_seq=None, labels=label_tensor)
+        elif (
             latent_stats is not None
             and label_id is not None
             and str(int(label_id)) in latent_stats
         ):
-
             z = sample_class_latent(
                 latent_stats,
                 label_id,
@@ -430,28 +449,36 @@ def validate_and_visualize(
                 device,
                 scale=1.0,
             )
-
+            if use_data_start:
+                idx = np.random.randint(0, len(original_sequences), size=num_gen)
+                fi = torch.from_numpy(original_sequences[idx, 0:1, :].astype(np.float32)).to(device)
+                if labels is not None:
+                    picked_labels = labels[idx]
+                    if label_id is not None:
+                        picked_labels = np.full(num_gen, label_id, dtype=np.int64)
+                    label_tensor = torch.from_numpy(picked_labels.astype(np.int64)).to(device)
+                gen_seq = model.decode(z, target_seq=None, first_inputs=fi, labels=label_tensor)
+            else:
+                if labels is not None:
+                    fill_label = 0 if label_id is None else int(label_id)
+                    label_tensor = torch.full((num_gen,), fill_label, dtype=torch.long, device=device)
+                gen_seq = model.decode(z, target_seq=None, labels=label_tensor)
         else:
-
-            z = torch.randn(
-                num_gen,
-                latent_dim,
-                device=device,
-            )
-        if use_data_start:
-            idx = np.random.randint(0, len(original_sequences), size=num_gen)
-            fi = torch.from_numpy(original_sequences[idx, 0:1, :].astype(np.float32)).to(device)
-            if labels is not None:
-                picked_labels = labels[idx]
-                if label_id is not None:
-                    picked_labels = np.full(num_gen, label_id, dtype=np.int64)
-                label_tensor = torch.from_numpy(picked_labels.astype(np.int64)).to(device)
-            gen_seq = model.decode(z, target_seq=None, first_inputs=fi, labels=label_tensor)
-        else:
-            if labels is not None:
-                fill_label = 0 if label_id is None else int(label_id)
-                label_tensor = torch.full((num_gen,), fill_label, dtype=torch.long, device=device)
-            gen_seq = model.decode(z, target_seq=None, labels=label_tensor)
+            z = torch.randn(num_gen, latent_dim, device=device)
+            if use_data_start:
+                idx = np.random.randint(0, len(original_sequences), size=num_gen)
+                fi = torch.from_numpy(original_sequences[idx, 0:1, :].astype(np.float32)).to(device)
+                if labels is not None:
+                    picked_labels = labels[idx]
+                    if label_id is not None:
+                        picked_labels = np.full(num_gen, label_id, dtype=np.int64)
+                    label_tensor = torch.from_numpy(picked_labels.astype(np.int64)).to(device)
+                gen_seq = model.decode(z, target_seq=None, first_inputs=fi, labels=label_tensor)
+            else:
+                if labels is not None:
+                    fill_label = 0 if label_id is None else int(label_id)
+                    label_tensor = torch.full((num_gen,), fill_label, dtype=torch.long, device=device)
+                gen_seq = model.decode(z, target_seq=None, labels=label_tensor)
 
     gen_seq = gen_seq.cpu().numpy()
     diagnostic = _reconstruction_diagnostic(
@@ -854,6 +881,7 @@ def generate(model: TVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: P
         generated_labels = []
         generated_denorm = []
         per_class = int(model_cfg.get("num_generate_per_class", model_cfg.get("num_generate", 200)))
+        paired_generation = bool(model_cfg.get("paired_generation", False))
         for label_id, label_name in enumerate(label_names):
             class_mask = labels == label_id
             class_sequences = sequences[class_mask]
@@ -872,6 +900,7 @@ def generate(model: TVAE, bundle: AugDataBundle, cfg: dict[str, Any], out_dir: P
                 label_id=label_id,
                 latent_stats=latent_stats,
                 save_plots=False,
+                paired_generation=paired_generation,
             )
             class_dmin, class_dmax = resolve_class_norm(label_name, norm_params, data_min, data_max)
             gen_denorm = denormalize_minus1_1_array(gen_class, class_dmin, class_dmax)

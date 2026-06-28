@@ -20,7 +20,9 @@ def resolve_value_columns(cfg: dict[str, Any]) -> list[str]:
         if isinstance(columns, str):
             return [columns]
         return list(columns)
-    column = cfg.get("value_column", "azimuth_error")
+    column = cfg.get("value_column")
+    if column is None:
+        raise ValueError("dataset config must provide value_columns or value_column")
     return [column]
 
 

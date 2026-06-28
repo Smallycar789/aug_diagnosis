@@ -71,8 +71,8 @@
 | 名称 | 路径 | 数据形态 | 典型用途 |
 |------|------|----------|----------|
 | `degradation` | `data/DegradationData/fault_diagnosis/` | 表格 + 滑窗序列（22 维特征，6 类故障） | 诊断为主；表格/窗口也可做生成 |
-| `cooler` | `data/cooler/cooler_simulation_results/` | 周期退化时序（`T_stable_K`, `t_cool_hours`, `sigma_T_K`） | 序列生成、时序诊断 |
-| `sifuqi` | `data/sifuqi/` | 多通道控制时序（13 列，4 档退化等级） | STFT 诊断、序列生成 |
+| `cooler` | `data/cooler/all_simulation.csv` | 10 组长表时序（`T_stable_K`, `t_cool_s`, `sigma_T_K`）；正常 &lt;2000h、温控故障 &gt;6000h 分段滑窗 | 序列生成、时序诊断 |
+| `sifuqi` | `data/sifuqi/servo_accuracy.csv` | 12 组宽表（`group_01`~`group_12`，伺服运动精度）；正常 &lt;1000h、跟踪故障 &gt;6000h 分段滑窗 | STFT 诊断、序列生成 |
 
 `data_preprocess.py`（诊断）与各 `data_aug/*.py` 内的数据加载函数，按 `dataset.name` 分支读取，**归一化/滑窗公式与 notebook 保持一致**。
 
@@ -291,12 +291,14 @@ output:
 dataset:
   name: cooler
   root: data/cooler
-  csv: cooler_simulation_results/all_simulation.csv
-  value_columns: [T_stable_K, t_cool_hours, sigma_T_K]
-  seq_len: 128
+  csv: all_simulation.csv
+  value_columns: [T_stable_K, t_cool_s, sigma_T_K]
+  normal_time_max: 2000
+  fault_time_min: 6000
+  label_names: [normal, temperature_control_fault]
+  sample_length: 128
   stride: 32
-  normalize: minus1_1          # 与 notebook 一致
-  sample_rate: 1.0             # FFT 用；CWRU 类数据可设 12000
+  sample_rate: 1.0
 
 model:
   name: tvae
@@ -535,15 +537,15 @@ def load_data(dataset_cfg, split="train"):
 
 **cooler 要点：**
 
-- 读取 `all_simulation.csv` 或指定 group
-- 列：`T_stable_K`, `t_cool_hours`, `sigma_T_K`
-- 可按 `group_id` 划分 train/val/test
+- 读取 `data/cooler/all_simulation.csv`，按 `group_id` 分组
+- 列：`time_hours`, `T_stable_K`, `t_cool_s`, `sigma_T_K`
+- 在 `time_hours < 2000` 与 `> 6000` 两段内分别滑窗（中间时段丢弃），二分类：`normal` / `temperature_control_fault`
 
 **sifuqi 要点：**
 
-- 读取 `servo_normal.csv` ~ `servo_severe.csv`
-- 标签来自 `label` 列或文件名映射
-- 特征列见 `data/sifuqi/README.md`
+- 读取 `data/sifuqi/servo_accuracy.csv` 宽表，melt 为 12 条 `group_XX` 轨迹
+- 特征：`servo_accuracy`（deg）
+- 在 `hours < 1000` 与 `> 6000` 两段内分别滑窗，二分类：`normal` / `tracking_fault`
 
 ---
 

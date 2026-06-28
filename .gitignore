@@ -4,4 +4,5 @@ configs/
 data/sensitivity/
 data/Degradation/
 references/
-scripts/
+scripts
+diagnosis/__pycache__/

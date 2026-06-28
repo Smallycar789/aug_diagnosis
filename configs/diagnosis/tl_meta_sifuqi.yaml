@@ -9,16 +9,16 @@ output:
 dataset:
   name: sifuqi
   root: data/sifuqi
+  csv: servo_accuracy.csv
+  time_column: hours
   value_columns:
-    - azimuth_error
-    - pitch_error
-  levels:
-    normal: servo_normal.csv
-    mild: servo_mild.csv
-    moderate: servo_moderate.csv
-    severe: servo_severe.csv
-  whole_file_as_series: true
-  sample_length: 256
+    - servo_accuracy
+  normal_time_max: 1000
+  fault_time_min: 6000
+  label_names:
+    - normal
+    - tracking_fault
+  sample_length: 64
   stride: 16
   merge_mode: flatten
   pad_to_length: 2048
@@ -26,7 +26,7 @@ dataset:
 
 model:
   name: tl_meta
-  n_way: 4
+  n_way: 2
   n_support: 5
   n_unlabeled: 5
   n_query: 5

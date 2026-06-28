@@ -9,17 +9,20 @@ output:
 dataset:
   name: cooler
   root: data/cooler
-  simulation_csv: cooler_simulation_results/all_simulation.csv
+  simulation_csv: all_simulation.csv
+  time_column: time_hours
+  group_column: group_id
   value_columns:
     - T_stable_K
-    - t_cool_hours
+    - t_cool_s
     - sigma_T_K
-  sample_length: 30
-  group_column: group_id
-  cycle_column: work_cycle
+  normal_time_max: 2000
+  fault_time_min: 6000
   label_names:
     - normal
-    - degraded
+    - temperature_control_fault
+  sample_length: 30
+  stride: 15
   domain_adaptation: false
   normalize: global
   val_ratio: 0.15

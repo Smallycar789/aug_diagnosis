@@ -32,6 +32,7 @@ from diagnosis.common import (
 )
 from diagnosis.data_preprocess import DiagnosisDataBundle
 from diagnosis.io_utils import get_device, resolve_path, save_checkpoint_best, save_json, save_loss_history
+from diagnosis.simulation_load import load_cooler_time_windows, load_sifuqi_time_windows
 
 
 class TLMetaSignalDataset(Dataset):
@@ -598,35 +599,19 @@ def _limit_samples_per_class(
     return selected_windows, np.asarray(selected_labels, dtype=np.int64)
 
 
-def _collect_cooler_windows(ds_cfg: dict[str, Any]) -> tuple[list[np.ndarray], list[int], list[str]]:
-    root = resolve_path(ds_cfg.get("root", "data/cooler"))
-    head_csv = root / ds_cfg.get("head_csv", "cooler_simulation_results/all_head_30.csv")
-    tail_csv = root / ds_cfg.get("tail_csv", "cooler_simulation_results/all_tail_30.csv")
-    value_columns = resolve_value_columns(ds_cfg)
-    group_col = ds_cfg.get("group_column", "group_id")
-    cycle_col = ds_cfg.get("cycle_column", "work_cycle")
+def _collect_time_threshold_windows(ds_cfg: dict[str, Any], loader) -> tuple[list[np.ndarray], list[int], list[str]]:
     sample_length = resolve_sample_length(ds_cfg, default=30)
-    label_names = list(ds_cfg.get("label_names", ["normal", "degraded"]))
-
-    windows: list[np.ndarray] = []
-    labels: list[int] = []
-
-    for label_id, csv_path in enumerate([head_csv, tail_csv]):
-        df = pd.read_csv(csv_path)
-        for column in value_columns:
-            if column not in df.columns:
-                raise KeyError(f"Column '{column}' not found in {csv_path}")
-        for _, group in df.groupby(group_col):
-            group = group.sort_values(cycle_col)
-            if len(group) != sample_length:
-                continue
-            window = np.stack([group[column].values.astype(np.float32) for column in value_columns], axis=0)
-            windows.append(window)
-            labels.append(label_id)
-
-    if not windows:
-        raise ValueError(f"No cooler windows created (sample_length={sample_length}).")
+    cfg = {
+        **ds_cfg,
+        "sample_length": sample_length,
+        "stride": resolve_stride(ds_cfg, max(1, sample_length // 2)),
+    }
+    windows, labels, _, label_names, _ = loader(cfg, layout="channels_first")
     return windows, labels, label_names
+
+
+def _collect_cooler_windows(ds_cfg: dict[str, Any]) -> tuple[list[np.ndarray], list[int], list[str]]:
+    return _collect_time_threshold_windows(ds_cfg, load_cooler_time_windows)
 
 
 def _collect_multivariate_file_windows(ds_cfg: dict[str, Any]) -> tuple[list[np.ndarray], list[int], list[str]]:
@@ -659,20 +644,7 @@ def _collect_multivariate_file_windows(ds_cfg: dict[str, Any]) -> tuple[list[np.
 
 
 def _collect_sifuqi_windows(ds_cfg: dict[str, Any]) -> tuple[list[np.ndarray], list[int], list[str]]:
-    ds_cfg = {
-        **ds_cfg,
-        "class_files": ds_cfg.get(
-            "levels",
-            {
-                "normal": "servo_normal.csv",
-                "mild": "servo_mild.csv",
-                "moderate": "servo_moderate.csv",
-                "severe": "servo_severe.csv",
-            },
-        ),
-        "whole_file_as_series": bool(ds_cfg.get("whole_file_as_series", True)),
-    }
-    return _collect_multivariate_file_windows(ds_cfg)
+    return _collect_time_threshold_windows(ds_cfg, load_sifuqi_time_windows)
 
 
 def _collect_raw_meta_windows(cfg: dict[str, Any]) -> tuple[list[np.ndarray], list[int], list[str]]:

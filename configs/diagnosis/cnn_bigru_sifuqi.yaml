@@ -1,5 +1,5 @@
 experiment:
-  name: cnn_bigru_sifuqi_region_v1
+  name: cnn_bigru_sifuqi_v1
   seed: 42
   device: auto
 
@@ -9,32 +9,27 @@ output:
 dataset:
   name: sifuqi
   root: data/sifuqi
-  domain_adaptation: false
+  csv: servo_accuracy.csv
+  time_column: hours
   value_columns:
-    - azimuth_error
-    - pitch_error
-  sample_length: 256
-  stride: 24
-  region_fraction: 0.25
-  class_window_regions:
-    normal: head
-    mild: tail
-    moderate: tail
-    severe: tail
+    - servo_accuracy
+  normal_time_max: 1000
+  fault_time_min: 6000
+  label_names:
+    - normal
+    - tracking_fault
+  sample_length: 64
+  stride: 16
+  domain_adaptation: false
   normalize: global
   val_ratio: 0.15
   test_ratio: 0.15
-  levels:
-    normal: servo_normal.csv
-    mild: servo_mild.csv
-    moderate: servo_moderate.csv
-    severe: servo_severe.csv
 
 model:
   name: cnn_bigru
-  input_channels: 2
-  num_classes: 4
-  sample_length: 256
+  input_channels: 1
+  num_classes: 2
+  sample_length: 64
   hidden_dims: 64
   gru_hidden: 128
   num_layers: 2

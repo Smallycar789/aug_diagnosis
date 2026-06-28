@@ -17,7 +17,6 @@ from diagnosis.common import (
     load_class_files,
     maybe_swap_val_test,
     normalize_windows_per_sample,
-    resolve_class_window_region,
     resolve_normalize_mode,
     resolve_sample_length,
     resolve_stride,
@@ -27,6 +26,7 @@ from diagnosis.common import (
     split_train_holdout,
 )
 from diagnosis.io_utils import resolve_path
+from diagnosis.simulation_load import load_cooler_time_windows, load_sifuqi_time_windows
 
 
 @dataclass
@@ -227,57 +227,48 @@ def _split_classification_bundle_by_unit(
     )
 
 
-def _load_head_tail_group_windows(cfg: dict[str, Any], dataset_name: str) -> DiagnosisDataBundle:
-    """Load binary data from simulation CSV: head N cycles = normal, tail N cycles = degraded."""
-    root = resolve_path(cfg.get("root"))
-    simulation_csv = root / cfg.get("simulation_csv", "cooler_simulation_results/all_simulation.csv")
-    value_columns = resolve_value_columns(cfg)
-    group_col = cfg.get("group_column", "group_id")
-    cycle_col = cfg.get("cycle_column", "work_cycle")
-    sample_length = resolve_sample_length(cfg, default=30)
-    label_names = list(cfg.get("label_names", ["normal", "degraded"]))
+def _load_time_threshold_diagnosis(
+    cfg: dict[str, Any],
+    *,
+    dataset_name: str,
+    loader,
+) -> DiagnosisDataBundle:
+    windows, labels, unit_ids, label_names, meta = loader(cfg, layout="channels_first")
+    X = np.array(windows, dtype=np.float32)
+    y = np.array(labels, dtype=np.int64)
+    unit_ids_arr = np.array(unit_ids)
 
-    df = pd.read_csv(simulation_csv)
-    for column in value_columns:
-        if column not in df.columns:
-            raise KeyError(f"Column '{column}' not found in {simulation_csv}")
+    split_cfg = {**cfg}
+    if dataset_name == "sifuqi":
+        split_cfg["_holdout_split"] = "reversed"
 
-    X_list: list[np.ndarray] = []
-    y_list: list[int] = []
-
-    for _, group in df.groupby(group_col):
-        group = group.sort_values(cycle_col)
-        if len(group) < sample_length:
-            continue
-        # head: first sample_length cycles → normal
-        head = group.head(sample_length)
-        X_list.append(np.stack([head[col].values.astype(np.float32) for col in value_columns], axis=0))
-        y_list.append(0)
-        # tail: last sample_length cycles → degraded
-        tail = group.tail(sample_length)
-        X_list.append(np.stack([tail[col].values.astype(np.float32) for col in value_columns], axis=0))
-        y_list.append(1)
-
-    if not X_list:
-        raise ValueError(
-            f"No windows created for {dataset_name} head/tail loader "
-            f"(sample_length={sample_length}, groups={group_col})."
+    if cfg.get("split_mode", "random") == "unit":
+        return _split_classification_bundle_by_unit(
+            X,
+            y,
+            unit_ids_arr,
+            split_cfg,
+            dataset_name=dataset_name,
+            label_names=label_names,
+            extra_meta={
+                "value_columns": meta["value_columns"],
+                "sample_length": meta["sample_length"],
+                "stride": meta["stride"],
+                **meta,
+            },
         )
-
-    X = np.array(X_list, dtype=np.float32)
-    y = np.array(y_list, dtype=np.int64)
 
     return _split_classification_bundle(
         X,
         y,
-        cfg,
+        split_cfg,
         dataset_name=dataset_name,
         label_names=label_names,
         extra_meta={
-            "value_columns": value_columns,
-            "sample_length": sample_length,
-            "simulation_csv": str(simulation_csv),
-            "group_column": group_col,
+            "value_columns": meta["value_columns"],
+            "sample_length": meta["sample_length"],
+            "stride": meta["stride"],
+            **meta,
         },
     )
 
@@ -338,22 +329,23 @@ def _load_multivariate_class_files(cfg: dict[str, Any], dataset_name: str) -> Di
 
 
 def _load_cooler(cfg: dict[str, Any]) -> DiagnosisDataBundle:
-    """Binary cooler diagnosis: all_head_30=normal, all_tail_30=degraded, one window per group."""
+    """Binary cooler diagnosis via time-threshold sliding windows."""
     cfg = {
         **cfg,
-        "simulation_csv": cfg.get("simulation_csv", "cooler_simulation_results/all_simulation.csv"),
+        "simulation_csv": cfg.get("simulation_csv", cfg.get("csv", "all_simulation.csv")),
         "value_columns": cfg.get(
             "value_columns",
-            ["T_stable_K", "t_cool_hours", "sigma_T_K"],
+            ["T_stable_K", "t_cool_s", "sigma_T_K"],
         ),
         "sample_length": resolve_sample_length(cfg, default=30),
-        "group_column": cfg.get("group_column", "group_id"),
-        "cycle_column": cfg.get("cycle_column", "work_cycle"),
-        "label_names": cfg.get("label_names", ["normal", "degraded"]),
+        "stride": resolve_stride(cfg, max(1, resolve_sample_length(cfg, default=30) // 2)),
+        "label_names": cfg.get("label_names", ["normal", "temperature_control_fault"]),
+        "normal_time_max": float(cfg.get("normal_time_max", 2000)),
+        "fault_time_min": float(cfg.get("fault_time_min", 6000)),
         "domain_adaptation": bool(cfg.get("domain_adaptation", False)),
         "normalize": cfg.get("normalize", "global"),
     }
-    return _load_head_tail_group_windows(cfg, "cooler")
+    return _load_time_threshold_diagnosis(cfg, dataset_name="cooler", loader=load_cooler_time_windows)
 
 
 def _collect_multivariate_windows_from_cfg(
@@ -1011,66 +1003,20 @@ def _load_image_quality(cfg: dict[str, Any]) -> DiagnosisDataBundle:
 
 
 def _load_sifuqi(cfg: dict[str, Any]) -> DiagnosisDataBundle:
-    """Load four degradation levels (normal/mild/moderate/severe) for multi-class diagnosis."""
-    root = resolve_path(cfg.get("root", "data/sifuqi"))
-    sample_length = resolve_sample_length(cfg, default=256)
-    stride = resolve_stride(cfg, default=64)
-    region_fraction = float(cfg.get("region_fraction", 0.25))
-    value_columns = resolve_value_columns(cfg)
-    default_levels = {
-        "normal": "servo_normal.csv",
-        "mild": "servo_mild.csv",
-        "moderate": "servo_moderate.csv",
-        "severe": "servo_severe.csv",
+    """Binary sifuqi diagnosis via time-threshold sliding windows on wide simulation CSV."""
+    cfg = {
+        **cfg,
+        "csv": cfg.get("csv", "servo_accuracy.csv"),
+        "value_columns": cfg.get("value_columns", ["servo_accuracy"]),
+        "sample_length": resolve_sample_length(cfg, default=256),
+        "stride": resolve_stride(cfg, default=64),
+        "label_names": cfg.get("label_names", ["normal", "tracking_fault"]),
+        "normal_time_max": float(cfg.get("normal_time_max", 1000)),
+        "fault_time_min": float(cfg.get("fault_time_min", 6000)),
+        "domain_adaptation": bool(cfg.get("domain_adaptation", False)),
+        "normalize": cfg.get("normalize", "global"),
     }
-    level_files = cfg.get("levels", default_levels)
-    label_names = list(level_files.keys())
-
-    windows, labels, _, _ = collect_multivariate_windows(
-        root,
-        level_files,
-        value_columns,
-        sample_length,
-        stride,
-        cycle_col=cfg.get("cycle_column", "cycle"),
-        region_resolver=lambda name: resolve_class_window_region(name, cfg),
-        region_fraction=region_fraction,
-        whole_file_as_series=True,
-    )
-
-    if not windows:
-        raise ValueError(
-            f"No windows created for sifuqi (sample_length={sample_length}, stride={stride}). "
-            "Check CSV length and window settings."
-        )
-
-    region_counts = {name: 0 for name in label_names}
-    label_map = {name: idx for idx, name in enumerate(label_names)}
-    for label_id in labels:
-        region_counts[label_names[label_id]] += 1
-
-    X = np.array(windows, dtype=np.float32)
-    y = np.array(labels, dtype=np.int64)
-    split_cfg = {**cfg, "_holdout_split": "reversed"}
-
-    return _split_classification_bundle(
-        X,
-        y,
-        split_cfg,
-        dataset_name="sifuqi",
-        label_names=label_names,
-        extra_meta={
-            "value_columns": value_columns,
-            "sample_length": sample_length,
-            "stride": stride,
-            "region_fraction": region_fraction,
-            "class_window_regions": {
-                name: resolve_class_window_region(name, cfg) for name in label_names
-            },
-            "region_window_counts": region_counts,
-            "source_files": {name: str(root / fname) for name, fname in level_files.items()},
-        },
-    )
+    return _load_time_threshold_diagnosis(cfg, dataset_name="sifuqi", loader=load_sifuqi_time_windows)
 
 
 def load_data(dataset_cfg: dict[str, Any], model_name: str, seed: int = 42) -> DiagnosisDataBundle:

@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 from data_aug.io_utils import resolve_path
+from diagnosis.simulation_load import load_cooler_time_windows, load_sifuqi_time_windows
 
 
 @dataclass
@@ -117,63 +118,74 @@ def _load_class_windows(cfg: dict[str, Any]) -> AugDataBundle:
     )
 
 
-def _load_cooler(cfg: dict[str, Any]) -> AugDataBundle:
-    root = resolve_path(cfg.get("root", "data/cooler"))
-    csv_path = root / cfg.get("csv", "cooler_simulation_results/all_simulation.csv")
-    df = _read_csv(csv_path)
+def _bundle_from_time_windows(
+    cfg: dict[str, Any],
+    *,
+    dataset_name: str,
+    windows: list[np.ndarray],
+    labels: list[int],
+    label_names: list[str],
+    value_columns: list[str],
+    extra_meta: dict[str, Any],
+) -> AugDataBundle:
+    if not windows:
+        raise ValueError(f"No windows created for {dataset_name}")
 
-    columns = cfg.get("value_columns", ["T_stable_K", "t_cool_hours", "sigma_T_K"])
-    use_multivariate = cfg.get("multivariate", False)
-
-    if use_multivariate:
-        raw = df[columns].values.astype(np.float32).flatten()
-        meta_column = "+".join(columns)
+    if windows[0].ndim == 2:
+        # channels_first (C, T) -> (T, F) for augmentation models
+        raw = np.stack([window.T for window in windows], axis=0).astype(np.float32)
     else:
-        column = cfg.get("value_column", columns[0])
-        raw = df[column].values.astype(np.float32)
-        meta_column = column
+        raw = np.asarray(windows, dtype=np.float32)
 
+    y = np.asarray(labels, dtype=np.int64)
     return AugDataBundle(
         raw_data=raw,
-        feature_columns=[meta_column],
+        labels=y,
+        label_names=label_names,
+        feature_columns=value_columns,
         meta={
-            "dataset": "cooler",
-            "source_file": str(csv_path),
-            "value_column": meta_column,
+            "dataset": dataset_name,
+            "value_columns": value_columns,
+            "num_samples": int(len(raw)),
+            "num_features": int(raw.shape[-1]),
+            "class_counts": {
+                name: int((y == idx).sum()) for idx, name in enumerate(label_names)
+            },
             "sample_rate": float(cfg.get("sample_rate", 1.0)),
+            **extra_meta,
         },
     )
 
 
+def _load_cooler(cfg: dict[str, Any]) -> AugDataBundle:
+    windows, labels, _, label_names, meta = load_cooler_time_windows(
+        cfg, layout="channels_first"
+    )
+    value_columns = list(cfg.get("value_columns", ["T_stable_K", "t_cool_s", "sigma_T_K"]))
+    return _bundle_from_time_windows(
+        cfg,
+        dataset_name="cooler",
+        windows=windows,
+        labels=labels,
+        label_names=label_names,
+        value_columns=value_columns,
+        extra_meta=meta,
+    )
+
+
 def _load_sifuqi(cfg: dict[str, Any]) -> AugDataBundle:
-    root = resolve_path(cfg.get("root", "data/sifuqi"))
-    level = cfg.get("level", "normal")
-    file_map = {
-        "normal": "servo_normal.csv",
-        "mild": "servo_mild.csv",
-        "moderate": "servo_moderate.csv",
-        "severe": "servo_severe.csv",
-    }
-    csv_name = cfg.get("csv") or file_map.get(level, "servo_normal.csv")
-    csv_path = root / csv_name
-    df = _read_csv(csv_path)
-
-    column = cfg.get("value_column", "azimuth_error")
-    if column not in df.columns:
-        raise KeyError(f"Column '{column}' not found in {csv_path}")
-
-    raw = df[column].values.astype(np.float32)
-    return AugDataBundle(
-        raw_data=raw,
-        label_names=[level],
-        feature_columns=[column],
-        meta={
-            "dataset": "sifuqi",
-            "source_file": str(csv_path),
-            "value_column": column,
-            "level": level,
-            "sample_rate": float(cfg.get("sample_rate", 100.0)),
-        },
+    windows, labels, _, label_names, meta = load_sifuqi_time_windows(
+        cfg, layout="channels_first"
+    )
+    value_columns = list(cfg.get("value_columns", ["servo_accuracy"]))
+    return _bundle_from_time_windows(
+        cfg,
+        dataset_name="sifuqi",
+        windows=windows,
+        labels=labels,
+        label_names=label_names,
+        value_columns=value_columns,
+        extra_meta=meta,
     )
 
 

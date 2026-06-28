@@ -9,15 +9,29 @@ output:
 dataset:
   name: cooler
   root: data/cooler
-  csv: cooler_simulation_results/all_simulation.csv
-  value_column: t_cool_hours
+  csv: all_simulation.csv
+  time_column: time_hours
+  group_column: group_id
+  value_columns:
+    - T_stable_K
+    - t_cool_s
+    - sigma_T_K
+  normal_time_max: 2000
+  fault_time_min: 6000
+  label_names:
+    - normal
+    - temperature_control_fault
+  sample_length: 128
+  stride: 32
   sample_rate: 1.0
 
 model:
   name: tvae
+  conditional: true
+  per_class_norm: true
   seq_len: 128
   stride: 32
-  input_dim: 1
+  input_dim: 3
   latent_dim: 32
   hidden_dim: 128
   num_layers: 1
@@ -36,4 +50,4 @@ model:
   weight_decay: 0.00001
   lr_patience: 10
   use_data_start: true
-  num_generate: 500
+  num_generate_per_class: 250
