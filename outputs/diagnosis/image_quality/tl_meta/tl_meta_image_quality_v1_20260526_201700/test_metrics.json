@@ -3,11 +3,6 @@
   "dataset": "image_quality",
   "model": "tl_meta",
   "split": "test",
-  "accuracy_percent": 90.33333333333333,
-  "accuracy": 0.9033333333333333,
-  "precision_macro": 0.9034203453149459,
-  "recall_macro": 0.9033333333333333,
-  "f1_macro": 0.9033395912948945,
   "classification_report": {
     "0": {
       "precision": 0.9071332436069987,
@@ -54,11 +49,11 @@
     }
   },
   "label_names": [
-    "normal",
-    "mtf_degradation",
-    "nonuniformity_degradation",
-    "bad_pixel_degradation",
-    "coupled_severe_fault"
+    "正常",
+    "MTF退化",
+    "非均匀性退化",
+    "坏元退化",
+    "耦合严重故障"
   ],
   "confusion_matrix": [
     [
@@ -96,5 +91,10 @@
       43,
       1354
     ]
-  ]
+  ],
+  "诊断准确率": 0.9033333333333333,
+  "诊断准确率(%)": 90.33333333333333,
+  "宏平均精确率": 0.9034203453149459,
+  "宏平均召回率": 0.9033333333333333,
+  "平均F1分数": 0.9033395912948945
 }

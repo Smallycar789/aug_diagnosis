@@ -3,11 +3,7 @@
   "dataset": "sensitivity",
   "model": "resnet",
   "split": "test",
-  "accuracy": 0.9285714285714286,
   "loss": 0.2076385117002896,
-  "precision_macro": 0.9355621758799515,
-  "recall_macro": 0.9342924079361593,
-  "f1_macro": 0.9348926802421573,
   "classification_report": {
     "0": {
       "precision": 1.0,
@@ -42,9 +38,9 @@
     }
   },
   "label_names": [
-    "normal",
-    "sensitivity_degradation",
-    "coupled_severe_fault"
+    "正常",
+    "灵敏度退化",
+    "耦合严重故障"
   ],
   "confusion_matrix": [
     [
@@ -62,5 +58,9 @@
       12,
       145
     ]
-  ]
+  ],
+  "诊断准确率": 0.9285714285714286,
+  "宏平均精确率": 0.9355621758799515,
+  "宏平均召回率": 0.9342924079361593,
+  "平均F1分数": 0.9348926802421573
 }

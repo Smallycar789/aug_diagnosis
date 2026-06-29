@@ -13,13 +13,48 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from diagnosis import cnn_bigru, resnet, tl_meta
 from diagnosis.data_preprocess import load_data
-from diagnosis.io_utils import get_device, load_config, set_seed
+from diagnosis.io_utils import get_device, load_config, save_json, set_seed
 
 MODELS = {
     "cnn_bigru": cnn_bigru,
     "resnet": resnet,
     "tl_meta": tl_meta,
 }
+
+# 故障类别英文 slug → 中文（平台展示）
+LABEL_NAME_ZH = {
+    "normal": "正常",
+    "temperature_control_fault": "温控故障",
+    "tracking_fault": "跟踪故障",
+    "sensitivity_degradation": "灵敏度退化",
+    "coupled_severe_fault": "耦合严重故障",
+    "mtf_degradation": "MTF退化",
+    "nonuniformity_degradation": "非均匀性退化",
+    "bad_pixel_degradation": "坏元退化",
+    "mild": "轻度故障",
+    "moderate": "中度故障",
+    "severe": "严重故障",
+}
+
+# 测试指标英文字段 → 中文（仅下列几项）
+METRIC_KEY_ZH = {
+    "accuracy": "诊断准确率",
+    "accuracy_percent": "诊断准确率(%)",
+    "precision_macro": "宏平均精确率",
+    "recall_macro": "宏平均召回率",
+    "f1_macro": "平均F1分数",
+}
+
+
+def localize_test_metrics(metrics: dict) -> dict:
+    """后加工：将 test_metrics 中部分字段名与故障类别名改为中文。"""
+    out = dict(metrics)
+    for en_key, zh_key in METRIC_KEY_ZH.items():
+        if en_key in out:
+            out[zh_key] = out.pop(en_key)
+    if isinstance(out.get("label_names"), list):
+        out["label_names"] = [LABEL_NAME_ZH.get(name, name) for name in out["label_names"]]
+    return out
 
 
 def _load_meta(out_dir: Path) -> dict:
@@ -89,6 +124,9 @@ def main(config_path: str, output_dir: str | None = None, split: str = "test") -
 
     print(f"Test metrics saved: {out_dir / 'test_metrics.json'}")
     print(f"Accuracy: {metrics.get('accuracy', metrics.get('accuracy_percent'))}")
+
+    metrics_zh = localize_test_metrics(metrics)
+    save_json(metrics_zh, out_dir / "test_metrics.json")
 
 
 if __name__ == "__main__":

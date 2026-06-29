@@ -3,11 +3,6 @@
   "dataset": "sensitivity",
   "model": "tl_meta",
   "split": "test",
-  "accuracy_percent": 99.7,
-  "accuracy": 0.997,
-  "precision_macro": 0.997000165708687,
-  "recall_macro": 0.9969999999999999,
-  "f1_macro": 0.9970000101888384,
   "classification_report": {
     "0": {
       "precision": 0.9965026230327254,
@@ -42,9 +37,9 @@
     }
   },
   "label_names": [
-    "normal",
-    "sensitivity_degradation",
-    "coupled_severe_fault"
+    "正常",
+    "灵敏度退化",
+    "耦合严重故障"
   ],
   "confusion_matrix": [
     [
@@ -62,5 +57,10 @@
       7,
       3989
     ]
-  ]
+  ],
+  "诊断准确率": 0.997,
+  "诊断准确率(%)": 99.7,
+  "宏平均精确率": 0.997000165708687,
+  "宏平均召回率": 0.9969999999999999,
+  "平均F1分数": 0.9970000101888384
 }

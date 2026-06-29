@@ -3,10 +3,6 @@
   "dataset": "image_quality",
   "model": "cnn_bigru",
   "split": "test",
-  "accuracy": 0.9706422018348624,
-  "precision_macro": 0.9720068324647009,
-  "recall_macro": 0.9704847364855762,
-  "f1_macro": 0.9705468322549251,
   "cohen_kappa": 0.9631876459090583,
   "classification_report": {
     "normal": {
@@ -91,10 +87,14 @@
     ]
   ],
   "label_names": [
-    "normal",
-    "mtf_degradation",
-    "nonuniformity_degradation",
-    "bad_pixel_degradation",
-    "coupled_severe_fault"
-  ]
+    "正常",
+    "MTF退化",
+    "非均匀性退化",
+    "坏元退化",
+    "耦合严重故障"
+  ],
+  "诊断准确率": 0.9706422018348624,
+  "宏平均精确率": 0.9720068324647009,
+  "宏平均召回率": 0.9704847364855762,
+  "平均F1分数": 0.9705468322549251
 }

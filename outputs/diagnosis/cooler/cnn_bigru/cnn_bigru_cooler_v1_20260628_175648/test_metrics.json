@@ -3,10 +3,6 @@
   "dataset": "cooler",
   "model": "cnn_bigru",
   "split": "test",
-  "accuracy": 1.0,
-  "precision_macro": 1.0,
-  "recall_macro": 1.0,
-  "f1_macro": 1.0,
   "cohen_kappa": 1.0,
   "classification_report": {
     "normal": {
@@ -46,7 +42,11 @@
     ]
   ],
   "label_names": [
-    "normal",
-    "temperature_control_fault"
-  ]
+    "正常",
+    "温控故障"
+  ],
+  "诊断准确率": 1.0,
+  "宏平均精确率": 1.0,
+  "宏平均召回率": 1.0,
+  "平均F1分数": 1.0
 }

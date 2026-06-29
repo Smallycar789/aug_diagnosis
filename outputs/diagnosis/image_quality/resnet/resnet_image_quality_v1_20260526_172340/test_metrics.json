@@ -3,11 +3,7 @@
   "dataset": "image_quality",
   "model": "resnet",
   "split": "test",
-  "accuracy": 0.9753086419753086,
   "loss": 0.07421208248922119,
-  "precision_macro": 0.9747716793538895,
-  "recall_macro": 0.9764912870005489,
-  "f1_macro": 0.9754307931904703,
   "classification_report": {
     "0": {
       "precision": 1.0,
@@ -54,11 +50,11 @@
     }
   },
   "label_names": [
-    "normal",
-    "mtf_degradation",
-    "nonuniformity_degradation",
-    "bad_pixel_degradation",
-    "coupled_severe_fault"
+    "正常",
+    "MTF退化",
+    "非均匀性退化",
+    "坏元退化",
+    "耦合严重故障"
   ],
   "confusion_matrix": [
     [
@@ -96,5 +92,9 @@
       1,
       52
     ]
-  ]
+  ],
+  "诊断准确率": 0.9753086419753086,
+  "宏平均精确率": 0.9747716793538895,
+  "宏平均召回率": 0.9764912870005489,
+  "平均F1分数": 0.9754307931904703
 }

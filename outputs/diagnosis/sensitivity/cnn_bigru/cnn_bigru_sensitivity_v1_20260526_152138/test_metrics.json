@@ -3,10 +3,6 @@
   "dataset": "sensitivity",
   "model": "cnn_bigru",
   "split": "test",
-  "accuracy": 0.9154929577464789,
-  "precision_macro": 0.9219753086419753,
-  "recall_macro": 0.9250374812593704,
-  "f1_macro": 0.9226190476190476,
   "cohen_kappa": 0.8717639975918121,
   "classification_report": {
     "normal": {
@@ -59,8 +55,12 @@
     ]
   ],
   "label_names": [
-    "normal",
-    "sensitivity_degradation",
-    "coupled_severe_fault"
-  ]
+    "正常",
+    "灵敏度退化",
+    "耦合严重故障"
+  ],
+  "诊断准确率": 0.9154929577464789,
+  "宏平均精确率": 0.9219753086419753,
+  "宏平均召回率": 0.9250374812593704,
+  "平均F1分数": 0.9226190476190476
 }

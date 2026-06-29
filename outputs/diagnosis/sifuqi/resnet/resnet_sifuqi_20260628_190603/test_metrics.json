@@ -3,11 +3,7 @@
   "dataset": "sifuqi",
   "model": "resnet",
   "split": "test",
-  "accuracy": 0.9444444444444444,
   "loss": 0.04944805842306879,
-  "precision_macro": 0.9545454545454546,
-  "recall_macro": 0.9375,
-  "f1_macro": 0.9428571428571428,
   "classification_report": {
     "0": {
       "precision": 0.9090909090909091,
@@ -36,8 +32,8 @@
     }
   },
   "label_names": [
-    "normal",
-    "tracking_fault"
+    "正常",
+    "跟踪故障"
   ],
   "confusion_matrix": [
     [
@@ -48,5 +44,9 @@
       1,
       7
     ]
-  ]
+  ],
+  "诊断准确率": 0.9444444444444444,
+  "宏平均精确率": 0.9545454545454546,
+  "宏平均召回率": 0.9375,
+  "平均F1分数": 0.9428571428571428
 }
