@@ -5,30 +5,30 @@
   "split": "test",
   "cohen_kappa": 1.0,
   "classification_report": {
-    "normal": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 18.0
+    "正常": {
+      "精确率": 1.0,
+      "召回率": 1.0,
+      "F1分数": 1.0,
+      "样本数": 18.0
     },
-    "temperature_control_fault": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 18.0
+    "温控故障": {
+      "精确率": 1.0,
+      "召回率": 1.0,
+      "F1分数": 1.0,
+      "样本数": 18.0
     },
-    "accuracy": 1.0,
-    "macro avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
+    "准确率": 1.0,
+    "宏平均": {
+      "精确率": 1.0,
+      "召回率": 1.0,
+      "F1分数": 1.0,
+      "样本数": 36.0
     },
-    "weighted avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
+    "加权平均": {
+      "精确率": 1.0,
+      "召回率": 1.0,
+      "F1分数": 1.0,
+      "样本数": 36.0
     }
   },
   "confusion_matrix": [

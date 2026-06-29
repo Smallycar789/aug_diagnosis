@@ -46,14 +46,66 @@ METRIC_KEY_ZH = {
 }
 
 
+# classification_report 内字段 → 中文
+REPORT_METRIC_KEY_ZH = {
+    "precision": "精确率",
+    "recall": "召回率",
+    "f1-score": "F1分数",
+    "support": "样本数",
+}
+
+REPORT_SECTION_KEY_ZH = {
+    "accuracy": "准确率",
+    "macro avg": "宏平均",
+    "weighted avg": "加权平均",
+}
+
+LABEL_ZH_TO_EN = {zh: en for en, zh in LABEL_NAME_ZH.items()}
+
+
+def _to_zh_label_name(name: str) -> str:
+    return LABEL_NAME_ZH.get(name, name)
+
+
+def _localize_report_row(row: dict) -> dict:
+    return {REPORT_METRIC_KEY_ZH.get(k, k): v for k, v in row.items()}
+
+
+def localize_classification_report(report: dict, label_names: list[str]) -> dict:
+    """将 classification_report 的类别 key 与指标字段改为中文。"""
+    zh_labels = [_to_zh_label_name(name) for name in label_names]
+    out: dict = {}
+    for key, value in report.items():
+        if key in REPORT_SECTION_KEY_ZH:
+            section_key = REPORT_SECTION_KEY_ZH[key]
+            out[section_key] = _localize_report_row(value) if isinstance(value, dict) else value
+            continue
+
+        if isinstance(key, str) and key.isdigit():
+            idx = int(key)
+            class_key = zh_labels[idx] if idx < len(zh_labels) else key
+        else:
+            en_key = LABEL_ZH_TO_EN.get(key, key)
+            class_key = _to_zh_label_name(en_key)
+
+        if isinstance(value, dict):
+            out[class_key] = _localize_report_row(value)
+        else:
+            out[class_key] = value
+    return out
+
+
 def localize_test_metrics(metrics: dict) -> dict:
     """后加工：将 test_metrics 中部分字段名与故障类别名改为中文。"""
     out = dict(metrics)
+    label_names = out.get("label_names", [])
+    if isinstance(out.get("classification_report"), dict) and isinstance(label_names, list):
+        out["classification_report"] = localize_classification_report(out["classification_report"], label_names)
     for en_key, zh_key in METRIC_KEY_ZH.items():
         if en_key in out:
             out[zh_key] = out.pop(en_key)
     if isinstance(out.get("label_names"), list):
-        out["label_names"] = [LABEL_NAME_ZH.get(name, name) for name in out["label_names"]]
+        out["label_names"] = [_to_zh_label_name(name) for name in out["label_names"]]
     return out
 
 
