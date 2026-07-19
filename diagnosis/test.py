@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional, Any
+
 import argparse
 import json
 import sys
@@ -129,7 +131,7 @@ def _resolve_test_config(config_path: str, out_dir: Path) -> dict:
     return cfg
 
 
-def main(config_path: str, output_dir: str | None = None, split: str = "test") -> None:
+def main(config_path: str, output_dir: Optional[str] = None, split: str = "test") -> None:
     if output_dir:
         out_dir = Path(output_dir)
         if not out_dir.is_absolute():

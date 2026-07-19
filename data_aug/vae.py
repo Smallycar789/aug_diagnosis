@@ -161,7 +161,7 @@ def load_checkpoint(path: Path, cfg: dict[str, Any]) -> VAE:
         input_dim=model_cfg.get("input_dim", 1),
         latent_dim=model_cfg.get("latent_dim", 64),
     ).to(device)
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    checkpoint = torch.load(path, map_location=device)
     vae.load_state_dict(checkpoint["model_state_dict"])
     vae.eval()
     return vae
@@ -194,7 +194,7 @@ def evaluate(
     bundle: AugDataBundle,
     out_dir: Path,
     cfg: dict[str, Any],
-    generated_samples: np.ndarray | None = None,
+    generated_samples: Optional[np.ndarray] = None,
 ) -> dict[str, Any]:
     raw_data = bundle.raw_data.astype(np.float32)
 

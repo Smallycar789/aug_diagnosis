@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -34,24 +34,24 @@ class DiagnosisDataBundle:
     meta: dict[str, Any] = field(default_factory=dict)
     label_names: list[str] = field(default_factory=list)
     # cnn_bigru domain adaptation
-    X_source: np.ndarray | None = None
-    y_source: np.ndarray | None = None
-    X_target: np.ndarray | None = None
-    y_target: np.ndarray | None = None
+    X_source: Optional[np.ndarray] = None
+    y_source: Optional[np.ndarray] = None
+    X_target: Optional[np.ndarray] = None
+    y_target: Optional[np.ndarray] = None
     # resnet / generic splits (images or tensors)
-    train_items: list | None = None
-    val_items: list | None = None
-    test_items: list | None = None
+    train_items: Optional[list] = None
+    val_items: Optional[list] = None
+    test_items: Optional[list] = None
     # tl_meta raw arrays for CWRUDataset-style construction
-    full_signals: np.ndarray | None = None
-    full_labels: np.ndarray | None = None
-    train_indices: np.ndarray | None = None
-    val_indices: np.ndarray | None = None
-    test_indices: np.ndarray | None = None
+    full_signals: Optional[np.ndarray] = None
+    full_labels: Optional[np.ndarray] = None
+    train_indices: Optional[np.ndarray] = None
+    val_indices: Optional[np.ndarray] = None
+    test_indices: Optional[np.ndarray] = None
 
 
 def load_cwru_sliding_windows(
-    csv_path: str | Path,
+    csv_path: Union[str, Path],
     sample_length: int = 1024,
     stride: int = 512,
     zscore_per_sample: bool = True,
@@ -96,7 +96,7 @@ def _finalize_classification_bundle(
     dataset_name: str,
     label_names: list[str],
     total_samples: int,
-    extra_meta: dict[str, Any] | None = None,
+    extra_meta: Optional[Dict[str, Any]] = None,
 ) -> DiagnosisDataBundle:
     domain_adaptation = bool(cfg.get("domain_adaptation", False))
     normalize_mode = cfg.get("normalize", "global")
@@ -146,7 +146,7 @@ def _split_classification_bundle(
     *,
     dataset_name: str,
     label_names: list[str],
-    extra_meta: dict[str, Any] | None = None,
+    extra_meta: Optional[Dict[str, Any]] = None,
 ) -> DiagnosisDataBundle:
     X_train, X_holdout, y_train, y_holdout = split_train_holdout(X, y, cfg)
     X_val, y_val, X_test, y_test = split_holdout_val_test(X_holdout, y_holdout, cfg)
@@ -174,7 +174,7 @@ def _split_classification_bundle_by_unit(
     *,
     dataset_name: str,
     label_names: list[str],
-    extra_meta: dict[str, Any] | None = None,
+    extra_meta: Optional[Dict[str, Any]] = None,
 ) -> DiagnosisDataBundle:
     root = resolve_path(cfg.get("root"))
     split_df = pd.read_csv(root / cfg.get("split_file", "unit_split.csv"))
@@ -437,8 +437,8 @@ def _subsample_windows_by_unit(
     y: np.ndarray,
     unit_ids: np.ndarray,
     *,
-    ratio: float | None = None,
-    max_units_per_class: int | None = None,
+    ratio: Optional[float] = None,
+    max_units_per_class: Optional[int] = None,
     label_names: list[str],
     seed: int = 42,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:

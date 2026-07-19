@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional, Any
+
 import argparse
 import sys
 from pathlib import Path
@@ -21,7 +23,7 @@ MODELS = {
 }
 
 
-def _resolve_out_dir(cfg: dict, output_dir: str | None = None) -> Path:
+def _resolve_out_dir(cfg: dict, output_dir: Optional[str] = None) -> Path:
     if output_dir:
         out_dir = Path(output_dir)
         if not out_dir.is_absolute():
@@ -40,7 +42,7 @@ def _resolve_out_dir(cfg: dict, output_dir: str | None = None) -> Path:
     return out_dir
 
 
-def main(config_path: str, output_dir: str | None = None) -> Path:
+def main(config_path: str, output_dir: Optional[str] = None) -> Path:
     cfg = load_config(config_path)
     exp = cfg.get("experiment", {})
     seed = int(exp.get("seed", 42))
@@ -58,9 +60,7 @@ def main(config_path: str, output_dir: str | None = None) -> Path:
     print(f"Model: {model_name} | Dataset: {cfg['dataset']['name']} | Device: {device}")
     print(f"Output: {out_dir}")
 
-    bundle = None
-    if model_name == "cnn_bigru":
-        bundle = load_data(cfg["dataset"], model_name, seed=seed)
+    bundle = load_data(cfg["dataset"], model_name, seed=seed)
 
     model, meta = mod.train(bundle, cfg, out_dir)
     print(f"Training done. Best checkpoint: {out_dir / 'checkpoint_best.pth'}")

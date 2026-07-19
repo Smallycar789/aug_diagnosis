@@ -35,7 +35,7 @@ from data_aug.shared import (
 from data_aug.data_load import AugDataBundle
 from data_aug.io_utils import get_device, save_checkpoint_best, save_json, save_loss_history
 
-from shared import compute_distribution_metrics
+from data_aug.shared import compute_distribution_metrics
 
 
 def _sinusoidal_position_encoding(seq_len: int, dim: int) -> torch.Tensor:
@@ -816,7 +816,7 @@ def _plot_tvae_curves(history, save_path):
 def load_checkpoint(path: Path, cfg: dict[str, Any]) -> TVAE:
     device = get_device(cfg)
     model_cfg = cfg["model"]
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    checkpoint = torch.load(path, map_location=device)
     num_classes = int(checkpoint.get("num_classes", model_cfg.get("num_classes", 0)))
     label_embed_dim = int(model_cfg.get("label_embed_dim", 8 if num_classes else 0))
     model = TVAE(
@@ -940,9 +940,9 @@ def evaluate(
     bundle: AugDataBundle,
     out_dir: Path,
     cfg: dict[str, Any],
-    generated_samples: np.ndarray | None = None,
-    model: TVAE | None = None,
-    meta: dict | None = None,
+    generated_samples: Optional[np.ndarray] = None,
+    model: Optional[TVAE] = None,
+    meta: Optional[dict] = None,
 ) -> dict[str, Any]:
     from sklearn.metrics import mean_squared_error
 
@@ -989,7 +989,7 @@ def evaluate(
 
     norm_params = {"per_class_norm": per_class_norm}
 
-    def _denorm_generated(samples: np.ndarray, label_indices: np.ndarray | None) -> np.ndarray:
+    def _denorm_generated(samples: np.ndarray, label_indices: Optional[np.ndarray]) -> np.ndarray:
         if label_indices is None or bundle.label_names is None:
             return denormalize_minus1_1_array(samples, data_min, data_max)
         return denormalize_by_label(

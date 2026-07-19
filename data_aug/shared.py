@@ -83,7 +83,7 @@ def _arrays_from_norm_entry(
     entry: dict[str, Any],
     min_keys: tuple[str, ...] = ("data_min", "ts_min"),
     max_keys: tuple[str, ...] = ("data_max", "ts_max"),
-) -> tuple[np.ndarray | None, np.ndarray | None]:
+) -> tuple[Optional[np.ndarray], Optional[np.ndarray]]:
     dmin = dmax = None
     for key in min_keys:
         if key in entry:
@@ -97,7 +97,7 @@ def _arrays_from_norm_entry(
 
 
 def resolve_class_norm(
-    label_name: str | None,
+    label_name: Optional[str],
     norm_params: dict[str, Any],
     fallback_min=None,
     fallback_max=None,
@@ -155,7 +155,7 @@ def build_per_class_norm_sequences(
 def physical_statistics(
     original_phys: np.ndarray,
     generated_phys: np.ndarray,
-    feature_names: list[str] | None = None,
+    feature_names: Optional[List[str]] = None,
 ) -> dict[str, Any]:
     """Mean/std and Pearson correlation on denormalized windows."""
     original_phys = np.asarray(original_phys, dtype=np.float32)
@@ -211,7 +211,7 @@ def calibrate_feature_means(
     generated: np.ndarray,
     reference: np.ndarray,
     feature_columns: list[str],
-    calibrate_features: list[str] | None,
+    calibrate_features: Optional[List[str]],
 ) -> np.ndarray:
     if not calibrate_features:
         return generated
@@ -232,7 +232,7 @@ def calibrate_feature_means(
 
 def denormalize_by_label(
     samples: np.ndarray,
-    label_indices: np.ndarray | None,
+    label_indices: Optional[np.ndarray],
     label_names: list[str],
     norm_params: dict[str, Any],
     fallback_min,
@@ -300,7 +300,7 @@ def compute_c2st(real_samples, fake_samples, random_state=42):
 def compute_mmd(
     real_samples: np.ndarray,
     generated_samples: np.ndarray,
-    gamma: float | None = None,
+    gamma: Optional[float] = None,
 ) -> float:
 
     X = real_samples.reshape(len(real_samples), -1)

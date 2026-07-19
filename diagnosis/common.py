@@ -132,8 +132,8 @@ def prepare_signal_segment(
     window: np.ndarray,
     normalize: str = "per_window",
     *,
-    norm_mean: np.ndarray | None = None,
-    norm_std: np.ndarray | None = None,
+    norm_mean: Optional[np.ndarray] = None,
+    norm_std: Optional[np.ndarray] = None,
 ) -> np.ndarray:
     """Prepare a (C, L) or (L,) window for downstream models such as STFT."""
     window = np.asarray(window, dtype=np.float32)
@@ -223,7 +223,7 @@ def collect_multivariate_windows(
     *,
     unit_col: str = "unit",
     cycle_col: str = "cycle",
-    region_resolver: Callable[[str], str] | None = None,
+    region_resolver: Optional[Callable[[str], str]] = None,
     region_fraction: float = 1.0,
     whole_file_as_series: bool = False,
 ) -> tuple[list[np.ndarray], list[int], list[str], list[str]]:

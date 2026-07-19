@@ -15,7 +15,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-from shared import compute_distribution_metrics
+from data_aug.shared import compute_distribution_metrics
 
 from data_aug.common import compare_signals, mean_bias_metrics, split_data
 from data_aug.data_load import AugDataBundle
@@ -221,7 +221,7 @@ def prepare_for_comparison(segments, model, device, ts_min=None, ts_max=None):
     return original_samples, reconstructed_samples
 
 
-def _prepare_data(bundle: AugDataBundle, cfg: dict[str, Any], label_mask: np.ndarray | None = None):
+def _prepare_data(bundle: AugDataBundle, cfg: dict[str, Any], label_mask: Optional[np.ndarray] = None):
     model_cfg = cfg["model"]
     seq_len = model_cfg.get("seq_len", 128)
     overlap_ratio = model_cfg.get("overlap_ratio", 0.5)
@@ -253,7 +253,7 @@ def _prepare_data(bundle: AugDataBundle, cfg: dict[str, Any], label_mask: np.nda
 
 def _build_feature_weight_tensor(
     feature_columns: list[str],
-    weight_cfg: dict[str, float] | None,
+    weight_cfg: Optional[Dict[str, float]],
     device: torch.device,
 ):
     if not weight_cfg:
@@ -272,7 +272,7 @@ def _feature_mean_match_loss(
     fake_data,
     real_data,
     feature_columns: list[str],
-    mean_match_cfg: dict[str, float] | None,
+    mean_match_cfg: Optional[Dict[str, float]],
 ):
     if not mean_match_cfg:
         return fake_data.new_tensor(0.0)
@@ -700,7 +700,7 @@ def _plot_gan_vae_curves(history, save_path):
 def load_checkpoint(path: Path, cfg: dict[str, Any]) -> VAE_GAN:
     device = get_device(cfg)
     model_cfg = cfg["model"]
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    checkpoint = torch.load(path, map_location=device)
     if "per_class" in checkpoint:
         models = {}
         latent_dim = int(checkpoint.get("latent_dim", model_cfg.get("latent_dim", 64)))
@@ -791,9 +791,9 @@ def evaluate(
     bundle: AugDataBundle,
     out_dir: Path,
     cfg: dict[str, Any],
-    generated_samples: np.ndarray | None = None,
-    model: VAE_GAN | None = None,
-    meta: dict | None = None,
+    generated_samples: Optional[np.ndarray] = None,
+    model: Optional[VAE_GAN] = None,
+    meta: Optional[dict] = None,
 ) -> dict[str, Any]:
     device = get_device(cfg)
     sample_rate = float(cfg["dataset"].get("sample_rate", bundle.meta.get("sample_rate", 12000)))

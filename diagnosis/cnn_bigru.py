@@ -387,10 +387,10 @@ def train(bundle: DiagnosisDataBundle, cfg: dict[str, Any], out_dir: Path):
     return model, meta
 
 
-def load_checkpoint(path: Path, cfg: dict[str, Any], label_names: list[str] | None = None):
+def load_checkpoint(path: Path, cfg: dict[str, Any], label_names: Optional[List[str]] = None):
     device = get_device(cfg)
     model_cfg = cfg["model"]
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    checkpoint = torch.load(path, map_location=device)
     if label_names is None:
         label_names = checkpoint.get("label_names", [])
 

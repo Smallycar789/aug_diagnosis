@@ -14,14 +14,14 @@ import yaml
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
-def resolve_path(path: str | Path) -> Path:
+def resolve_path(path: Union[str, Path]) -> Path:
     p = Path(path)
     if not p.is_absolute():
         p = PROJECT_ROOT / p
     return p.resolve()
 
 
-def load_config(config_path: str | Path) -> dict[str, Any]:
+def load_config(config_path: Union[str, Path]) -> dict[str, Any]:
     with open(resolve_path(config_path), encoding="utf-8") as f:
         return yaml.safe_load(f)
 

@@ -333,7 +333,10 @@ class Wrapper(Dataset):
 
 
 def build_tl_resnet18(num_classes, freeze_layers=True):
-    model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+    try:
+        model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+    except (AttributeError, TypeError):
+        model = models.resnet18(pretrained=True)
 
     if freeze_layers:
         for param in model.conv1.parameters():
@@ -399,7 +402,7 @@ def validate(model, dataloader, criterion, device):
     return epoch_loss, epoch_acc, np.array(all_preds), np.array(all_labels)
 
 
-def _prepare_dataloaders(cfg: dict[str, Any], bundle: DiagnosisDataBundle | None = None):
+def _prepare_dataloaders(cfg: dict[str, Any], bundle: Optional[DiagnosisDataBundle] = None):
     model_cfg = cfg["model"]
     batch_size = int(model_cfg.get("batch_size", 32))
 
@@ -441,7 +444,7 @@ def _prepare_dataloaders(cfg: dict[str, Any], bundle: DiagnosisDataBundle | None
     return train_loader, val_loader, test_loader, label_names, num_classes
 
 
-def train(bundle: DiagnosisDataBundle | None, cfg: dict[str, Any], out_dir: Path):
+def train(bundle: Optional[DiagnosisDataBundle], cfg: dict[str, Any], out_dir: Path):
     device = get_device(cfg)
     model_cfg = cfg["model"]
 
@@ -523,7 +526,7 @@ def _plot_curves(history, save_path):
 
 def load_checkpoint(path: Path, cfg: dict[str, Any]):
     device = get_device(cfg)
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    checkpoint = torch.load(path, map_location=device)
     num_classes = checkpoint.get("num_classes", int(cfg["model"].get("num_classes", 10)))
     model = build_tl_resnet18(num_classes, freeze_layers=bool(cfg["model"].get("freeze_layers", True))).to(device)
     model.load_state_dict(checkpoint["model_state_dict"])
@@ -531,7 +534,7 @@ def load_checkpoint(path: Path, cfg: dict[str, Any]):
     return model
 
 
-def evaluate(model, bundle: DiagnosisDataBundle | None, cfg: dict[str, Any], out_dir: Path, split: str = "test", meta: dict | None = None) -> dict:
+def evaluate(model, bundle: Optional[DiagnosisDataBundle], cfg: dict[str, Any], out_dir: Path, split: str = "test", meta: Optional[dict] = None) -> dict:
     device = get_device(cfg)
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()

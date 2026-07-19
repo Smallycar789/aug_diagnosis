@@ -80,7 +80,7 @@ def collect_time_threshold_windows(
     return windows, labels, unit_ids, label_names
 
 
-def read_cooler_groups(cfg: dict[str, Any], root: Path | None = None) -> tuple[list[tuple[str, pd.DataFrame]], Path]:
+def read_cooler_groups(cfg: dict[str, Any], root: Optional[Path] = None) -> tuple[list[tuple[str, pd.DataFrame]], Path]:
     root = root or resolve_path(cfg.get("root", "data/cooler"))
     csv_name = cfg.get("simulation_csv", cfg.get("csv", "all_simulation.csv"))
     csv_path = root / csv_name
@@ -99,7 +99,7 @@ def read_cooler_groups(cfg: dict[str, Any], root: Path | None = None) -> tuple[l
     return groups, csv_path
 
 
-def read_sifuqi_groups(cfg: dict[str, Any], root: Path | None = None) -> tuple[list[tuple[str, pd.DataFrame]], Path]:
+def read_sifuqi_groups(cfg: dict[str, Any], root: Optional[Path] = None) -> tuple[list[tuple[str, pd.DataFrame]], Path]:
     root = root or resolve_path(cfg.get("root", "data/sifuqi"))
     csv_name = cfg.get("csv", "servo_accuracy.csv")
     csv_path = root / csv_name

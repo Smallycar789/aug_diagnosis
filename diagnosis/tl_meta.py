@@ -38,7 +38,7 @@ from diagnosis.simulation_load import load_cooler_time_windows, load_sifuqi_time
 class TLMetaSignalDataset(Dataset):
     """1D meta-learning samples for SSMN encoder input."""
 
-    def __init__(self, data: np.ndarray, labels: np.ndarray, class_names: list[str], indices: np.ndarray | None = None):
+    def __init__(self, data: np.ndarray, labels: np.ndarray, class_names: list[str], indices: Optional[np.ndarray] = None):
         self.data = np.asarray(data, dtype=np.float32)
         self.labels = np.asarray(labels, dtype=np.int64)
         self.class_names = list(class_names)
@@ -789,7 +789,7 @@ def _build_datasets(cfg: dict[str, Any]):
     return _build_multivariate_meta_datasets(cfg)
 
 
-def train(bundle: DiagnosisDataBundle | None, cfg: dict[str, Any], out_dir: Path):
+def train(bundle: Optional[DiagnosisDataBundle], cfg: dict[str, Any], out_dir: Path):
     device = get_device(cfg)
     model_cfg = cfg["model"]
 
@@ -868,7 +868,7 @@ def train(bundle: DiagnosisDataBundle | None, cfg: dict[str, Any], out_dir: Path
 def load_checkpoint(path: Path, cfg: dict[str, Any]):
     device = get_device(cfg)
     model_cfg = cfg["model"]
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    checkpoint = torch.load(path, map_location=device)
 
     n_way = int(checkpoint.get("n_way", model_cfg.get("n_way", 10)))
     embedding_dim = int(model_cfg.get("embedding_dim", 128))
@@ -881,7 +881,7 @@ def load_checkpoint(path: Path, cfg: dict[str, Any]):
     return model
 
 
-def evaluate(model, bundle: DiagnosisDataBundle | None, cfg: dict[str, Any], out_dir: Path, split: str = "test", meta: dict | None = None) -> dict:
+def evaluate(model, bundle: Optional[DiagnosisDataBundle], cfg: dict[str, Any], out_dir: Path, split: str = "test", meta: Optional[dict] = None) -> dict:
     device = get_device(cfg)
     model = model.to(device)
     model_cfg = cfg["model"]

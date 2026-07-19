@@ -29,7 +29,7 @@ from data_aug.shared import (
     resolve_class_norm,
     strip_plot_compare_stats,
 )
-from shared import compute_distribution_metrics
+from data_aug.shared import compute_distribution_metrics
 
 class Encoder(nn.Module):
     def __init__(self, input_dim, z_dim, label_dim):
@@ -463,7 +463,7 @@ def train(bundle: AugDataBundle, cfg: dict[str, Any], out_dir: Path):
     return enc, gen, disc, meta
 
 
-def load_checkpoint(path: Path, cfg: dict[str, Any], out_dir: Path | None = None):
+def load_checkpoint(path: Path, cfg: dict[str, Any], out_dir: Optional[Path] = None):
     device = get_device(cfg)
     model_cfg = cfg["model"]
 
@@ -489,7 +489,7 @@ def load_checkpoint(path: Path, cfg: dict[str, Any], out_dir: Path | None = None
     gen = Generator(z_dim=z_dim, output_shape=(H, W)).to(device)
     disc = Discriminator(input_shape=(H, W)).to(device)
 
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    checkpoint = torch.load(path, map_location=device)
     if "per_class" in checkpoint:
         models = {}
         label_names = checkpoint.get("label_names", [])
@@ -560,8 +560,8 @@ def evaluate(
     bundle: AugDataBundle,
     out_dir: Path,
     cfg: dict[str, Any],
-    generated_samples: np.ndarray | None = None,
-    segments: np.ndarray | None = None,
+    generated_samples: Optional[np.ndarray] = None,
+    segments: Optional[np.ndarray] = None,
 ) -> dict[str, Any]:
     from sklearn.metrics import mean_squared_error
 

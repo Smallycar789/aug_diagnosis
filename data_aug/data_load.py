@@ -16,7 +16,7 @@ from diagnosis.simulation_load import load_cooler_time_windows, load_sifuqi_time
 @dataclass
 class AugDataBundle:
     raw_data: np.ndarray
-    labels: np.ndarray | None = None
+    labels: Optional[np.ndarray] = None
     label_names: list[str] = field(default_factory=list)
     feature_columns: list[str] = field(default_factory=list)
     meta: dict[str, Any] = field(default_factory=dict)

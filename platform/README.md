@@ -123,7 +123,32 @@ outputs/diagnosis/sensitivity/cnn_bigru/cnn_bigru_sensitivity_v1_20260526_152138
 
 ---
 
-## 5. 环境与安装
+## 5. 演示数据、正式数据与正式模型
+
+三者用途不同，不要混用：
+
+| | 演示数据 | 正式数据 | 正式模型 |
+|---|----------|----------|----------|
+| **位置** | `platform/demo_data/` | `data/` | `outputs/` |
+| **规模** | 每文件约 800 行（全量 CSV 头部裁剪） | 全量 CSV | 完整训练 checkpoint、指标、图表 |
+| **用途** | 验证接口能跑通（配合 `smoke=true`） | 重新训练出交付级结果 | 测试/生成对接、对外交付 |
+| **指标** | 无意义（仅 2 epoch） | — | 有实验结论（如 91.55% Acc） |
+
+```
+联调：  platform/demo_data/  +  smoke=true   →  outputs/（可忽略）
+交付：  data/ 全量            +  smoke=false  →  outputs/（正式模型）
+测试：  run_dir → outputs/...（不依赖 demo_data）
+```
+
+一键重建演示数据（需已安装 pandas）：
+
+```bash
+python platform/scripts/build_demo_data.py
+```
+
+---
+
+## 6. 环境与安装
 
 ```bash
 cd /path/to/aug_diagnosis
@@ -135,7 +160,7 @@ pip install -r platform/requirements-py37.txt
 
 ---
 
-## 6. 快速联调（推荐顺序）
+## 7. 快速联调（推荐顺序）
 
 ```bash
 # 1. 测试已有正式模型（无需重新训练）
@@ -153,7 +178,7 @@ python platform/data_augmentation_generate.py \
 
 ---
 
-## 7. 其他交付文档
+## 8. 其他交付文档
 
 | 文档 | 位置 | 内容 |
 |------|------|------|
@@ -163,7 +188,7 @@ python platform/data_augmentation_generate.py \
 
 ---
 
-## 8. platform/ 目录文件说明
+## 9. platform/ 目录文件说明
 
 | 路径 | 说明 |
 |------|------|
@@ -173,5 +198,6 @@ python platform/data_augmentation_generate.py \
 | `config.py` | 数据集 profile、YAML 配置生成 |
 | `configs/` | 四个服务的输入 JSON 模板 |
 | `demo_data/` | 裁剪演示 CSV（联调用，非正式数据） |
+| `scripts/build_demo_data.py` | 从 `data/` 一键重建 `demo_data/` |
 | `runtime/` | 运行时自动生成的 YAML（可删，会自动重建） |
 | `requirements-py37.txt` | Py3.7.6 依赖清单 |

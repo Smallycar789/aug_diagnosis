@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional, Any
+
 import argparse
 import sys
 from pathlib import Path
@@ -28,7 +30,7 @@ MODELS = {
 }
 
 
-def _resolve_out_dir(cfg: dict, config_path: str, output_dir: str | None = None) -> Path:
+def _resolve_out_dir(cfg: dict, config_path: str, output_dir: Optional[str] = None) -> Path:
     if output_dir:
         out_dir = Path(output_dir)
         if not out_dir.is_absolute():
@@ -47,7 +49,7 @@ def _resolve_out_dir(cfg: dict, config_path: str, output_dir: str | None = None)
     return out_dir
 
 
-def main(config_path: str, stage: str = "all", output_dir: str | None = None) -> None:
+def main(config_path: str, stage: str = "all", output_dir: Optional[str] = None) -> Path:
     cfg = load_config(config_path)
     exp = cfg.get("experiment", {})
     set_seed(exp.get("seed", 42))
@@ -162,6 +164,7 @@ def main(config_path: str, stage: str = "all", output_dir: str | None = None) ->
         print(f"Metrics: {out_dir / 'metrics.json'}")
 
     print("\nDone.")
+    return out_dir
 
 
 if __name__ == "__main__":
