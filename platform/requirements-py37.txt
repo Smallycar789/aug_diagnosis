@@ -1,0 +1,22 @@
+# Python 3.7.6 platform delivery environment
+#
+# Create env:
+#   conda create -n py376 python=3.7.6 -y
+#   conda activate py376
+#   pip install torch==1.13.1+cpu torchvision==0.14.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+#   pip install -r platform/requirements-py37.txt
+#
+# CPU-only PyTorch 1.13 wheels for Linux are commonly installed via the index above.
+# For CUDA builds, use the matching torch/torchvision pair from PyTorch 1.13 release notes.
+
+torch==1.13.1
+torchvision==0.14.1
+numpy==1.21.6
+pandas==1.1.5
+scipy==1.7.3
+scikit-learn==1.0.2
+matplotlib==3.5.3
+PyYAML==6.0.1
+seaborn==0.11.2
+tqdm==4.64.1
+pillow==9.5.0
