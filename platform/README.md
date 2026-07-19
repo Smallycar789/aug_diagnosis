@@ -182,6 +182,7 @@ python platform/data_augmentation_generate.py \
 
 | 文档 | 位置 | 内容 |
 |------|------|------|
+| 框架设计 | `FRAMEWORK_DESIGN.md` | 算法层结构、outputs 规范、与平台层关系 |
 | 算法原理说明 | `light/故障诊断算法说明文档.md` | 算法细节、实验结论 |
 | 算法统计表格 | `light/算法统计表格.md` | 算法清单与文件列表 |
 | 光电算法规范 | `light/光电算法规范.docx` | 甲方接口 JSON 格式 |

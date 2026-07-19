@@ -1,7 +1,8 @@
 # 光电探测算法集成框架设计
 
 > 本文档定义从 `test_pre` Jupyter 实验代码迁移到可集成 Python 项目的**简化框架**。  
-> 原则：**不改算法逻辑**，只做配置化、数据加载统一化、输出规范化。
+> 原则：**不改算法逻辑**，只做配置化、数据加载统一化、输出规范化。  
+> **平台对外集成**见 `platform/README.md`；本文档描述算法层设计，并说明与平台封装层的关系。
 
 ---
 
@@ -9,9 +10,10 @@
 
 | 目标 | 说明 |
 |------|------|
-| 结构简单 | 无 registry / runner / adapter 多层抽象，核心入口为 `train.py` |
+| 结构简单 | 无 registry / runner / adapter 多层抽象；算法层入口为 `diagnosis/train.py`、`data_aug/train.py` |
 | 算法可插拔 | 通过 yaml 配置切换模型与数据集 |
-| 输出可复现 | 每次运行落盘完整配置快照与指标 |
+| 输出可复现 | 每次运行落盘完整配置快照与指标，统一写入 `outputs/` |
+| 平台可集成 | `platform/` 提供四个对外服务脚本，符合《光电算法规范》JSON 接口 |
 | 对照保留 | `test_pre/` 原样保留，作为算法对照源 |
 
 ---
@@ -19,68 +21,165 @@
 ## 2. 目录结构
 
 ```text
-光电探测/
-├── data/                              # 原始数据（不改动）
-│   ├── DegradationData/               # 红外退化（故障诊断 + 表格/窗口序列）
+aug_diagnosis/
+├── data/                              # 正式训练数据（CSV，交付/全量实验用）
+│   ├── degradation/                   # 红外退化多类故障（灵敏度等实验）
+│   ├── sensitivity/                   # 灵敏度专项（若有）
 │   ├── cooler/                        # 斯特林制冷机退化时序
-│   └── sifuqi/                        # 伺服控制精度退化时序
+│   ├── sifuqi/                        # 伺服控制精度退化时序
+│   └── image_quality/                 # 图像质量退化
 │
-├── configs/                           # 实验配置（yaml）
-│   ├── diagnosis/                     # 故障诊断配置
-│   │   ├── cnn_bigru_degradation.yaml
-│   │   ├── resnet_sifuqi.yaml
-│   │   └── tl_meta_degradation.yaml
-│   └── data_aug/                      # 数据生成配置
-│       ├── vae_degradation.yaml
-│       ├── tvae_cooler.yaml
-│       └── gan_vae_sifuqi.yaml
+├── configs/                           # 算法层实验配置（yaml，研发用）
+│   ├── diagnosis/
+│   └── data_aug/
 │
-├── diagnosis/                         # 故障诊断
-│   ├── data_preprocess.py             # 三类数据统一加载
-│   ├── train.py                       # 训练入口
-│   ├── test.py                        # 测试入口
-│   ├── cnn_bigru.py                   # 1DCNN-BiGRU（来自 notebook）
-│   ├── resnet.py                      # ResNet + STFT（来自 notebook）
-│   └── tl_meta.py                     # SSMN 元学习（来自 notebook）
+├── diagnosis/                         # 故障诊断算法实现
+│   ├── data_preprocess.py
+│   ├── train.py                       # 算法层训练入口
+│   ├── test.py                        # 算法层测试入口
+│   ├── cnn_bigru.py / resnet.py / tl_meta.py
+│   └── io_utils.py
 │
-├── data_aug/                          # 数据生成
-│   ├── train.py                       # 训练 + 生成 + 评估入口
-│   ├── vae.py                         # VAE（来自 notebook）
-│   ├── gan.py                         # GAN（来自 notebook）
-│   ├── gan_vae.py                     # GAN-VAE 1D（来自 notebook）
-│   └── tvae.py                        # TVAE（来自 notebook）
+├── data_aug/                          # 数据增强算法实现
+│   ├── train.py                       # 算法层 train | generate | evaluate 入口
+│   ├── gan.py / tvae.py / gan_vae.py / vae.py
+│   └── io_utils.py
 │
-├── outputs/                           # 统一输出根目录
+├── outputs/                           # ★ 统一正式输出根目录（模型与指标，交付用）
 │   ├── diagnosis/
 │   │   └── {dataset}/{model}/{run_id}/
 │   └── data_aug/
 │       └── {dataset}/{model}/{run_id}/
 │
-├── test_pre/                          # 初期 Jupyter 实验（保留对照）
-│   └── jupyter_test/
-│       ├── augmetation/               # VAE / GAN / GAN-VAE / TVAE
-│       └── diagnosis/                 # 1DCNN-BiGRU / ResNet / TL-Meta
+├── platform/                          # ★ 平台封装层（对外集成入口）
+│   ├── fault_diagnosis_train.py       # 服务：诊断训练
+│   ├── fault_diagnosis_test.py        # 服务：诊断测试
+│   ├── data_augmentation_train.py     # 服务：增强训练
+│   ├── data_augmentation_generate.py  # 服务：样本生成
+│   ├── platform_common.py / config.py
+│   ├── configs/                       # InterfaceType=input JSON 模板
+│   ├── demo_data/                     # 演示用小 CSV（联调，非交付）
+│   ├── runtime/                       # 临时生成的 yaml（可删）
+│   └── requirements-py37.txt          # 平台交付环境 Python 3.7.6
 │
+├── test_pre/                          # 初期 Jupyter 实验（保留对照）
 └── FRAMEWORK_DESIGN.md                # 本文档
 ```
 
+### 2.1 三层职责
+
+| 层级 | 目录 | 谁调用 | 产出 |
+|------|------|--------|------|
+| 算法层 | `diagnosis/`、`data_aug/` | 研发 yaml 实验；被平台层调用 | 写入 `outputs/` |
+| 平台层 | `platform/` | 组装平台、ATE 等外部系统 | 返回 `dict`（+ 可选 output JSON） |
+| 结果层 | `outputs/` | — | checkpoint、指标、图表（**正式模型**） |
+
 ---
 
-## 3. 三类数据集
+## 3. 平台封装入口与输出
+
+> 详细联调说明见 **`platform/README.md`**。本节与该平台文档保持一致，说明算法层之上的对外接口。
+
+### 3.1 四个平台服务入口
+
+| 脚本 | 函数名 | 调用算法层 | 典型场景 |
+|------|--------|------------|----------|
+| `platform/fault_diagnosis_train.py` | `fault_diagnosis_train` | `diagnosis/train.py` | 重新训练诊断模型 |
+| `platform/fault_diagnosis_test.py` | `fault_diagnosis_test` | `diagnosis/test.py` | **加载 `outputs/` 已有模型做测试（常用）** |
+| `platform/data_augmentation_train.py` | `data_augmentation_train` | `data_aug/train.py`（stage=train） | 重新训练生成模型 |
+| `platform/data_augmentation_generate.py` | `data_augmentation_generate` | `data_aug/train.py`（stage=generate） | **加载 `outputs/` 已有模型生成样本（常用）** |
+
+约定（《光电算法规范》）：
+
+- 脚本文件名 = 函数名；函数支持 `**kwargs`
+- 输入：`platform/configs/*_input.json`（`InterfaceType=input`）或 kwargs
+- 返回：英文键名 `dict`；可选 `platform_output_json_file` 写出 `InterfaceType=output`
+
+### 3.2 平台层调用链路
+
+```text
+外部系统 / JSON 参数
+    → platform/*.py（解析参数、写临时 yaml 到 platform/runtime/）
+    → diagnosis/train.py 或 data_aug/train.py
+    → diagnosis/* 或 data_aug/*（算法核心）
+    → outputs/diagnosis/... 或 outputs/data_aug/...（落盘）
+    → platform/*.py 汇总为返回 dict
+```
+
+**训练**：平台脚本生成 yaml → 算法层训练 → 结果写入 **`outputs/`**（与直接跑 `diagnosis/train.py` 相同根目录）。
+
+**测试 / 生成**：平台脚本读取参数 **`run_dir`**（必须指向 `outputs/` 下某次实验目录）→ 加载该目录内 `config_resolved.yaml` + `checkpoint_best.pth`。
+
+示例 `run_dir`：
+
+```text
+outputs/diagnosis/sensitivity/cnn_bigru/cnn_bigru_sensitivity_v1_20260526_152138
+```
+
+### 3.3 平台返回 dict（服务层输出）
+
+平台脚本**不替代** `outputs/` 落盘；除返回 dict 外，算法层仍按第 9 节规范写文件。
+
+**`fault_diagnosis_train` 返回示例：**
+
+| 键 | 说明 |
+|----|------|
+| `status` | `success` / `failed` |
+| `output_dir` | `outputs/diagnosis/...` 下本次 run 目录 |
+| `checkpoint_path` | `checkpoint_best.pth` 路径 |
+| `config_path` | 本次临时 yaml（`platform/runtime/`） |
+| `algorithm` / `dataset_profile` | 算法与数据集 profile |
+
+**`fault_diagnosis_test` 返回示例：**
+
+| 键 | 说明 |
+|----|------|
+| `status` | 执行状态 |
+| `output_dir` | 与 `run_dir` 相同 |
+| `accuracy` / `f1_macro` | 测试指标 |
+| `metrics_json` | `test_metrics.json` 路径 |
+| `confusion_matrix_png` | 混淆矩阵图路径 |
+
+**`data_augmentation_train` / `data_augmentation_generate`** 类似，见 `platform/数据增强算法接口说明.md`。
+
+### 3.4 演示数据、正式数据与正式模型
+
+| | 演示数据 | 正式数据 | 正式模型 |
+|---|----------|----------|----------|
+| 位置 | `platform/demo_data/` | `data/` | `outputs/` |
+| 用途 | 联调（`smoke=true`，2 epoch） | 全量训练 | 测试/生成对接、对外交付 |
+| 平台参数 | `data_dir=platform/demo_data/...` | `data_dir=data/...`，`smoke=false` | `run_dir=outputs/...` |
+
+重建演示数据：`python platform/scripts/build_demo_data.py`
+
+### 3.5 算法层入口 vs 平台层入口
+
+| 角色 | 诊断训练 | 诊断测试 | 增强训练 | 增强生成 |
+|------|----------|----------|----------|----------|
+| **研发（yaml）** | `python diagnosis/train.py --config configs/...` | `python diagnosis/test.py --config ...` | `python data_aug/train.py --config ...` | `--stage generate` |
+| **平台集成** | `python platform/fault_diagnosis_train.py --config ...` | `python platform/fault_diagnosis_test.py --config ...` | `python platform/data_augmentation_train.py ...` | `python platform/data_augmentation_generate.py ...` |
+
+两套入口共用同一算法实现，**正式模型与指标统一落在 `outputs/`**。
+
+---
+
+## 4. 三类数据集
 
 | 名称 | 路径 | 数据形态 | 典型用途 |
 |------|------|----------|----------|
-| `degradation` | `data/DegradationData/fault_diagnosis/` | 表格 + 滑窗序列（22 维特征，6 类故障） | 诊断为主；表格/窗口也可做生成 |
-| `cooler` | `data/cooler/all_simulation.csv` | 10 组长表时序（`T_stable_K`, `t_cool_s`, `sigma_T_K`）；正常 &lt;2000h、温控故障 &gt;6000h 分段滑窗 | 序列生成、时序诊断 |
-| `sifuqi` | `data/sifuqi/servo_accuracy.csv` | 12 组宽表（`group_01`~`group_12`，伺服运动精度）；正常 &lt;1000h、跟踪故障 &gt;6000h 分段滑窗 | STFT 诊断、序列生成 |
+| `sensitivity` / `degradation` | `data/degradation/` 或 `data/sensitivity/` | 多类故障 CSV（如 `avg_detectivity`, `NETD_mK`），滑窗序列 | 灵敏度退化诊断与增强 |
+| `cooler` | `data/cooler/all_simulation.csv` | 多组时序（`T_stable_K`, `t_cool_s`, `sigma_T_K`）；正常 &lt;2000h、故障 &gt;6000h | 序列生成、时序诊断 |
+| `sifuqi` | `data/sifuqi/servo_accuracy.csv` | 伺服精度宽表/长表；正常 &lt;1000h、跟踪故障 &gt;6000h | STFT 诊断、序列生成 |
+
+平台层通过 `dataset_profile`（`sensitivity` / `cooler` / `sifuqi`）选择配置；联调可用 `platform/demo_data/` 对应子集。
 
 `data_preprocess.py`（诊断）与各 `data_aug/*.py` 内的数据加载函数，按 `dataset.name` 分支读取，**归一化/滑窗公式与 notebook 保持一致**。
 
 ---
 
-## 4. 算法清单与来源
+## 5. 算法清单与来源
 
-### 4.1 数据生成（`data_aug/`）
+### 5.1 数据生成（`data_aug/`）
 
 | 模块文件 | 来源 Notebook | 说明 |
 |----------|---------------|------|
@@ -89,7 +188,7 @@
 | `gan_vae.py` | `test_pre/jupyter_test/augmetation/GAN-VAE.ipynb` | 1D Conv VAE-GAN |
 | `tvae.py` | `test_pre/jupyter_test/augmetation/TVAE.ipynb` | 双向 LSTM TVAE |
 
-### 4.2 故障诊断（`diagnosis/`）
+### 5.2 故障诊断（`diagnosis/`）
 
 | 模块文件 | 来源 Notebook | 说明 |
 |----------|---------------|------|
@@ -99,9 +198,9 @@
 
 ---
 
-## 5. 入口脚本设计
+## 6. 入口脚本设计
 
-### 5.1 故障诊断 `diagnosis/train.py`
+### 6.1 算法层：故障诊断 `diagnosis/train.py`
 
 ```python
 # 模型名 -> 模块映射（唯一 switch 点）
@@ -130,7 +229,7 @@ def main(config_path):
 python diagnosis/train.py --config configs/diagnosis/cnn_bigru_degradation.yaml
 ```
 
-### 5.2 故障诊断 `diagnosis/test.py`
+### 6.2 算法层：故障诊断 `diagnosis/test.py`
 
 ```python
 def main(config_path):
@@ -152,7 +251,7 @@ def main(config_path):
 python diagnosis/test.py --config configs/diagnosis/cnn_bigru_degradation.yaml
 ```
 
-### 5.3 数据生成 `data_aug/train.py`
+### 6.3 算法层：数据生成 `data_aug/train.py`
 
 ```python
 MODELS = {
@@ -192,13 +291,29 @@ def main(config_path, stage="all"):
 python data_aug/train.py --config configs/data_aug/tvae_cooler.yaml --stage all
 ```
 
+### 6.4 平台层入口（对外集成）
+
+平台层不新增训练逻辑，仅包装第 3 节四个服务。命令示例：
+
+```bash
+# 测试已有正式模型（run_dir 指向 outputs/）
+python platform/fault_diagnosis_test.py \
+  --config platform/configs/fault_diagnosis_test_input.json
+
+# 冒烟训练（demo_data + smoke=true，仅验证接口）
+python platform/fault_diagnosis_train.py \
+  --config platform/configs/fault_diagnosis_train_input.json
+```
+
+平台训练同样写入 `outputs/diagnosis/` 或 `outputs/data_aug/`；**交付与对接以 `outputs/` 中完整实验目录为准**，不以 `platform/runtime/` 或冒烟结果为交付物。
+
 ---
 
-## 6. 每个算法模块的标准接口
+## 7. 每个算法模块的标准接口
 
 每个 `*.py` 从 notebook **原样复制**模型类、损失函数、训练循环，仅额外暴露以下函数：
 
-### 6.1 诊断模块
+### 7.1 诊断模块
 
 ```python
 def build_model(cfg: dict) -> nn.Module: ...
@@ -207,7 +322,7 @@ def load_checkpoint(model, path) -> None: ...
 def evaluate(model, test_data, cfg, out_dir) -> dict: ...
 ```
 
-### 6.2 数据生成模块
+### 7.2 数据生成模块
 
 ```python
 def build_model(cfg: dict) -> nn.Module: ...
@@ -223,9 +338,9 @@ def evaluate(data, out_dir, cfg) -> dict: ...
 
 ---
 
-## 7. 配置文件规范
+## 8. 配置文件规范
 
-### 7.1 公共字段
+### 8.1 公共字段
 
 ```yaml
 experiment:
@@ -239,7 +354,7 @@ output:
   # {root}/{dataset.name}/{model.name}/{experiment.name}_{timestamp}/
 ```
 
-### 7.2 诊断配置示例
+### 8.2 诊断配置示例
 
 ```yaml
 # configs/diagnosis/cnn_bigru_degradation.yaml
@@ -275,7 +390,7 @@ model:
   mmd_weight: 0.1
 ```
 
-### 7.3 数据生成配置示例
+### 8.3 数据生成配置示例
 
 ```yaml
 # configs/data_aug/tvae_cooler.yaml
@@ -315,9 +430,11 @@ model:
 
 ---
 
-## 8. 输出目录规范
+## 9. 输出目录规范
 
-### 8.1 目录命名
+算法层与平台层训练**共用** `outputs/` 作为正式落盘根目录。平台服务返回的 `dict` 是对 `outputs/` 内容的摘要，不单独维护另一套模型仓库。
+
+### 9.1 目录命名
 
 ```text
 outputs/
@@ -334,7 +451,7 @@ outputs/diagnosis/degradation/cnn_bigru/cnn_bigru_degradation_v1_20260525_143022
 outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 ```
 
-### 8.2 故障诊断输出（单次 train + test）
+### 9.2 故障诊断输出（单次 train + test）
 
 | 文件 | 产生阶段 | 说明 |
 |------|----------|------|
@@ -355,7 +472,7 @@ outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 | `training_curves.png` | tl_meta | loss + val accuracy 双轴图 |
 | `tsne_visualization.png` | tl_meta | 特征 t-SNE（可选） |
 
-### 8.3 数据生成输出（train + generate + evaluate）
+### 9.3 数据生成输出（train + generate + evaluate）
 
 | 文件 | 产生阶段 | 说明 |
 |------|----------|------|
@@ -376,7 +493,7 @@ outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 | `vae_comprehensive_results.png` | VAE 综合结果图（来自 VAE.ipynb） |
 | `generated_samples_denorm.npy` | 反归一化后的生成样本 |
 
-### 8.4 `test_metrics.json` 结构（诊断）
+### 9.4 `test_metrics.json` 结构（诊断）
 
 ```json
 {
@@ -404,7 +521,7 @@ outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 
 字段与 notebook 中 `sklearn.metrics` 输出对齐；`tl_meta` 可增加 `n_way`、`n_shot` 等元学习参数。
 
-### 8.5 `metrics.json` 结构（数据生成）
+### 9.5 `metrics.json` 结构（数据生成）
 
 参考 `test_pre` 中 VAE / TVAE / GAN-VAE notebook 的评估逻辑：
 
@@ -453,7 +570,7 @@ outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 
 算法模块的 `evaluate()` 应**直接复用 notebook 中的评估函数**，仅将 print 结果写入 `metrics.json`、将 plt 保存到 `out_dir`。
 
-### 8.6 `loss_history.json` 结构
+### 9.6 `loss_history.json` 结构
 
 **诊断：**
 
@@ -484,7 +601,7 @@ outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 
 ---
 
-## 9. 最佳模型保存策略
+## 10. 最佳模型保存策略
 
 | 任务 | 主指标 | 保存时机 |
 |------|--------|----------|
@@ -507,7 +624,7 @@ outputs/data_aug/cooler/tvae/tvae_cooler_v1_20260525_150000/
 
 ---
 
-## 10. `data_preprocess.py` 职责
+## 11. `data_preprocess.py` 职责
 
 ```python
 def load_data(dataset_cfg, split="train"):
@@ -549,7 +666,7 @@ def load_data(dataset_cfg, split="train"):
 
 ---
 
-## 11. 迁移步骤（逐算法）
+## 12. 迁移步骤（逐算法）
 
 对每个算法重复以下步骤，**一次只迁一个**：
 
@@ -571,7 +688,7 @@ def load_data(dataset_cfg, split="train"):
 
 ---
 
-## 12. 建议实施顺序
+## 13. 建议实施顺序
 
 1. 创建 `configs/` 目录结构与示例 yaml
 2. 实现 `diagnosis/train.py`、`diagnosis/test.py` 骨架（含 `make_run_dir`、`save_config_resolved`）
@@ -583,7 +700,7 @@ def load_data(dataset_cfg, split="train"):
 
 ---
 
-## 13. 依赖与环境
+## 14. 依赖与环境
 
 参考 notebook 常用库：
 
@@ -600,24 +717,26 @@ tqdm
 pyyaml
 ```
 
-可按项目需要增加 `requirements.txt`，版本与 `data/sifuqi/environment.yml` 对齐。
+可按项目需要增加 `requirements.txt`（研发环境）与 `platform/requirements-py37.txt`（平台交付环境）。
 
 ---
 
-## 14. 与外部系统集成（预留）
+## 15. 与外部系统集成
 
-后续 ATE 或其他系统调用时，只需：
+平台封装已实现（`platform/`），外部系统（ATE、服务编排等）按以下方式集成：
 
-1. 传入 `--config` 路径（或环境变量 `EXPERIMENT_CONFIG`）
-2. 读取 `outputs/.../config_resolved.yaml` 复现实验
-3. 加载 `checkpoint_best.pth` 做推理
-4. 读取 `test_metrics.json` 或 `metrics.json` 获取结果
+1. **测试 / 生成（推荐）**：传入 `run_dir`，指向 `outputs/` 下已有实验目录（含 `checkpoint_best.pth`、`config_resolved.yaml`）
+2. **重新训练**：调用 `platform/fault_diagnosis_train` 或 `platform/data_augmentation_train`，`data_dir` 指向 `data/` 全量数据，`smoke=false`
+3. **读取结果**：算法指标见 `outputs/.../test_metrics.json` 或 `metrics.json`；平台调用同时返回汇总 `dict`
+4. **接口格式**：输入/输出 JSON 结构见 `platform/configs/` 及 `platform/` 下接口说明文档
 
-无需改动算法模块内部逻辑。
+无需改动 `diagnosis/`、`data_aug/` 内部算法逻辑。平台环境：Python 3.7.6，`platform/requirements-py37.txt`。
+
+更多细节：**`platform/README.md`**、`platform/故障诊断算法接口说明.md`、`platform/数据增强算法接口说明.md`。
 
 ---
 
-## 15. 附录：单次运行产出清单速查
+## 16. 附录：单次运行产出清单速查
 
 ### 诊断（train + test 完整流程）
 
@@ -649,4 +768,4 @@ outputs/data_aug/{dataset}/{model}/{run_id}/
 
 ---
 
-*文档版本：v1.0 | 更新日期：2026-05-25*
+*文档版本：v1.1 | 更新日期：2026-07-19 | 平台封装见 `platform/README.md`*
