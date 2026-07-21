@@ -2,10 +2,8 @@ experiment:
   name: gan_cooler_v1
   seed: 42
   device: auto
-
 output:
   root: outputs/data_aug
-
 dataset:
   name: cooler
   root: data/cooler
@@ -13,18 +11,17 @@ dataset:
   time_column: time_hours
   group_column: group_id
   value_columns:
-    - T_stable_K
-    - t_cool_s
-    - sigma_T_K
+  - T_stable_K
+  - t_cool_s
+  - sigma_T_K
   normal_time_max: 2000
   fault_time_min: 6000
   label_names:
-    - normal
-    - temperature_control_fault
+  - normal
+  - temperature_control_fault
   sample_length: 50
   stride: 10
   sample_rate: 1.0
-
 model:
   name: gan
   z_dim: 100

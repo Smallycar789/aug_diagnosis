@@ -312,4 +312,4 @@ L_ol = MSE( decode(μ, first_inputs=x[:,0:1]), x )
 
 - 实现文件：[`data_aug/tvae.py`](tvae.py)
 - 运行说明：[`data_aug/README.md`](README.md)
-- 配置示例：`configs/data_aug/tvae_cooler.yaml`、`configs/data_aug/tvae_sensitivity.yaml`
+- 配置示例：`configs/data_aug/tvae_cooler.yaml`、`configs/data_aug/tvae_sifuqi.yaml`

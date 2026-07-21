@@ -1,25 +1,22 @@
 experiment:
-  name: tvae_cooler_matvae_v1
+  name: tvae_sifuqi_matvae_v1
   seed: 42
   device: auto
 output:
   root: outputs/data_aug
 dataset:
-  name: cooler
-  root: data/cooler
-  csv: all_simulation.csv
-  time_column: time_hours
-  group_column: group_id
+  name: sifuqi
+  root: data/sifuqi
+  csv: servo_accuracy.csv
+  time_column: hours
   value_columns:
-  - T_stable_K
-  - t_cool_s
-  - sigma_T_K
-  normal_time_max: 2000
+  - servo_accuracy
+  normal_time_max: 1000
   fault_time_min: 6000
   label_names:
   - normal
-  - temperature_control_fault
-  sample_length: 128
+  - tracking_fault
+  sample_length: 64
   stride: 8
   sample_rate: 1.0
 model:
@@ -27,9 +24,9 @@ model:
   conditional: true
   label_embed_dim: 8
   per_class_norm: true
-  seq_len: 128
+  seq_len: 64
   stride: 8
-  input_dim: 3
+  input_dim: 1
   latent_dim: 32
   hidden_dim: 128
   num_layers: 1
@@ -37,7 +34,7 @@ model:
   batch_size: 16
   lr: 0.001
   use_attention_encoder: true
-  attention_heads: 8
+  attention_heads: 4
   attention_layers: 1
   structured_decoder: true
   trend_degree: 2
@@ -62,4 +59,4 @@ model:
   lr_patience: 10
   use_data_start: false
   paired_generation: true
-  num_generate_per_class: 250
+  num_generate_per_class: 300

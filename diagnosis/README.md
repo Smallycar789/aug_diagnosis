@@ -27,20 +27,20 @@
 
 ```bash
 conda activate envv
-cd /path/to/光电探测
+cd /path/to/aug_diagnosis
 
-# 训练
-python diagnosis/train.py --config configs/diagnosis/cnn_bigru_cwru.yaml
+# 训练（简写：自动解析 configs/diagnosis/{algorithm}_{dataset}.yaml）
+python diagnosis/train.py --dataset sensitivity --algorithm cnn_bigru
+
+# 或显式指定配置
+python diagnosis/train.py --config configs/diagnosis/cnn_bigru_sensitivity.yaml
 
 # 测试（指定训练输出目录）
-python diagnosis/test.py --config configs/diagnosis/cnn_bigru_cwru.yaml --output-dir outputs/diagnosis/cwru_csv/cnn_bigru/xxx
+python diagnosis/test.py --config configs/diagnosis/cnn_bigru_sensitivity.yaml --output-dir outputs/diagnosis/sensitivity/cnn_bigru/xxx
 
-# 伺服器（sifuqi）四等级故障诊断 — 一键训练
-chmod +x scripts/run_cnn_bigru_sifuqi.sh   # 首次
-./scripts/run_cnn_bigru_sifuqi.sh
-# 或
-bash scripts/run_cnn_bigru_sifuqi.sh
-# 或
+# 其他数据集示例
+python diagnosis/train.py --dataset image_quality --algorithm resnet
+python diagnosis/train.py --dataset cooler --algorithm tl_meta
 python diagnosis/train.py --config configs/diagnosis/cnn_bigru_sifuqi.yaml
 ```
 
@@ -58,8 +58,11 @@ outputs/diagnosis/{dataset}/{model}/{run_id}/
 
 ## 数据集
 
-- `cwru_csv` — 使用项目根目录 CWRU CSV（与 notebook 一致）
-- `degradation` — 红外退化 fault_diagnosis 滑窗数据
-- `cooler` / `sifuqi` — 时序滑窗（用于后续验证）
+当前 `configs/diagnosis/` 提供四个数据集 × 三种算法的正式配置：
 
-参数均在 `configs/diagnosis/*.yaml` 中配置。
+- `image_quality` — 图像质量退化（5 类）
+- `sensitivity` — 灵敏度退化（3 类）
+- `cooler` — 斯特林制冷机时序（2 类）
+- `sifuqi` — 伺服跟踪精度退化（2 类）
+
+参数均在 `configs/diagnosis/{algorithm}_{dataset}.yaml` 中配置。

@@ -1,11 +1,9 @@
 experiment:
-  name: gan_sensitivity_stgan_2feat_perclass_v1
+  name: gan_sensitivity_2feat_l96_v1
   seed: 42
   device: auto
-
 output:
   root: outputs/data_aug
-
 dataset:
   name: sensitivity
   root: data/sensitivity
@@ -14,24 +12,28 @@ dataset:
     sensitivity_degradation: sensitivity_degradation.csv
     coupled_severe_fault: coupled_severe_fault.csv
   value_columns:
-    - avg_detectivity
-    - NETD_mK
+  - avg_detectivity
+  - NETD_mK
   unit_column: unit
   cycle_column: cycle
-  sample_length: 50
-  stride: 10
+  sample_length: 96
+  stride: 32
   sample_rate: 1.0
-
 model:
   name: gan
-  z_dim: 100
-  window_size: 50
-  step_length: 10
-  epochs: 50
-  batch_size: 64
-  g_lr: 0.002
-  d_lr: 0.0001
-  enc_lr: 0.0001
+  z_dim: 64
+  window_size: 96
+  step_length: 32
+  epochs: 120
+  batch_size: 16
+  g_lr: 0.0005
+  d_lr: 5.0e-05
+  enc_lr: 0.0003
+  recon_weight: 0.5
   per_class: true
+  per_class_norm: true
   num_generate_per_class: 300
+  num_compare: 5
+  split_feature_plots: true
+  eval_mmd_max_samples: 256
   spectrum_plot_style: vline

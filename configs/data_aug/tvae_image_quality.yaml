@@ -1,5 +1,5 @@
 experiment:
-  name: smoke_tvae_degradation_5feat
+  name: tvae_image_quality_v1
   seed: 42
   device: auto
 
@@ -7,51 +7,44 @@ output:
   root: outputs/data_aug
 
 dataset:
-  name: degradation
-  root: data/degradation
+  name: image_quality
+  root: data/image_quality
   class_files:
     normal: normal.csv
-    sensitivity_degradation: sensitivity_degradation.csv
     mtf_degradation: mtf_degradation.csv
     nonuniformity_degradation: nonuniformity_degradation.csv
     bad_pixel_degradation: bad_pixel_degradation.csv
     coupled_severe_fault: coupled_severe_fault.csv
   value_columns:
-    - avg_detectivity
-    - NETD_mK
-    - SiTF
-    - signal_gain
-    - read_noise_index
+    - MTF50
+    - response_nonuniformity
+    - bad_pixel_rate
   unit_column: unit
   cycle_column: cycle
   sample_length: 32
-  stride: 32
+  stride: 16
   sample_rate: 1.0
 
 model:
   name: tvae
   conditional: true
   seq_len: 32
-  input_dim: 5
+  stride: 16
+  input_dim: 3
   label_embed_dim: 8
   latent_dim: 16
-  hidden_dim: 32
+  hidden_dim: 64
   num_layers: 1
-  epochs: 2
+  epochs: 150
   batch_size: 16
   lr: 0.001
-  phase1_tf_epochs: 1
+  per_class_norm: true
+  phase1_tf_epochs: 0
   ramp_tfr_epochs: 1
-  use_reference_kl_schedule: false
-  beta_end: 0.01
-  free_bits: 0.0
-  tfr_min: 0.5
+  use_reference_kl_schedule: true
+  beta_delay_frac: 0.42
+  beta_end: 0.04
+  tfr_min: 0.0
   openloop_aux_weight: 0.0
-  dec_dropout: 0.0
-  weight_decay: 0.0
-  lr_patience: 3
-  use_data_start: false
-  num_generate_per_class: 5
-  num_compare: 3
-  split_feature_plots: true
-  spectrum_plot_style: vline
+  dec_dropout: 0.05
+  num_generate_per_class: 300

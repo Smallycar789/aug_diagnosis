@@ -13,32 +13,34 @@
 
 使用 conda 环境 `envv`：
 
-```powershell
+```bash
 conda activate envv
-cd C:\Users\86188\Desktop\ATE\光电探测
+cd /path/to/aug_diagnosis
 
 # 完整流程：训练 + 生成 + 评估
 python data_aug/train.py --config configs/data_aug/gan_cooler.yaml --stage all
 
 # 分阶段（需指定同一 output 目录）
 python data_aug/train.py --config configs/data_aug/tvae_cooler.yaml --stage train
-python data_aug/train.py --config configs/data_aug/tvae_cooler.yaml --stage generate --output-dir outputs/data_aug/cooler/tvae/tvae_cooler_v1_YYYYMMDD_HHMMSS
+python data_aug/train.py --config configs/data_aug/tvae_cooler.yaml --stage generate --output-dir outputs/data_aug/cooler/tvae/xxx
 ```
 
-一键冒烟测试：
+当前 `configs/data_aug/` 保留四个数据集 × 三种算法的正式配置（共 12 个）：
 
-```powershell
-powershell -File scripts/run_data_aug_smoke.ps1
-```
-
-快速冒烟测试（2 epoch）：
-
-```powershell
-python data_aug/train.py --config configs/data_aug/smoke_vae_cooler.yaml --stage all
-python data_aug/train.py --config configs/data_aug/smoke_gan_cooler.yaml --stage all
-python data_aug/train.py --config configs/data_aug/smoke_gan_vae_sifuqi.yaml --stage all
-python data_aug/train.py --config configs/data_aug/smoke_tvae_cooler.yaml --stage all
-```
+| 配置文件 | 数据集 | 算法 |
+|----------|--------|------|
+| `gan_image_quality.yaml` | image_quality | gan |
+| `tvae_image_quality.yaml` | image_quality | tvae |
+| `gan_vae_image_quality.yaml` | image_quality | gan_vae |
+| `gan_sensitivity.yaml` | sensitivity | gan |
+| `tvae_sensitivity.yaml` | sensitivity | tvae |
+| `gan_vae_sensitivity.yaml` | sensitivity | gan_vae |
+| `gan_cooler.yaml` | cooler | gan |
+| `tvae_cooler.yaml` | cooler | tvae |
+| `gan_vae_cooler.yaml` | cooler | gan_vae |
+| `gan_sifuqi.yaml` | sifuqi | gan |
+| `tvae_sifuqi.yaml` | sifuqi | tvae |
+| `gan_vae_sifuqi.yaml` | sifuqi | gan_vae |
 
 ## 输出目录
 
