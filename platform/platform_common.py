@@ -14,6 +14,60 @@ PLATFORM_ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = PLATFORM_ROOT.parent
 RUNTIME_ROOT = PLATFORM_ROOT / "runtime"
 
+_IMAGE_FIELD_KEYS = frozenset(
+    {
+        "signal_comparison",
+        "frequency_comparison",
+        "feature_plots",
+        "loss_curves",
+        "training_curves",
+        "tsne_visualization",
+        "target_confusion_matrix",
+        "vae_comprehensive_results",
+    }
+)
+_IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".svg", ".gif", ".webp")
+
+
+def _is_image_path(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    lowered = value.lower()
+    return lowered.endswith(_IMAGE_SUFFIXES) or "/png" in lowered
+
+
+def sanitize_metrics_for_platform(metrics: Any) -> Any:
+    """Remove image file references from metrics while keeping numeric indicators."""
+    if isinstance(metrics, dict):
+        cleaned: Dict[str, Any] = {}
+        for key, value in metrics.items():
+            if key in _IMAGE_FIELD_KEYS:
+                continue
+            if _is_image_path(value):
+                continue
+            cleaned[key] = sanitize_metrics_for_platform(value)
+        return cleaned
+    if isinstance(metrics, list):
+        return [sanitize_metrics_for_platform(item) for item in metrics]
+    return metrics
+
+
+def public_platform_result(result: Dict[str, Any], allowed_image_fields: Optional[List[str]] = None) -> Dict[str, Any]:
+    """Drop image paths from platform API output except explicitly allowed fields."""
+    allowed = set(allowed_image_fields or ())
+    public: Dict[str, Any] = {}
+    for key, value in result.items():
+        if key in allowed:
+            public[key] = value
+            continue
+        if key in _IMAGE_FIELD_KEYS or _is_image_path(value):
+            continue
+        if key == "metrics" and isinstance(value, dict):
+            public[key] = sanitize_metrics_for_platform(value)
+            continue
+        public[key] = value
+    return public
+
 
 def ensure_project_on_path() -> None:
     root = str(PROJECT_ROOT)
