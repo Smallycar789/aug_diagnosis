@@ -2,17 +2,15 @@ experiment:
   name: resnet_image_quality_v1
   seed: 42
   device: auto
-
 output:
   root: outputs/diagnosis
-
 dataset:
   name: image_quality
   root: data/image_quality
   value_columns:
-    - MTF50
-    - response_nonuniformity
-    - bad_pixel_rate
+  - MTF50
+  - response_nonuniformity
+  - bad_pixel_rate
   class_files:
     normal: normal.csv
     mtf_degradation: mtf_degradation.csv
@@ -21,7 +19,6 @@ dataset:
     coupled_severe_fault: coupled_severe_fault.csv
   window_size: 32
   window_stride: 16
-
 model:
   name: resnet
   sample_len: 96

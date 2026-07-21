@@ -2,10 +2,8 @@ experiment:
   name: resnet_cooler_v1
   seed: 42
   device: auto
-
 output:
   root: outputs/diagnosis
-
 dataset:
   name: cooler
   root: data/cooler
@@ -13,17 +11,16 @@ dataset:
   time_column: time_hours
   group_column: group_id
   value_columns:
-    - T_stable_K
-    - t_cool_s
-    - sigma_T_K
+  - T_stable_K
+  - t_cool_s
+  - sigma_T_K
   normal_time_max: 2000
   fault_time_min: 6000
   label_names:
-    - normal
-    - temperature_control_fault
+  - normal
+  - temperature_control_fault
   sample_length: 30
   stride: 15
-
 model:
   name: resnet
   sample_len: 90

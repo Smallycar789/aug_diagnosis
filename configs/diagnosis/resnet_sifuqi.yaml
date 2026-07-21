@@ -1,29 +1,25 @@
-
 experiment:
   name: resnet_sifuqi
   seed: 0
   device: auto
-
 output:
   root: outputs/diagnosis
-
 dataset:
   name: sifuqi
   root: data/sifuqi
   csv: servo_accuracy.csv
   time_column: hours
   value_columns:
-    - servo_accuracy
+  - servo_accuracy
   normal_time_max: 1000
   fault_time_min: 6000
   label_names:
-    - normal
-    - tracking_fault
+  - normal
+  - tracking_fault
   sample_length: 64
   stride: 8
   normalize: per_window
   stft_input: channel
-
 model:
   name: resnet
   sample_len: 64

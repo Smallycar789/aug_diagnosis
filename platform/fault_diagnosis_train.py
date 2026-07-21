@@ -13,7 +13,7 @@ PLATFORM_DIR = Path(__file__).resolve().parent
 if str(PLATFORM_DIR) not in sys.path:
     sys.path.insert(0, str(PLATFORM_DIR))
 
-from config import DIAGNOSIS_ALGORITHMS, resolve_data_dir, write_diagnosis_config
+from config import DIAGNOSIS_ALGORITHMS, prepare_diagnosis_train_config, resolve_data_dir
 from platform_common import build_output, default_output_fields, ensure_project_on_path, load_input, resolve_param, save_platform_json
 
 OUTPUT_SPECS = default_output_fields() + [
@@ -36,11 +36,22 @@ def fault_diagnosis_train(config_path=None, **kwargs):
     if algorithm not in DIAGNOSIS_ALGORITHMS:
         raise ValueError("algorithm must be one of: {}".format(", ".join(DIAGNOSIS_ALGORITHMS)))
 
-    resolved_data = resolve_data_dir(data_dir, profile)
-    if not resolved_data.exists():
+    resolved_data = resolve_data_dir(data_dir, profile) if data_dir else None
+    if resolved_data is not None and not resolved_data.exists():
         raise FileNotFoundError("data_dir does not exist: {}".format(resolved_data))
 
-    yaml_path = write_diagnosis_config(profile, algorithm, resolved_data, device=device, smoke=smoke)
+    yaml_path = prepare_diagnosis_train_config(
+        profile, algorithm, resolved_data, device=device, smoke=smoke
+    )
+    from diagnosis.io_utils import PROJECT_ROOT, load_config
+
+    cfg = load_config(yaml_path)
+    data_root = Path(cfg["dataset"]["root"])
+    if not data_root.is_absolute():
+        data_root = (PROJECT_ROOT / data_root).resolve()
+    if not data_root.exists():
+        raise FileNotFoundError("data_dir does not exist: {}".format(data_root))
+
     from diagnosis.train import main as train_main
 
     run_dir = train_main(str(yaml_path))

@@ -2,29 +2,26 @@ experiment:
   name: cnn_bigru_sifuqi_v1
   seed: 42
   device: auto
-
 output:
   root: outputs/diagnosis
-
 dataset:
   name: sifuqi
   root: data/sifuqi
   csv: servo_accuracy.csv
   time_column: hours
   value_columns:
-    - servo_accuracy
+  - servo_accuracy
   normal_time_max: 1000
   fault_time_min: 6000
   label_names:
-    - normal
-    - tracking_fault
+  - normal
+  - tracking_fault
   sample_length: 64
   stride: 16
   domain_adaptation: false
   normalize: global
   val_ratio: 0.15
   test_ratio: 0.15
-
 model:
   name: cnn_bigru
   input_channels: 1

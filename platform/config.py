@@ -436,6 +436,41 @@ def build_augmentation_cfg(
     return cfg
 
 
+def prepare_diagnosis_train_config(
+    profile: str,
+    algorithm: str,
+    data_dir: Optional[Path] = None,
+    device: str = "auto",
+    smoke: bool = True,
+) -> Path:
+    """Load configs/diagnosis yaml and apply optional runtime overrides."""
+    src = PROJECT_ROOT / "configs" / "diagnosis" / f"{algorithm}_{profile}.yaml"
+    if not src.exists():
+        raise FileNotFoundError(
+            "Diagnosis config not found: {} (expected configs/diagnosis/{}_{}.yaml)".format(
+                src, algorithm, profile
+            )
+        )
+
+    with open(src, encoding="utf-8") as fh:
+        cfg = yaml.safe_load(fh)
+
+    patched = False
+    if device and device != "auto":
+        cfg.setdefault("experiment", {})["device"] = device
+        patched = True
+    if data_dir is not None:
+        cfg.setdefault("dataset", {})["root"] = str(data_dir)
+        patched = True
+    if smoke:
+        cfg.setdefault("model", {})["epochs"] = 2
+        patched = True
+
+    if patched:
+        return _write_yaml(cfg, f"diagnosis_{profile}_{algorithm}")
+    return src.resolve()
+
+
 def write_diagnosis_config(
     profile: str,
     algorithm: str,

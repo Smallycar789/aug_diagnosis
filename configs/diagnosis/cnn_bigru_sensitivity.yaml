@@ -2,16 +2,14 @@ experiment:
   name: cnn_bigru_sensitivity_v1
   seed: 42
   device: auto
-
 output:
   root: outputs/diagnosis
-
 dataset:
   name: sensitivity
   root: data/sensitivity
   value_columns:
-    - avg_detectivity
-    - NETD_mK
+  - avg_detectivity
+  - NETD_mK
   class_files:
     normal: normal.csv
     sensitivity_degradation: sensitivity_degradation.csv
@@ -22,7 +20,6 @@ dataset:
   swap_val_test: true
   domain_adaptation: false
   normalize: global
-
 model:
   name: cnn_bigru
   input_channels: 2

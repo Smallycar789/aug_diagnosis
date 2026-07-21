@@ -6,12 +6,45 @@ import copy
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional, Union
 
 import numpy as np
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DIAGNOSIS_CONFIGS_DIR = PROJECT_ROOT / "configs" / "diagnosis"
+DIAGNOSIS_DATASETS = ("image_quality", "sensitivity", "cooler", "sifuqi")
+DIAGNOSIS_ALGORITHMS = ("cnn_bigru", "resnet", "tl_meta")
+
+
+def diagnosis_config_path(algorithm: str, dataset: str) -> Path:
+    if algorithm not in DIAGNOSIS_ALGORITHMS:
+        raise ValueError(
+            "algorithm must be one of: {}".format(", ".join(DIAGNOSIS_ALGORITHMS))
+        )
+    if dataset not in DIAGNOSIS_DATASETS:
+        raise ValueError(
+            "dataset must be one of: {}".format(", ".join(DIAGNOSIS_DATASETS))
+        )
+    path = DIAGNOSIS_CONFIGS_DIR / f"{algorithm}_{dataset}.yaml"
+    if not path.exists():
+        raise FileNotFoundError("Diagnosis config not found: {}".format(path))
+    return path
+
+
+def resolve_train_config_path(
+    config_path: Optional[Union[str, Path]] = None,
+    dataset: Optional[str] = None,
+    algorithm: Optional[str] = None,
+) -> Path:
+    if config_path:
+        return resolve_path(config_path)
+    if dataset and algorithm:
+        return diagnosis_config_path(algorithm, dataset)
+    raise ValueError(
+        "Provide --config, or both --dataset and --algorithm "
+        "(e.g. configs/diagnosis/cnn_bigru_sensitivity.yaml)"
+    )
 
 
 def resolve_path(path: Union[str, Path]) -> Path:

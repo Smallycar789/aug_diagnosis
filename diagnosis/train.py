@@ -14,7 +14,16 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from diagnosis import cnn_bigru, resnet, tl_meta
 from diagnosis.data_preprocess import load_data
-from diagnosis.io_utils import get_device, load_config, make_run_dir, save_config_resolved, set_seed
+from diagnosis.io_utils import (
+    DIAGNOSIS_ALGORITHMS,
+    DIAGNOSIS_DATASETS,
+    get_device,
+    load_config,
+    make_run_dir,
+    resolve_train_config_path,
+    save_config_resolved,
+    set_seed,
+)
 
 MODELS = {
     "cnn_bigru": cnn_bigru,
@@ -69,7 +78,29 @@ def main(config_path: str, output_dir: Optional[str] = None) -> Path:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fault diagnosis training")
-    parser.add_argument("--config", required=True, help="Path to yaml config")
+    parser.add_argument(
+        "--config",
+        default=None,
+        help="Path to yaml config (default: configs/diagnosis/{algorithm}_{dataset}.yaml)",
+    )
+    parser.add_argument(
+        "--dataset",
+        choices=DIAGNOSIS_DATASETS,
+        default=None,
+        help="Dataset name; used with --algorithm when --config is omitted",
+    )
+    parser.add_argument(
+        "--algorithm",
+        choices=DIAGNOSIS_ALGORITHMS,
+        default=None,
+        help="Model name; used with --dataset when --config is omitted",
+    )
     parser.add_argument("--output-dir", default=None, help="Optional output directory")
     args = parser.parse_args()
-    main(args.config, args.output_dir)
+    config_path = resolve_train_config_path(
+        config_path=args.config,
+        dataset=args.dataset,
+        algorithm=args.algorithm,
+    )
+    print(f"Config: {config_path}")
+    main(str(config_path), args.output_dir)
