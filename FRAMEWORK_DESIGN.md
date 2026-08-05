@@ -40,6 +40,9 @@ aug_diagnosis/
 │   ├── cnn_bigru.py / resnet.py / tl_meta.py
 │   └── io_utils.py
 │
+├── references/                        # 离线交付资源（ResNet 预训练初始化等）
+│   └── diagnosis/pretrained/        # resnet_{dataset}.pth，与 ImageNet 初始化等价
+│
 ├── data_aug/                          # 数据增强算法实现
 │   ├── train.py                       # 算法层 train | generate | evaluate 入口
 │   ├── gan.py / tvae.py / gan_vae.py / vae.py
@@ -193,8 +196,34 @@ outputs/diagnosis/sensitivity/cnn_bigru/cnn_bigru_sensitivity_v1_20260526_152138
 | 模块文件 | 来源 Notebook | 说明 |
 |----------|---------------|------|
 | `cnn_bigru.py` | `test_pre/jupyter_test/diagnosis/1DCNN-BiGRU.ipynb` | SoftPool + 1DCNN-BiGRU + MMD 域适应 |
-| `resnet.py` | `test_pre/jupyter_test/diagnosis/ResNet.ipynb` | STFT 时频图 + ResNet |
+| `resnet.py` | `test_pre/jupyter_test/diagnosis/ResNet.ipynb` | STFT 时频图 + ResNet；离线从 `references/diagnosis/pretrained/` 加载初始化 |
 | `tl_meta.py` | `test_pre/jupyter_test/diagnosis/TL-Meta.ipynb` | SSMN 半监督元学习 |
+
+### 5.3 ResNet 离线预训练权重（验收机）
+
+无网验收机无法通过 torchvision 下载 ImageNet。ResNet **不改 YAML、不改 train/test 命令**，在 `build_tl_resnet18()` 内按 `dataset.name` 约定路径自动选择初始化来源：
+
+| 数据集 | 本地初始化（存在则优先） |
+|--------|--------------------------|
+| `image_quality` | `references/diagnosis/pretrained/resnet_image_quality.pth` |
+| `sensitivity` | `references/diagnosis/pretrained/resnet_sensitivity.pth` |
+| `cooler` | `references/diagnosis/pretrained/resnet_cooler.pth` |
+| `sifuqi` | `references/diagnosis/pretrained/resnet_sifuqi.pth` |
+
+**行为说明：**
+
+1. 文件存在 → `resnet18(weights=None)` + `load_state_dict`，不联网；与有网环境下 `ImageNet + build_tl_resnet18()` 初始权重等价（各 config 按 `experiment.seed` 单独导出）。
+2. 文件不存在 → 保持原 ImageNet 下载逻辑（开发机默认）。
+3. **训练流程不变**：数据划分、STFT、优化器、epoch 循环、`checkpoint_best.pth` 保存逻辑均未修改。
+4. **测试不变**：`test.py --output-dir <run_dir>` 仍加载该次训练的 `checkpoint_best.pth`；`references/` 下文件仅用于训练/加载骨架时的离线初始化，不是推理用最终模型。
+
+**有网环境重新导出（一次性）：**
+
+```bash
+python scripts/export_resnet_pretrained_init.py
+```
+
+交付验收包时需包含 `references/diagnosis/pretrained/resnet_*.pth` 四个文件（已纳入仓库）。
 
 ---
 

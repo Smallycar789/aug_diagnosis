@@ -15,6 +15,7 @@ aug_diagnosis/
 ├── data_aug/           ← 数据增强算法实现（GAN / TVAE / GAN-VAE）
 ├── data/               ← 原始训练数据（CSV）
 ├── outputs/            ← ★ 正式实验结果（已训练好的模型，交付用）
+├── references/         ← 离线交付资源（ResNet 预训练初始化权重）
 └── platform/           ← ★ 平台封装层（你们对接的入口）
     ├── fault_diagnosis_train.py
     ├── fault_diagnosis_test.py

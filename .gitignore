@@ -2,8 +2,12 @@ __pycache__/
 configs/
 data/sensitivity/
 data/Degradation/
-references/
-scripts
+references/*
+!references/diagnosis/
+!references/diagnosis/pretrained/
+!references/diagnosis/pretrained/**
+scripts/*
+!scripts/export_resnet_pretrained_init.py
 diagnosis/__pycache__/
 outputs/
 archive/

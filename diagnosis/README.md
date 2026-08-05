@@ -12,7 +12,7 @@
 | `data_preprocess.py` | 按数据集类型（CWRU、degradation、cooler、sifuqi 等）统一加载数据并封装为 `DiagnosisDataBundle`。 |
 | `simulation_load.py` | 专用于 cooler / sifuqi 仿真 CSV 的读取与时间阈值滑窗（正常段 / 故障段分段采样）。 |
 | `cnn_bigru.py` | 实现 1D-CNN + BiGRU 分类器及 MMD 域自适应训练与测试流程（对应 `model.name: cnn_bigru`）。 |
-| `resnet.py` | 实现基于 STFT 时频图与 ResNet18 的迁移学习故障分类（对应 `model.name: resnet`）。 |
+| `resnet.py` | 实现基于 STFT 时频图与 ResNet18 的迁移学习故障分类（对应 `model.name: resnet`）；离线环境从 `references/diagnosis/pretrained/` 加载与 ImageNet 等价的初始化权重。 |
 | `tl_meta.py` | 实现 SSMN 半监督元学习小样本故障诊断（对应 `model.name: tl_meta`）。 |
 
 ## 算法
@@ -66,3 +66,22 @@ outputs/diagnosis/{dataset}/{model}/{run_id}/
 - `sifuqi` — 伺服跟踪精度退化（2 类）
 
 参数均在 `configs/diagnosis/{algorithm}_{dataset}.yaml` 中配置。
+
+## ResNet 离线预训练权重（验收机）
+
+无网验收机无法下载 ImageNet 权重。ResNet 在**不改 YAML、不改 train/test 命令**的前提下，按 `dataset.name` 自动查找本地初始化文件：
+
+```
+references/diagnosis/pretrained/resnet_{dataset}.pth
+```
+
+| 数据集 | 本地初始化文件 |
+|--------|----------------|
+| `image_quality` | `references/diagnosis/pretrained/resnet_image_quality.pth` |
+| `sensitivity` | `references/diagnosis/pretrained/resnet_sensitivity.pth` |
+| `cooler` | `references/diagnosis/pretrained/resnet_cooler.pth` |
+| `sifuqi` | `references/diagnosis/pretrained/resnet_sifuqi.pth` |
+
+- **训练**：`build_tl_resnet18()` 若发现上述文件存在，则 `resnet18(weights=None)` 加载本地权重，不再联网；文件不存在时仍走 ImageNet（开发机默认）。
+- **测试**：仍使用训练产出目录中的 `checkpoint_best.pth`（`test.py --output-dir`），与改前一致；本地初始化文件仅用于构建模型骨架后立即被 checkpoint 覆盖。
+- **重新导出**（有网环境一次性）：`python scripts/export_resnet_pretrained_init.py`，按各 yaml 的 `experiment.seed` 生成与 ImageNet 初始化等价的四个 `.pth`。

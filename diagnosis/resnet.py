@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import matplotlib
 
@@ -332,23 +332,31 @@ class Wrapper(Dataset):
         return img, label
 
 
-def build_tl_resnet18(num_classes, freeze_layers=True):
+def _resnet_pretrained_path(dataset_name: str) -> Path:
+    return resolve_path("references/diagnosis/pretrained/resnet_{}.pth".format(dataset_name))
+
+
+def _freeze_resnet_backbone(model: nn.Module) -> None:
+    for param in model.conv1.parameters():
+        param.requires_grad = False
+    for param in model.bn1.parameters():
+        param.requires_grad = False
+    for param in model.layer1.parameters():
+        param.requires_grad = False
+    for param in model.layer2.parameters():
+        param.requires_grad = False
+    for param in model.layer3.parameters():
+        param.requires_grad = False
+
+
+def _build_tl_resnet18_from_imagenet(num_classes: int, freeze_layers: bool) -> nn.Module:
     try:
         model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
     except (AttributeError, TypeError):
         model = models.resnet18(pretrained=True)
 
     if freeze_layers:
-        for param in model.conv1.parameters():
-            param.requires_grad = False
-        for param in model.bn1.parameters():
-            param.requires_grad = False
-        for param in model.layer1.parameters():
-            param.requires_grad = False
-        for param in model.layer2.parameters():
-            param.requires_grad = False
-        for param in model.layer3.parameters():
-            param.requires_grad = False
+        _freeze_resnet_backbone(model)
 
         def init_weights(m):
             if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
@@ -362,6 +370,36 @@ def build_tl_resnet18(num_classes, freeze_layers=True):
     in_features = model.fc.in_features
     model.fc = nn.Linear(in_features, num_classes)
     return model
+
+
+def _build_tl_resnet18_from_local(
+    num_classes: int, freeze_layers: bool, pretrained_path: Path
+) -> nn.Module:
+    model = models.resnet18(weights=None)
+    in_features = model.fc.in_features
+    model.fc = nn.Linear(in_features, num_classes)
+
+    checkpoint = torch.load(str(pretrained_path), map_location="cpu")
+    ckpt_num_classes = checkpoint.get("num_classes")
+    if ckpt_num_classes is not None and ckpt_num_classes != num_classes:
+        raise ValueError(
+            "pretrained num_classes={} but model.num_classes={} for {}".format(
+                ckpt_num_classes, num_classes, pretrained_path
+            )
+        )
+    model.load_state_dict(checkpoint["model_state_dict"])
+
+    if freeze_layers:
+        _freeze_resnet_backbone(model)
+    return model
+
+
+def build_tl_resnet18(num_classes, freeze_layers=True, dataset_name: Optional[str] = None):
+    if dataset_name:
+        pretrained_path = _resnet_pretrained_path(dataset_name)
+        if pretrained_path.exists():
+            return _build_tl_resnet18_from_local(num_classes, freeze_layers, pretrained_path)
+    return _build_tl_resnet18_from_imagenet(num_classes, freeze_layers)
 
 
 def train_one_epoch(model, dataloader, criterion, optimizer, device):
@@ -450,7 +488,11 @@ def train(bundle: Optional[DiagnosisDataBundle], cfg: dict[str, Any], out_dir: P
 
     train_loader, val_loader, test_loader, label_names, num_classes = _prepare_dataloaders(cfg, bundle)
 
-    model = build_tl_resnet18(num_classes, freeze_layers=bool(model_cfg.get("freeze_layers", True))).to(device)
+    model = build_tl_resnet18(
+        num_classes,
+        freeze_layers=bool(model_cfg.get("freeze_layers", True)),
+        dataset_name=cfg["dataset"]["name"],
+    ).to(device)
     optimizer = optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=float(model_cfg.get("lr", 0.001)),
@@ -528,7 +570,11 @@ def load_checkpoint(path: Path, cfg: dict[str, Any]):
     device = get_device(cfg)
     checkpoint = torch.load(path, map_location=device)
     num_classes = checkpoint.get("num_classes", int(cfg["model"].get("num_classes", 10)))
-    model = build_tl_resnet18(num_classes, freeze_layers=bool(cfg["model"].get("freeze_layers", True))).to(device)
+    model = build_tl_resnet18(
+        num_classes,
+        freeze_layers=bool(cfg["model"].get("freeze_layers", True)),
+        dataset_name=cfg["dataset"]["name"],
+    ).to(device)
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
     return model
